@@ -24,33 +24,74 @@ app.run(function($ionicPlatform) {
 })
 
 app.config(function($stateProvider, $urlRouterProvider) {
- 
   $stateProvider
   .state('map', {
     url: '/',
     templateUrl: 'templates/map.html',
     controller: 'MapCtrl'
   });
- 
+
   $urlRouterProvider.otherwise("/");
- 
 })
 
 app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
   var options = {timeout: 10000, enableHighAccuracy: true};
- 
+  var marker;
+
   $cordovaGeolocation.getCurrentPosition(options).then(function(position){
- 
+
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
- 
+
     var mapOptions = {
       center: latLng,
       zoom: 15,
+      disableDefaultUI: true,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
- 
+
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
- 
+
+    // Create the search box and link it to the UI element.
+    var input = document.getElementById('pac-input');
+    var searchBox = new google.maps.places.SearchBox(input);
+    $scope.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(input);
+    //Bias the SearchBox results towards current map's viewport.
+    $scope.map.addListener('bounds_changed', function() {
+      searchBox.setBounds($scope.map.getBounds());
+    });
+    // Listen for the event fired when the user selects a prediction,
+    // removes any existing search history and
+    // retrieves more details for that place.
+    searchBox.addListener('places_changed', function() {
+      var places = searchBox.getPlaces();
+      if (places.length === 0) {
+        return;
+      }
+      // Clear out the old marker
+      if(marker){
+        marker.setMap(null);
+      }
+      // For each place, get the icon, name and location.
+      var bounds = new google.maps.LatLngBounds();
+
+      places.forEach(function(place) {
+      // Create a marker for each place.
+        marker = new google.maps.Marker({
+          map: $scope.map,
+          title: place.name,
+          position: place.geometry.location
+        });
+        if (place.geometry.viewport) {
+        // Only geocodes have viewport.
+          bounds.union(place.geometry.viewport);
+        } else {
+          bounds.extend(place.geometry.location);
+        }
+        $scope.map.setCenter(place.geometry.location);
+        $scope.map.fitBounds(bounds);
+      });
+    });
+
   }, function(error){
     console.log("Could not get location");
   });

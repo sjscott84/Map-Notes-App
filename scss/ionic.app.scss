@@ -31,3 +31,13 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     height: 100%;
 }
 
+#pac-input {
+	background-color: #fff;
+	font-family: Roboto;
+	font-size: 15px;
+	font-weight: 300;
+	text-overflow: ellipsis;
+	margin-bottom: 20px;
+	width: 90%;
+}
+
