@@ -144,12 +144,43 @@ function Popup ($scope, $ionicPopup, marker){
           text: '<b>Save</b>',
           type: 'button-positive',
           onTap: function(e) {
-            console.log("click");
+            savePlacePopup($scope, $ionicPopup, marker);
           }
         }
       ]
     });
   //};
 };
+
+function savePlacePopup ($scope, $ionicPopup, marker){
+  // Triggered on a button click, or some other target
+  //$scope.showPopup = function() {
+  $scope.data = {};
+
+    // An elaborate, custom popup
+    var myPopup = $ionicPopup.show({
+      template: '<p>Group:</p><input type="Group" ng-model="data.group"><br><p>Type:</p><input type="Type" ng-model="data.type"><br><p>Note:</p><input type="Note" ng-model="data.notes">',
+      title: placeObject.name,
+      scope: $scope,
+      buttons: [
+        { text: 'Cancel',
+          onTap: function(){
+            placeObject = {};
+          }
+        },
+        {
+          text: '<b>Save</b>',
+          type: 'button-positive',
+          onTap: function(e) {
+            placeObject.group = $scope.data.group;
+            placeObject.type = $scope.data.type;
+            placeObject.notes = $scope.data.notes;
+          }
+        }
+      ]
+    });
+  //};
+};
+
 
 
