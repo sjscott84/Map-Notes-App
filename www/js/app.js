@@ -38,6 +38,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
 app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPopup) {
   var options = {timeout: 10000, enableHighAccuracy: true};
   var marker;
+  var button = document.getElementById('button');
 
   $cordovaGeolocation.getCurrentPosition(options).then(function(position){
 
@@ -51,11 +52,12 @@ app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPo
     };
 
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+    $scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
 
     // Create the search box and link it to the UI element.
     var input = document.getElementById('pac-input');
     var searchBox = new google.maps.places.SearchBox(input);
-    $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+    $scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
     //Bias the SearchBox results towards current map's viewport.
     $scope.map.addListener('bounds_changed', function() {
       searchBox.setBounds($scope.map.getBounds());
