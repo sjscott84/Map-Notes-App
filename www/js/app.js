@@ -4,6 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 var app = angular.module('starter', ['ionic', 'ngCordova'])
+var placeObject = {};
 
 app.run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -34,25 +35,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise("/");
 })
 
-app.directive('disabletap', function($timeout) {
-  return {
-    link: function() {
-      $timeout(function() {
-        container = document.getElementsByClassName('pac-container');
-        // disable ionic data tab
-        angular.element(container).attr('data-tap-disabled', 'true');
-        // leave input field if google-address-entry is selected
-        angular.element(container).on("click", function(){
-            document.getElementById('type-selector').blur();
-        });
-
-      },500);
-
-    }
-  };
-});
-
-app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
+app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPopup) {
   var options = {timeout: 10000, enableHighAccuracy: true};
   var marker;
 
@@ -72,7 +55,7 @@ app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
     // Create the search box and link it to the UI element.
     var input = document.getElementById('pac-input');
     var searchBox = new google.maps.places.SearchBox(input);
-    $scope.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(input);
+    $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
     //Bias the SearchBox results towards current map's viewport.
     $scope.map.addListener('bounds_changed', function() {
       searchBox.setBounds($scope.map.getBounds());
@@ -99,6 +82,11 @@ app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
           title: place.name,
           position: place.geometry.location
         });
+
+        google.maps.event.addListener(marker, 'click', function() {
+          Popup($scope, $ionicPopup, marker);
+        });
+
         if (place.geometry.viewport) {
         // Only geocodes have viewport.
           bounds.union(place.geometry.viewport);
@@ -107,12 +95,24 @@ app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
         }
         $scope.map.setCenter(place.geometry.location);
         $scope.map.fitBounds(bounds);
+        placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "location":place.geometry.location, "latitude":place.geometry.location.lat(), "longitude":place.geometry.location.lng(), "type": undefined, "notes": undefined};
       });
     });
 
   }, function(error){
     console.log("Could not get location");
   });
+
+  $scope.disableTap = function(){
+    container = document.getElementsByClassName('pac-container');
+    // disable ionic data tab
+    angular.element(container).attr('data-tap-disabled', 'true');
+    // leave input field if google-address-entry is selected
+    angular.element(container).on("click", function(){
+        document.getElementById('pac-input').blur();
+    });
+  };
+
 });
 
 app.controller('MenuCtrl', function($scope){
@@ -122,5 +122,34 @@ app.controller('MenuCtrl', function($scope){
     {title: 'Remove current places'}
     ];
 });
+
+function Popup ($scope, $ionicPopup, marker){
+  // Triggered on a button click, or some other target
+  //$scope.showPopup = function() {
+  $scope.data = {};
+
+    // An elaborate, custom popup
+    var myPopup = $ionicPopup.show({
+      //template: '<input type="password" ng-model="data.wifi">',
+      title: placeObject.name,
+      subTitle: "Do you want to save this place?",
+      scope: $scope,
+      buttons: [
+        { text: 'Cancel',
+          onTap: function(){
+            marker.setMap(null);
+          } 
+        },
+        {
+          text: '<b>Save</b>',
+          type: 'button-positive',
+          onTap: function(e) {
+            console.log("click");
+          }
+        }
+      ]
+    });
+  //};
+};
 
 
