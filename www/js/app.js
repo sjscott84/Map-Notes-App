@@ -35,7 +35,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise("/");
 })
 
-app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPopup) {
+app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPopup, $http) {
   var options = {timeout: 10000, enableHighAccuracy: true};
   var marker;
   var button = document.getElementById('button');
@@ -86,7 +86,7 @@ app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPo
         });
 
         google.maps.event.addListener(marker, 'click', function() {
-          Popup($scope, $ionicPopup, marker);
+          Popup($scope, $ionicPopup, marker, $http);
         });
 
         if (place.geometry.viewport) {
@@ -125,7 +125,7 @@ app.controller('MenuCtrl', function($scope){
     ];
 });
 
-function Popup ($scope, $ionicPopup, marker){
+function Popup ($scope, $ionicPopup, marker, $http){
   // Triggered on a button click, or some other target
   //$scope.showPopup = function() {
   $scope.data = {};
@@ -146,7 +146,7 @@ function Popup ($scope, $ionicPopup, marker){
           text: '<b>Save</b>',
           type: 'button-positive',
           onTap: function(e) {
-            savePlacePopup($scope, $ionicPopup, marker);
+            savePlacePopup($scope, $ionicPopup, marker, $http);
           }
         }
       ]
@@ -154,7 +154,7 @@ function Popup ($scope, $ionicPopup, marker){
   //};
 };
 
-function savePlacePopup ($scope, $ionicPopup, marker){
+function savePlacePopup ($scope, $ionicPopup, marker, $http){
   // Triggered on a button click, or some other target
   //$scope.showPopup = function() {
   $scope.data = {};
@@ -177,12 +177,25 @@ function savePlacePopup ($scope, $ionicPopup, marker){
             placeObject.group = $scope.data.group;
             placeObject.type = $scope.data.type;
             placeObject.notes = $scope.data.notes;
+
+            $http({
+              method: 'POST',
+              url: 'http://thescotts.mynetgear.com:3000/writeFile',
+              data: JSON.stringify(placeObject)
+            }).then(function successCallback(response) {
+                console.log("Succefully Saved");
+                console.log(response);
+              }, function errorCallback(response) {
+                console.log(response);
+              });
           }
         }
       ]
     });
   //};
 };
+
+
 
 
 
