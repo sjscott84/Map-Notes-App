@@ -5,6 +5,56 @@
 // the 2nd parameter is an array of 'requires'
 var app = angular.module('starter', ['ionic', 'ngCordova'])
 var placeObject = {};
+var listView = [];
+var infoWindow;
+var currentPlace;
+
+var Place = function (map, name, position, lat, lng, type, note, address){
+  var self = this;
+  self.map = map;
+  self.name = name;
+  self.lat = lat;
+  self.lng = lng;
+  self.type = type;
+  self.note = note;
+  self.address = address;
+  self.position = {"lat":self.lat, "lng":self.lng};
+  self.marker = new google.maps.Marker({
+    map: map,
+    title: name,
+    icon: 'img/star_gold_16.png',
+    position: self.position,
+    zoomOnClick: false,
+  });
+  google.maps.event.addListener(this.marker, 'click', function() {
+    addInfoWindow(self.map, self.name, self.address, self.type, self.note, self.marker);
+    currentPlace = self;
+    //map.setCenter(self.marker.getPosition());
+  });
+};
+
+addInfoWindow = function(map, name, address, type, note, marker){
+
+    var contents;
+
+    if(infoWindow){
+      infoWindow.close();
+    }
+
+    listView.forEach(function(place){
+        contents = '<div class="infowindow"><b>'+name+'</b><br>'+address+'<br><b>What: </b>'+type+'<br><b>Notes: </b>'+note+'<br><a onclick="openGoogleMap()">View on google maps</a></div>';
+    });
+
+    infoWindow.setContent(contents);
+    infoWindow.open(map, marker);
+};
+
+openGoogleMap = function(){
+    var lat = currentPlace.position.lat;
+    var lng = currentPlace.position.lng;
+
+    window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
+};
 
 app.run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -101,6 +151,10 @@ app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPo
       });
     });
 
+    infoWindow = new google.maps.InfoWindow({
+      disableAutoPan: true
+    });
+
   }, function(error){
     console.log("Could not get location");
   });
@@ -147,6 +201,7 @@ function Popup ($scope, $ionicPopup, marker, $http){
           text: '<b>Save</b>',
           type: 'button-positive',
           onTap: function(e) {
+            marker.setMap(null);
             savePlacePopup($scope, $ionicPopup, marker, $http);
             
           }
@@ -181,6 +236,8 @@ function savePlacePopup ($scope, $ionicPopup, marker, $http){
             placeObject.group = $scope.data.group;
             placeObject.type = $scope.data.type;
             placeObject.notes = $scope.data.notes;
+
+            listView.push(new Place($scope.map, placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
 
             $http({
               method: 'POST',
