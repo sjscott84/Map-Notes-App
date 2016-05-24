@@ -35,7 +35,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise("/");
 })
 
-app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPopup, $http) {
+app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPopup, $http, $ionicModal) {
   var options = {timeout: 10000, enableHighAccuracy: true};
   var marker;
   var button = document.getElementById('button');
@@ -119,11 +119,12 @@ app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPo
 
 app.controller('MenuCtrl', function($scope){
   $scope.tasks = [
-    {title: 'Find places by location'},
+    {title: 'Find places by location',},
     {title: 'Search for places'},
     {title: 'Remove current places'}
     ];
 });
+
 
 function Popup ($scope, $ionicPopup, marker, $http){
   // Triggered on a button click, or some other target
@@ -147,6 +148,7 @@ function Popup ($scope, $ionicPopup, marker, $http){
           type: 'button-positive',
           onTap: function(e) {
             savePlacePopup($scope, $ionicPopup, marker, $http);
+            
           }
         }
       ]
@@ -161,7 +163,9 @@ function savePlacePopup ($scope, $ionicPopup, marker, $http){
 
     // An elaborate, custom popup
     var myPopup = $ionicPopup.show({
-      template: '<p>Group:</p><input type="Group" ng-model="data.group"><br><p>Type:</p><input type="Type" ng-model="data.type"><br><p>Note:</p><input type="Note" ng-model="data.notes">',
+      template: '<div class="list"><label class="item item-input item-floating-label"><span class="input-label">Group</span><input type="text" placeholder="Group" ng-model="data.group"></label>\
+      <label class="item item-input item-floating-label"><span class="input-label">Type</span><input type="text" placeholder="Type" ng-model="data.type""></label>\
+      <label class="item item-input item-floating-label"><span class="input-label">Note</span><input type="text" placeholder="Note" ng-model="data.notes"></label></div>',
       title: placeObject.name,
       scope: $scope,
       buttons: [
@@ -184,7 +188,6 @@ function savePlacePopup ($scope, $ionicPopup, marker, $http){
               data: JSON.stringify(placeObject)
             }).then(function successCallback(response) {
                 console.log("Succefully Saved");
-                console.log(response);
               }, function errorCallback(response) {
                 console.log(response);
               });
