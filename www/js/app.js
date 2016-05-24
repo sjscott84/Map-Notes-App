@@ -8,6 +8,8 @@ var placeObject = {};
 var listView = [];
 var infoWindow;
 var currentPlace;
+var groups = [];
+var types = [];
 
 var Place = function (map, name, position, lat, lng, type, note, address){
   var self = this;
@@ -56,7 +58,7 @@ openGoogleMap = function(){
     window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
 };
 
-app.run(function($ionicPlatform) {
+app.run(function($ionicPlatform, $http) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -72,6 +74,24 @@ app.run(function($ionicPlatform) {
       StatusBar.styleDefault();
     }
   });
+
+  $http({
+    method: 'GET',
+    url: 'http://thescotts.mynetgear.com:3000/pageSetUp'
+  }).then(function successCallback(response) {
+    console.log(response.data.groups);
+    for(var i=0; i<response.data.groups.length; i++){
+      groups.push(response.data.groups[i]);
+    }
+    for(var i=0; i<response.data.types.length; i++){
+      types.push(response.data.types[i]);
+    }
+    groups.sort();
+    types.sort();
+    }, function errorCallback(response) {
+      console.log(response);
+    });
+
 })
 
 app.config(function($stateProvider, $urlRouterProvider) {
