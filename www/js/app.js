@@ -10,8 +10,10 @@ var infoWindow;
 var currentPlace;
 var groups = [];
 var types = [];
+var marker;
+var map;
 
-var Place = function (map, name, position, lat, lng, type, note, address){
+var Place = function (name, position, lat, lng, type, note, address){
   var self = this;
   self.map = map;
   self.name = name;
@@ -105,9 +107,9 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise("/");
 })
 
-app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPopup, $http, $ionicModal) {
+app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPopup', '$http', '$ionicModal', 'Popup', function($scope, $state, $cordovaGeolocation, $ionicPopup, $http, $ionicModal, Popup) {
   var options = {timeout: 10000, enableHighAccuracy: true};
-  var marker;
+  //var marker;
   var button = document.getElementById('button');
 
   $cordovaGeolocation.getCurrentPosition(options).then(function(position){
@@ -123,6 +125,8 @@ app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPo
 
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
     $scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
+
+    map = $scope.map;
 
     // Create the search box and link it to the UI element.
     var input = document.getElementById('pac-input');
@@ -156,7 +160,9 @@ app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPo
         });
 
         google.maps.event.addListener(marker, 'click', function() {
-          Popup($scope, $ionicPopup, marker, $http);
+          //Popup($scope, $ionicPopup, marker, $http);
+          Popup.getPopup(marker);
+          marker.setMap(null);
         });
 
         if (place.geometry.viewport) {
@@ -189,7 +195,7 @@ app.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicPo
     });
   };
 
-});
+}]);
 
 app.controller('MenuCtrl', function($scope){
   $scope.tasks = [
@@ -199,79 +205,67 @@ app.controller('MenuCtrl', function($scope){
     ];
 });
 
+app.controller('PopupCtrl', function($scope, $ionicPopup, $http){
 
-function Popup ($scope, $ionicPopup, marker, $http){
-  // Triggered on a button click, or some other target
-  //$scope.showPopup = function() {
-  $scope.data = {};
+})
 
+app.factory('Popup', ['$ionicPopup', '$http', function($ionicPopup, $http, marker){
     // An elaborate, custom popup
-    var myPopup = $ionicPopup.show({
-      //template: '<input type="password" ng-model="data.wifi">',
-      title: placeObject.name,
-      subTitle: "Do you want to save this place?",
-      scope: $scope,
-      buttons: [
-        { text: 'Cancel',
-          onTap: function(){
-            marker.setMap(null);
-          } 
-        },
-        {
-          text: '<b>Save</b>',
-          type: 'button-positive',
-          onTap: function(e) {
-            marker.setMap(null);
-            savePlacePopup($scope, $ionicPopup, marker, $http);
-            
-          }
-        }
-      ]
-    });
-  //};
-};
+  return {
+    getPopup: function(){
+      var myPopup = $ionicPopup.show({
+        title: placeObject.name,
+        subTitle: "Do you want to save this place?",
+        buttons: [
+          { text: 'Cancel',
+            onTap: function(){
+            } 
+          },
+          {
+            text: '<b>Save</b>',
+            type: 'button-positive',
+            onTap: function(e) {
+              data = {};
+              var myPopup = $ionicPopup.show({
+                templateUrl: 'templates/popup.html',
+                title: placeObject.name,
+                buttons: [
+                  { text: 'Cancel',
+                    onTap: function(){
+                      placeObject = {};
+                    }
+                  },
+                  {
+                    text: '<b>Save</b>',
+                    type: 'button-positive',
+                    onTap: function(e) {
+                      placeObject.group = data.group;
+                      placeObject.type = data.type;
+                      placeObject.notes = data.notes;
 
-function savePlacePopup ($scope, $ionicPopup, marker, $http){
-  // Triggered on a button click, or some other target
-  //$scope.showPopup = function() {
-  $scope.data = {};
+                      listView.push(new Place(placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
 
-    // An elaborate, custom popup
-    var myPopup = $ionicPopup.show({
-      templateUrl: 'templates/popup.html',
-      title: placeObject.name,
-      scope: $scope,
-      buttons: [
-        { text: 'Cancel',
-          onTap: function(){
-            placeObject = {};
-          }
-        },
-        {
-          text: '<b>Save</b>',
-          type: 'button-positive',
-          onTap: function(e) {
-            placeObject.group = $scope.data.group;
-            placeObject.type = $scope.data.type;
-            placeObject.notes = $scope.data.notes;
-
-            listView.push(new Place($scope.map, placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
-
-            $http({
-              method: 'POST',
-              url: 'http://thescotts.mynetgear.com:3000/writeFile',
-              data: JSON.stringify(placeObject)
-            }).then(function successCallback(response) {
-                console.log("Succefully Saved");
-              }, function errorCallback(response) {
-                console.log(response);
+                      $http({
+                        method: 'POST',
+                        url: 'http://thescotts.mynetgear.com:3000/writeFile',
+                        data: JSON.stringify(placeObject)
+                      }).then(function successCallback(response) {
+                          console.log("Succefully Saved");
+                      }, function errorCallback(response) {
+                          console.log(response);
+                      });
+                    }
+                  }
+                ]
               });
+            }
           }
-        }
-      ]
-    });
-  //};
-};
+        ]
+      });
+    }
+  }
+}]);
+
 
 
 
