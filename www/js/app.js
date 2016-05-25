@@ -238,9 +238,7 @@ function savePlacePopup ($scope, $ionicPopup, marker, $http){
 
     // An elaborate, custom popup
     var myPopup = $ionicPopup.show({
-      template: '<div class="list"><label class="item item-input item-floating-label"><span class="input-label">Group</span><input type="text" placeholder="Group" ng-model="data.group"></label>\
-      <label class="item item-input item-floating-label"><span class="input-label">Type</span><input type="text" placeholder="Type" ng-model="data.type""></label>\
-      <label class="item item-input item-floating-label"><span class="input-label">Note</span><input type="text" placeholder="Note" ng-model="data.notes"></label></div>',
+      templateUrl: 'templates/popup.html',
       title: placeObject.name,
       scope: $scope,
       buttons: [
