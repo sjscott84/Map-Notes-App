@@ -5,7 +5,6 @@
 // the 2nd parameter is an array of 'requires'
 var app = angular.module('starter', ['ionic', 'ngCordova'])
 
-app.value('placeObject', {});
 app.value('listView', []);
 app.value('existingPlaces', {
   groups: [],
@@ -61,7 +60,7 @@ openGoogleMap = function(){
     window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
 };
 
-app.run( function($ionicPlatform, $http, existingPlaces) {
+app.run( function($ionicPlatform, $http, existingPlaces, server) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -78,7 +77,7 @@ app.run( function($ionicPlatform, $http, existingPlaces) {
     }
   });
 
-  $http({
+  /*$http({
     method: 'GET',
     url: 'http://thescotts.mynetgear.com:3000/pageSetUp'
   }).then(function successCallback(response) {
@@ -93,7 +92,9 @@ app.run( function($ionicPlatform, $http, existingPlaces) {
     existingPlaces.types.sort();
     }, function errorCallback(response) {
       console.log(response);
-    });
+    });*/
+
+    server.pageSetUp();
 
 })
 
@@ -108,12 +109,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise("/");
 })
 
-app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPopup', '$http', '$ionicModal', 'placeObject', 'listView',
-                function($scope, $state, $cordovaGeolocation, $ionicPopup, $http, $ionicModal, placeObject, listView) {
+app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPopup', '$ionicModal', 'listView', 'server',
+                function($scope, $state, $cordovaGeolocation, $ionicPopup, $ionicModal, listView, server) {
   var options = {timeout: 10000, enableHighAccuracy: true};
   var button = document.getElementById('button');
   var marker;
-  var infoWindow
+  var infoWindow;
+  var placeObject = {};
 
   $cordovaGeolocation.getCurrentPosition(options).then(function(position){
 
@@ -175,37 +177,25 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPop
                 onTap: function(e) {
                   $scope.data = {};
                   var myPopup = $ionicPopup.show({
-                  template: '<div class="list"><label class="item item-input item-floating-label"><span class="input-label">Group</span><input type="text" placeholder="Group" ng-model="data.group"></label>\
-                            <ul class="list"><li class="item" ng-repeat="group in groups">{{group}}</li></ul>\
-                            <label class="item item-input item-floating-label"><span class="input-label">Type</span><input type="text" placeholder="Type" ng-model="data.type"></label>\
-                            <label class="item item-input item-floating-label"><span class="input-label">Note</span><input type="text" placeholder="Note" ng-model="data.notes"></label></div>',
-                  title: placeObject.name,
-                  scope: $scope,
-                  buttons: [
-                    { text: 'Cancel',
-                      onTap: function(){
-                        placeObject = {};
-                      }
-                    },
-                    {
-                      text: '<b>Save</b>',
-                      type: 'button-positive',
+                    templateUrl: 'templates/popup.html',
+                    title: placeObject.name,
+                    scope: $scope,
+                    buttons: [
+                      { text: 'Cancel',
+                        onTap: function(){
+                          placeObject = {};
+                        }
+                      },
+                      {
+                        text: '<b>Save</b>',
+                        type: 'button-positive',
                       onTap: function(e) {
-                        placeObject.name = $scope.data.group;
+                        placeObject.group = $scope.data.group;
                         placeObject.type = $scope.data.type;
                         placeObject.notes = $scope.data.notes;
 
                         listView.push(new Place($scope.map, placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
-
-                        $http({
-                          method: 'POST',
-                          url: 'http://thescotts.mynetgear.com:3000/writeFile',
-                          data: JSON.stringify(placeObject)
-                        }).then(function successCallback(response) {
-                            console.log("Succefully Saved");
-                        }, function errorCallback(response) {
-                            console.log(response);
-                        });
+                        server.savePlace(placeObject);
                       }
                     }
                   ]
@@ -250,6 +240,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPop
 
 }]);
 
+
 app.controller('MenuCtrl', function($scope){
   $scope.tasks = [
     {title: 'Find places by location',},
@@ -257,6 +248,41 @@ app.controller('MenuCtrl', function($scope){
     {title: 'Remove current places'}
     ];
 });
+
+app.factory('server', ['$http', 'existingPlaces', function($http, existingPlaces){
+  return {
+    pageSetUp: function(){
+      $http({
+        method: 'GET',
+        url: 'http://thescotts.mynetgear.com:3000/pageSetUp'
+      }).then(function successCallback(response) {
+          console.log(response.data.groups);
+          for(var i=0; i<response.data.groups.length; i++){
+            existingPlaces.groups.push(response.data.groups[i]);
+          }
+          for(var i=0; i<response.data.types.length; i++){
+            existingPlaces.types.push(response.data.types[i]);
+          }
+          existingPlaces.groups.sort();
+          existingPlaces.types.sort();
+        }, function errorCallback(response) {
+          console.log(response);
+        });
+      },
+    savePlace: function(placeObject){
+      $http({
+        method: 'POST',
+        url: 'http://thescotts.mynetgear.com:3000/writeFile',
+        data: JSON.stringify(placeObject)
+      }).then(function(response) {
+          console.log("Succefully Saved");
+      }, function(response) {
+          console.log(response);
+      });
+    }
+  }
+}]);
+
 
 
 
