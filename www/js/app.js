@@ -109,8 +109,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise("/");
 })
 
-app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPopup', '$ionicModal', 'listView', 'server',
-                function($scope, $state, $cordovaGeolocation, $ionicPopup, $ionicModal, listView, server) {
+app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPopup', '$ionicModal', 'listView', 'server', 'popup',
+                function($scope, $state, $cordovaGeolocation, $ionicPopup, $ionicModal, listView, server, popup) {
   var options = {timeout: 10000, enableHighAccuracy: true};
   var button = document.getElementById('button');
   var marker;
@@ -163,7 +163,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPop
         });
 
         google.maps.event.addListener(marker, 'click', function() {
-          var myPopup = $ionicPopup.show({
+          /*var myPopup = $ionicPopup.show({
             title: placeObject.name,
             subTitle: "Do you want to save this place?",
             buttons: [
@@ -203,7 +203,8 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPop
                 }
               }
             ]
-          });
+          });*/
+          popup.saveRequest(placeObject, $scope);
           marker.setMap(null);
         });
 
@@ -283,6 +284,57 @@ app.factory('server', ['$http', 'existingPlaces', function($http, existingPlaces
   }
 }]);
 
+app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup, server, listView){
+  function inputPlaceInfoFn(placeObject, $scope){
+    $scope.data = {};
+    var myPopup = $ionicPopup.show({
+      templateUrl: 'templates/popup.html',
+      title: placeObject.name,
+      scope: $scope,
+      buttons: [
+        { text: 'Cancel',
+          onTap: function(){
+            placeObject = {};
+          }
+        },
+        {
+          text: '<b>Save</b>',
+          type: 'button-positive',
+          onTap: function(e) {
+            placeObject.group = $scope.data.group;
+            placeObject.type = $scope.data.type;
+            placeObject.notes = $scope.data.notes;
+
+            listView.push(new Place($scope.map, placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
+
+            server.savePlace(placeObject);
+          }
+        }
+      ]
+    })
+  }
+  return {
+    saveRequest: function(placeObject, $scope){
+      var myPopup = $ionicPopup.show({
+        title: placeObject.name,
+        subTitle: "Do you want to save this place?",
+        buttons: [
+          { text: 'Cancel',
+            onTap: function(){
+            } 
+          },
+          {
+            text: '<b>Save</b>',
+            type: 'button-positive',
+            onTap: function(e) {
+              inputPlaceInfoFn(placeObject, $scope);
+            }
+          }
+        ]
+      })
+    }
+  }
+}]);
 
 
 
