@@ -76,24 +76,6 @@ app.run( function($ionicPlatform, $http, existingPlaces, server) {
       StatusBar.styleDefault();
     }
   });
-
-  /*$http({
-    method: 'GET',
-    url: 'http://thescotts.mynetgear.com:3000/pageSetUp'
-  }).then(function successCallback(response) {
-    console.log(response.data.groups);
-    for(var i=0; i<response.data.groups.length; i++){
-      existingPlaces.groups.push(response.data.groups[i]);
-    }
-    for(var i=0; i<response.data.types.length; i++){
-      existingPlaces.types.push(response.data.types[i]);
-    }
-    existingPlaces.groups.sort();
-    existingPlaces.types.sort();
-    }, function errorCallback(response) {
-      console.log(response);
-    });*/
-
     server.pageSetUp();
 
 })
@@ -109,8 +91,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise("/");
 })
 
-app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPopup', '$ionicModal', 'listView', 'server', 'popup',
-                function($scope, $state, $cordovaGeolocation, $ionicPopup, $ionicModal, listView, server, popup) {
+app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView', 'server', 'popup',
+                function($scope, $state, $cordovaGeolocation, listView, server, popup) {
   var options = {timeout: 10000, enableHighAccuracy: true};
   var button = document.getElementById('button');
   var marker;
@@ -163,47 +145,6 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPop
         });
 
         google.maps.event.addListener(marker, 'click', function() {
-          /*var myPopup = $ionicPopup.show({
-            title: placeObject.name,
-            subTitle: "Do you want to save this place?",
-            buttons: [
-              { text: 'Cancel',
-                onTap: function(){
-                } 
-              },
-              {
-                text: '<b>Save</b>',
-                type: 'button-positive',
-                onTap: function(e) {
-                  $scope.data = {};
-                  var myPopup = $ionicPopup.show({
-                    templateUrl: 'templates/popup.html',
-                    title: placeObject.name,
-                    scope: $scope,
-                    buttons: [
-                      { text: 'Cancel',
-                        onTap: function(){
-                          placeObject = {};
-                        }
-                      },
-                      {
-                        text: '<b>Save</b>',
-                        type: 'button-positive',
-                      onTap: function(e) {
-                        placeObject.group = $scope.data.group;
-                        placeObject.type = $scope.data.type;
-                        placeObject.notes = $scope.data.notes;
-
-                        listView.push(new Place($scope.map, placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
-                        server.savePlace(placeObject);
-                      }
-                    }
-                  ]
-                });
-                }
-              }
-            ]
-          });*/
           popup.saveRequest(placeObject, $scope);
           marker.setMap(null);
         });
@@ -217,7 +158,6 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPop
         $scope.map.setCenter(place.geometry.location);
         $scope.map.fitBounds(bounds);
         placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "location":place.geometry.location, "latitude":place.geometry.location.lat(), "longitude":place.geometry.location.lng(), "type": undefined, "notes": undefined};
-      console.log(placeObject);
       });
     });
 
@@ -229,7 +169,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPop
     console.log("Could not get location");
   });
 
-  $scope.disableTap = function(){
+  /*$scope.disableTap = function(){
     container = document.getElementsByClassName('pac-container');
     // disable ionic data tab
     angular.element(container).attr('data-tap-disabled', 'true');
@@ -237,7 +177,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', '$ionicPop
     angular.element(container).on("click", function(){
         document.getElementById('pac-input').blur();
     });
-  };
+  };*/
 
 }]);
 
@@ -285,12 +225,12 @@ app.factory('server', ['$http', 'existingPlaces', function($http, existingPlaces
 }]);
 
 app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup, server, listView){
-  function inputPlaceInfoFn(placeObject, $scope){
-    $scope.data = {};
+  function inputPlaceInfoFn(placeObject, mapScope){
+    mapScope.data = {};
     var myPopup = $ionicPopup.show({
       templateUrl: 'templates/popup.html',
       title: placeObject.name,
-      scope: $scope,
+      scope: mapScope,
       buttons: [
         { text: 'Cancel',
           onTap: function(){
@@ -301,11 +241,11 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup,
           text: '<b>Save</b>',
           type: 'button-positive',
           onTap: function(e) {
-            placeObject.group = $scope.data.group;
-            placeObject.type = $scope.data.type;
-            placeObject.notes = $scope.data.notes;
+            placeObject.group = mapScope.data.group;
+            placeObject.type = mapScope.data.type;
+            placeObject.notes = mapScope.data.notes;
 
-            listView.push(new Place($scope.map, placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
+            listView.push(new Place(mapScope.map, placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
 
             server.savePlace(placeObject);
           }
@@ -314,10 +254,11 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup,
     })
   }
   return {
-    saveRequest: function(placeObject, $scope){
+    saveRequest: function(placeObject, mapScope){
       var myPopup = $ionicPopup.show({
         title: placeObject.name,
         subTitle: "Do you want to save this place?",
+        scope : mapScope,
         buttons: [
           { text: 'Cancel',
             onTap: function(){
@@ -326,8 +267,8 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup,
           {
             text: '<b>Save</b>',
             type: 'button-positive',
-            onTap: function(e) {
-              inputPlaceInfoFn(placeObject, $scope);
+            onTap: function() {
+              inputPlaceInfoFn(placeObject, mapScope);
             }
           }
         ]
@@ -335,6 +276,22 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup,
     }
   }
 }]);
+/*app.factory('predictInput',['existingPlaces', function(existingPlaces){
+  return{
+    getSavedGroups: function($scope){
+      var entry = $scope.data.group.length();
+      for(var i = 0; i<existingPlaces.groups.length; i++){
+      var what = existingPlaces.groups.slice(0, entry);
+      if($scope.data.group.match(new RegExp([what], 'i'))){
+        self.showSavedGroups.push(self.availableGroups()[j]);
+      }
+    }
+    },
+    getSavedTypes: function(){
+
+    }
+  }
+}]);*/
 
 
 
