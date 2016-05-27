@@ -91,13 +91,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise("/");
 })
 
-app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView', 'server', 'popup',
-                function($scope, $state, $cordovaGeolocation, listView, server, popup) {
+app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView', 'server', 'popup', 'existingPlaces',
+                function($scope, $state, $cordovaGeolocation, listView, server, popup, existingPlaces) {
   var options = {timeout: 10000, enableHighAccuracy: true};
   var button = document.getElementById('button');
   var marker;
   var infoWindow;
   var placeObject = {};
+  $scope.matchingGroups = [];
+  $scope.matchingTypes = [];
 
   $cordovaGeolocation.getCurrentPosition(options).then(function(position){
 
@@ -169,7 +171,36 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
     console.log("Could not get location");
   });
 
-  /*$scope.disableTap = function(){
+  $scope.getGroups = function() {
+    var entry = $scope.data.group.length;
+    $scope.matchingGroups = [];
+    for(var i = 0; i<existingPlaces.groups.length; i++){
+        var what = existingPlaces.groups[i].slice(0, entry);
+        if($scope.data.group.match(new RegExp([what], 'i'))){
+          //console.log(existingPlaces.groups[i]);
+          $scope.matchingGroups.push(existingPlaces.groups[i]);
+      }
+    }
+  }
+
+  $scope.getTypes = function() {
+    var entry = $scope.data.type.length;
+    $scope.matchingTypes = [];
+    for(var i = 0; i<existingPlaces.types.length; i++){
+        var what = existingPlaces.types[i].slice(0, entry);
+        if($scope.data.type.match(new RegExp([what], 'i'))){
+          //console.log(existingPlaces.groups[i]);
+          $scope.matchingTypes.push(existingPlaces.types[i]);
+      }
+    }
+  }
+
+  $scope.closeList = function(){
+    $scope.matchingGroups = [];
+    $scope.matchingTypes = [];
+  }
+
+  $scope.disableTap = function(){
     container = document.getElementsByClassName('pac-container');
     // disable ionic data tab
     angular.element(container).attr('data-tap-disabled', 'true');
@@ -177,7 +208,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
     angular.element(container).on("click", function(){
         document.getElementById('pac-input').blur();
     });
-  };*/
+  };
 
 }]);
 
@@ -276,22 +307,7 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup,
     }
   }
 }]);
-/*app.factory('predictInput',['existingPlaces', function(existingPlaces){
-  return{
-    getSavedGroups: function($scope){
-      var entry = $scope.data.group.length();
-      for(var i = 0; i<existingPlaces.groups.length; i++){
-      var what = existingPlaces.groups.slice(0, entry);
-      if($scope.data.group.match(new RegExp([what], 'i'))){
-        self.showSavedGroups.push(self.availableGroups()[j]);
-      }
-    }
-    },
-    getSavedTypes: function(){
 
-    }
-  }
-}]);*/
 
 
 

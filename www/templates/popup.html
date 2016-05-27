@@ -1,17 +1,22 @@
 <div class="list">
 	<label class="item item-input item-floating-label">
 		<span class="input-label">Group</span>
-		<input type="text" placeholder="Group" ng-model="data.group">
+		<input type="text" placeholder="Group" ng-model="data.group" ng-keyup="getGroups()">
 	</label>
-		<!--<ul class="list">
-			<li class="item" ng-repeat="group in groups">
-				{{group}}
-			</li>
-		</ul>-->
+	<ion-list>
+		<ion-item ng-repeat="group in matchingGroups" ng-click="data.group=group; closeList()">
+			{{group}}
+		</ion-item>
+	</ion-list>
 	<label class="item item-input item-floating-label">
 		<span class="input-label">Type</span>
-		<input type="text" placeholder="Type" ng-model="data.type">
+		<input type="text" placeholder="Type" ng-model="data.type" ng-keyup="getTypes()">
 	</label>
+	<ion-list>
+		<ion-item ng-repeat="type in matchingTypes" ng-click="data.type=type; closeList()">
+			{{type}}
+		</ion-item>
+	</ion-list>
 	<label class="item item-input item-floating-label">
 		<span class="input-label">Note</span>
 		<input type="text" placeholder="Note" ng-model="data.notes">
