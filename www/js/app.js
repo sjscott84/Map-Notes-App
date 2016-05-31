@@ -5,15 +5,22 @@
 // the 2nd parameter is an array of 'requires'
 var app = angular.module('starter', ['ionic', 'ngCordova'])
 
+var map;
+
 app.value('listView', []);
 app.value('existingPlaces', {
   groups: [],
   types: []
 });
 app.value('currentPlace', undefined);
+app.value('currentPosition', {
+  lat: '',
+  lng: '',
+  radius: 2
+})
 
 //Place Constructor
-var Place = function (map, name, position, lat, lng, type, note, address){
+var Place = function (name, position, lat, lng, type, note, address){
   var self = this;
   self.map = map;
   self.name = name;
@@ -91,8 +98,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise("/");
 })
 
-app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView', 'server', 'popup', 'existingPlaces',
-                function($scope, $state, $cordovaGeolocation, listView, server, popup, existingPlaces) {
+app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView', 'server', 'popup', 'existingPlaces', 'currentPosition',
+                function($scope, $state, $cordovaGeolocation, listView, server, popup, existingPlaces, currentPosition) {
   var options = {timeout: 10000, enableHighAccuracy: true};
   var button = document.getElementById('button');
   var marker;
@@ -105,6 +112,9 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
 
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
+    currentPosition.lat = position.coords.latitude;
+    currentPosition.lng = position.coords.longitude;
+
     var mapOptions = {
       center: latLng,
       zoom: 15,
@@ -114,6 +124,8 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
 
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
     $scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
+
+    map = $scope.map;
 
     // Create the search box and link it to the UI element.
     var input = document.getElementById('pac-input');
@@ -213,7 +225,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
 }]);
 
 
-app.controller('MenuCtrl', function($scope){
+app.controller('MenuCtrl', ['$scope', 'popup', 'server', function($scope, popup, server){
   $scope.tasks = [
     {title: 'Find places by location',
     func: 'searchByLocation'},
@@ -228,15 +240,16 @@ app.controller('MenuCtrl', function($scope){
     };
 
     $scope.searchByLocation = function(){
-      console.log("It worked by location!");
+      server.resultsByLocation();
+      //console.log("It worked by location!");
     };
 
     $scope.removePlaces = function(){
       console.log("Places removed");
     };
-});
+}]);
 
-app.factory('server', ['$http', 'existingPlaces', function($http, existingPlaces){
+app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', function($http, existingPlaces, listView, currentPosition){
   return {
     pageSetUp: function(){
       $http({
@@ -266,6 +279,27 @@ app.factory('server', ['$http', 'existingPlaces', function($http, existingPlaces
       }, function(response) {
           console.log(response);
       });
+    },
+    resultsByLocation: function(){
+      var data = {"lat" : currentPosition.lat, "lng": currentPosition.lng, "distance": currentPosition.radius};
+      $http({
+        method: 'GET',
+        url: 'http://thescotts.mynetgear.com:3000/readFileForRadius',
+        params: data
+      }).then(function(response){
+        if(response.data.length !== 0){
+          response.data.forEach(function(value){
+            listView.push(new Place(value.name, value.location, value.latitude, value.longitude, value.type, value.notes, value.address));
+            //self.fitBoundsToVisibleMarkers();
+            //var zoom = map.getZoom();
+              //map.setZoom(zoom > 15 ? 15 : zoom);
+          });
+        }else{
+          alert("Error, no results found, please try again");
+        }
+      }), function(response){
+            console.log(response);
+      }
     }
   }
 }]);
