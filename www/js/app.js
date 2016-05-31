@@ -215,10 +215,25 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
 
 app.controller('MenuCtrl', function($scope){
   $scope.tasks = [
-    {title: 'Find places by location',},
-    {title: 'Search for places'},
-    {title: 'Remove current places'}
+    {title: 'Find places by location',
+    func: 'searchByLocation'},
+    {title: 'Search for places',
+    func: 'searchByWhat'},
+    {title: 'Remove current places',
+    func: 'removePlaces'}
     ];
+
+    $scope.searchByWhat = function(){
+      console.log("It worked!");
+    };
+
+    $scope.searchByLocation = function(){
+      console.log("It worked by location!");
+    };
+
+    $scope.removePlaces = function(){
+      console.log("Places removed");
+    };
 });
 
 app.factory('server', ['$http', 'existingPlaces', function($http, existingPlaces){
