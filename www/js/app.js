@@ -225,7 +225,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
 }]);
 
 
-app.controller('MenuCtrl', ['$scope', 'popup', 'server', function($scope, popup, server){
+app.controller('MenuCtrl', ['$scope', 'popup', 'server', 'listView', function($scope, popup, server, listView){
   $scope.tasks = [
     {title: 'Find places by location',
     func: 'searchByLocation'},
@@ -245,7 +245,10 @@ app.controller('MenuCtrl', ['$scope', 'popup', 'server', function($scope, popup,
     };
 
     $scope.removePlaces = function(){
-      console.log("Places removed");
+      while(listView.length !== 0){
+        var x = listView.pop();
+        x.marker.setMap(null);
+      }
     };
 }]);
 
@@ -321,11 +324,12 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup,
           text: '<b>Save</b>',
           type: 'button-positive',
           onTap: function(e) {
+            listView = [];
             placeObject.group = mapScope.data.group;
             placeObject.type = mapScope.data.type;
             placeObject.notes = mapScope.data.notes;
 
-            listView.push(new Place(mapScope.map, placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
+            listView.push(new Place(placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
 
             server.savePlace(placeObject);
           }
