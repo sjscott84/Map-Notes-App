@@ -225,7 +225,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
 }]);
 
 
-app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server', 'listView', function($scope, $ionicSideMenuDelegate, popup, server, listView){
+app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server', 'listView', 'fitBounds', function($scope, $ionicSideMenuDelegate, popup, server, listView, fitBounds){
   $scope.tasks = [
     {title: 'Find places by location',
     func: 'searchByLocation'},
@@ -241,6 +241,8 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
 
     $scope.searchByLocation = function(){
       server.resultsByLocation();
+      //console.log(listView);
+      //fitBounds.fitBoundsToVisibleMarkers(listView);
       $ionicSideMenuDelegate.toggleLeft();
     };
 
@@ -253,7 +255,7 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
     };
 }]);
 
-app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', function($http, existingPlaces, listView, currentPosition){
+app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', 'fitBounds', function($http, existingPlaces, listView, currentPosition, fitBounds){
   return {
     pageSetUp: function(){
       $http({
@@ -294,10 +296,11 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
         if(response.data.length !== 0){
           response.data.forEach(function(value){
             listView.push(new Place(value.name, value.location, value.latitude, value.longitude, value.type, value.notes, value.address));
-            //self.fitBoundsToVisibleMarkers();
+            //fitBounds.fitBoundsToVisibleMarkers(listView);
             //var zoom = map.getZoom();
               //map.setZoom(zoom > 15 ? 15 : zoom);
           });
+          fitBounds.fitBoundsToVisibleMarkers(listView);
         }else{
           alert("Error, no results found, please try again");
         }
@@ -361,6 +364,21 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup,
     }
   }
 }]);
+
+app.factory('fitBounds', function(){
+  return {
+    fitBoundsToVisibleMarkers: function(listView){
+      var bounds = new google.maps.LatLngBounds();
+
+      for (var i=0; i<listView.length; i++) {
+        if(listView[i].marker.getVisible()) {
+          bounds.extend(listView[i].marker.getPosition() );
+        }
+      }
+      map.fitBounds(bounds);
+    }
+  }
+});
 
 
 
