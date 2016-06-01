@@ -225,7 +225,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
 }]);
 
 
-app.controller('MenuCtrl', ['$scope', 'popup', 'server', 'listView', function($scope, popup, server, listView){
+app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server', 'listView', function($scope, $ionicSideMenuDelegate, popup, server, listView){
   $scope.tasks = [
     {title: 'Find places by location',
     func: 'searchByLocation'},
@@ -241,7 +241,7 @@ app.controller('MenuCtrl', ['$scope', 'popup', 'server', 'listView', function($s
 
     $scope.searchByLocation = function(){
       server.resultsByLocation();
-      //console.log("It worked by location!");
+      $ionicSideMenuDelegate.toggleLeft();
     };
 
     $scope.removePlaces = function(){
@@ -249,6 +249,7 @@ app.controller('MenuCtrl', ['$scope', 'popup', 'server', 'listView', function($s
         var x = listView.pop();
         x.marker.setMap(null);
       }
+      $ionicSideMenuDelegate.toggleLeft();
     };
 }]);
 
