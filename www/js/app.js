@@ -21,32 +21,37 @@ app.value('currentPosition', {
 })
 
 //Place Constructor
-var Place = function (name, position, lat, lng, type, note, address){
-  var self = this;
-  self.map = map;
-  self.name = name;
-  self.lat = lat;
-  self.lng = lng;
-  self.type = type;
-  self.note = note;
-  self.address = address;
-  self.position = {"lat":self.lat, "lng":self.lng};
-  self.marker = new google.maps.Marker({
-    map: map,
-    title: name,
-    icon: 'img/star_gold_16.png',
-    position: self.position,
-    zoomOnClick: false,
+app.factory('placeConstructor', ['listView', function(listView){
+  var infoWindow = new google.maps.InfoWindow({
+    disableAutoPan: false
   });
-  google.maps.event.addListener(this.marker, 'click', function() {
-    addInfoWindow(self.map, self.name, self.address, self.type, self.note, self.marker);
-    currentPlace = self;
-    //map.setCenter(self.marker.getPosition());
-  });
-};
+  return{
+    Place: function (name, position, lat, lng, type, note, address){
+      var self = this;
+      self.map = map;
+      self.name = name;
+      self.lat = lat;
+      self.lng = lng;
+      self.type = type;
+      self.note = note;
+      self.address = address;
+      self.position = {"lat":self.lat, "lng":self.lng};
+      self.marker = new google.maps.Marker({
+        map: map,
+        title: name,
+        icon: 'img/star_gold_16.png',
+        position: self.position,
+        zoomOnClick: false,
+      });
+      google.maps.event.addListener(this.marker, 'click', function() {
+        addInfoWindow(self.map, self.name, self.address, self.type, self.note, self.marker);
+        currentPlace = self;
+        //map.setCenter(self.marker.getPosition());
+      });
+    }
+  }
 
-addInfoWindow = function(map, name, address, type, note, marker){
-
+  function addInfoWindow (map, name, address, type, note, marker){
     var contents;
 
     if(infoWindow){
@@ -59,7 +64,15 @@ addInfoWindow = function(map, name, address, type, note, marker){
 
     infoWindow.setContent(contents);
     infoWindow.open(map, marker);
-};
+  };
+
+  /*function openGoogleMap (){
+    var lat = currentPlace.position.lat;
+    var lng = currentPlace.position.lng;
+
+    window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
+  }*/
+}])
 
 openGoogleMap = function(){
     var lat = currentPlace.position.lat;
@@ -99,12 +112,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise("/");
 })
 
-app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView', 'server', 'popup', 'existingPlaces', 'currentPosition',
-                function($scope, $state, $cordovaGeolocation, listView, server, popup, existingPlaces, currentPosition) {
+app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'server', 'popup', 'existingPlaces', 'currentPosition',
+                function($scope, $state, $cordovaGeolocation, server, popup, existingPlaces, currentPosition) {
   var options = {timeout: 10000, enableHighAccuracy: true};
   var button = document.getElementById('button');
   var marker;
-  var infoWindow;
+  //var infoWindow;
   var placeObject = {};
   $scope.matchingGroups = [];
   $scope.matchingTypes = [];
@@ -174,10 +187,6 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
         $scope.map.fitBounds(bounds);
         placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "location":place.geometry.location, "latitude":place.geometry.location.lat(), "longitude":place.geometry.location.lng(), "type": undefined, "notes": undefined};
       });
-    });
-
-    infoWindow = new google.maps.InfoWindow({
-      disableAutoPan: true
     });
 
   }, function(error){
@@ -262,7 +271,7 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
     };
 }]);
 
-app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', 'fitBounds', function($http, existingPlaces, listView, currentPosition, fitBounds){
+app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', 'fitBounds', 'placeConstructor', function($http, existingPlaces, listView, currentPosition, fitBounds, placeConstructor){
   return {
     pageSetUp: function(){
       return $http({
@@ -309,7 +318,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
       }).then(function(response){
         if(response.data.length !== 0){
           response.data.forEach(function(value){
-            listView.push(new Place(value.name, value.location, value.latitude, value.longitude, value.type, value.notes, value.address));
+            listView.push(new placeConstructor.Place(value.name, value.location, value.latitude, value.longitude, value.type, value.notes, value.address));
             //fitBounds.fitBoundsToVisibleMarkers(listView);
             //var zoom = map.getZoom();
               //map.setZoom(zoom > 15 ? 15 : zoom);
@@ -331,7 +340,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
       }).then(function(response){
         if(response.data.length !== 0){
           response.data.forEach(function(value){
-            listView.push(new Place(value.name, value.location, value.latitude, value.longitude, value.type, value.notes, value.address));
+            listView.push(new placeConstructor.Place(value.name, value.location, value.latitude, value.longitude, value.type, value.notes, value.address));
             //fitBounds.fitBoundsToVisibleMarkers(listView);
             //var zoom = map.getZoom();
               //map.setZoom(zoom > 15 ? 15 : zoom);
@@ -347,7 +356,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
   }
 }]);
 
-app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup, server, listView){
+app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', function($ionicPopup, server, listView, placeConstructor){
   function inputPlaceInfoFn(placeObject, mapScope){
     mapScope.data = {};
     var myPopup = $ionicPopup.show({
@@ -364,12 +373,12 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup,
           text: '<b>Save</b>',
           type: 'button-positive',
           onTap: function(e) {
-            listView = [];
+            //listView = [];
             placeObject.group = mapScope.data.group;
             placeObject.type = mapScope.data.type;
             placeObject.notes = mapScope.data.notes;
 
-            listView.push(new Place(placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
+            listView.push(new placeConstructor.Place(placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
 
             server.savePlace(placeObject);
           }
