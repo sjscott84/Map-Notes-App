@@ -10,8 +10,8 @@ var test = ['1', '2', '3', '4'];
 
 app.value('listView', []);
 app.value('existingPlaces', {
-  groups: [],
-  types: []
+  groups: ["All"],
+  types: ["All"]
 });
 app.value('currentPlace', undefined);
 app.value('currentPosition', {
@@ -187,7 +187,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
   $scope.getGroups = function() {
     var entry = $scope.data.group.length;
     $scope.matchingGroups = [];
-    for(var i = 0; i<existingPlaces.groups.length; i++){
+    for(var i = 1; i<existingPlaces.groups.length; i++){
         var what = existingPlaces.groups[i].slice(0, entry);
         if($scope.data.group.match(new RegExp([what], 'i'))){
           //console.log(existingPlaces.groups[i]);
@@ -199,7 +199,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
   $scope.getTypes = function() {
     var entry = $scope.data.type.length;
     $scope.matchingTypes = [];
-    for(var i = 0; i<existingPlaces.types.length; i++){
+    for(var i = 1; i<existingPlaces.types.length; i++){
         var what = existingPlaces.types[i].slice(0, entry);
         if($scope.data.type.match(new RegExp([what], 'i'))){
           //console.log(existingPlaces.groups[i]);
@@ -269,11 +269,11 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
         method: 'GET',
         url: 'http://thescotts.mynetgear.com:3000/pageSetUp'
       }).then(function successCallback(response) {
-          if(existingPlaces.groups.length !== 0 || existingPlaces.types.length !== 0){
-            while(existingPlaces.groups.length !== 0){
+          if(existingPlaces.groups.length > 1 || existingPlaces.types.length > 1){
+            while(existingPlaces.groups.length !== 1){
               existingPlaces.groups.pop();
             }
-            while(existingPlaces.types.length !== 0){
+            while(existingPlaces.types.length !== 1){
               existingPlaces.types.pop();
             }
           }
