@@ -321,6 +321,28 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
       }), function(response){
             console.log(response);
       }
+    },
+    searchForPlaces: function(group, type){
+      var data = {"group" : group, "type" : type};
+      $http({
+        method: 'GET',
+        url: 'http://thescotts.mynetgear.com:3000/readFileForGroup',
+        params: data
+      }).then(function(response){
+        if(response.data.length !== 0){
+          response.data.forEach(function(value){
+            listView.push(new Place(value.name, value.location, value.latitude, value.longitude, value.type, value.notes, value.address));
+            //fitBounds.fitBoundsToVisibleMarkers(listView);
+            //var zoom = map.getZoom();
+              //map.setZoom(zoom > 15 ? 15 : zoom);
+          });
+          fitBounds.fitBoundsToVisibleMarkers(listView);
+        }else{
+          alert("Error, no results found, please try again");
+        }
+      }), function(response){
+            console.log(response);
+      }
     }
   }
 }]);
@@ -377,20 +399,21 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup,
       })
     },
     getPlaces: function(scope){
+      scope.data = {};
       var myPopup = $ionicPopup.show({
         templateUrl: 'templates/findPlaces.html',
         title: 'Find Places By Location',
-        scope : scope,
+        scope: scope,
         buttons: [
           { text: 'Cancel',
             onTap: function(){
             } 
           },
           {
-            text: '<b>Retrieve Places</b>',
+            text: 'Retrieve Places',
             type: 'button-positive',
             onTap: function() {
-              console.log('click');
+              server.searchForPlaces(scope.data.selectedGroup, scope.data.selectedType);
             }
           }
         ]

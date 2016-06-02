@@ -4,8 +4,11 @@
     <div class="input-label">
       Group
     </div>
-    <select ng-model="selectedGroup">
+    <!--<select name="selected" ng-model="data.selected">
       <option ng-repeat="item in group" value="{{item}}">{{item}}</option>
+    </select>-->
+    <select ng-model="data.selectedGroup" ng-options="item for item in group">
+      <option></option>
     </select>
   </label>
 
@@ -13,8 +16,8 @@
     <div class="input-label">
       Type
     </div>
-    <select ng-model="selectedType">
-      <option ng-repeat="item in type" value="{{item}}">{{item}}</option>
+    <select ng-model="data.selectedType" ng-options="item for item in type">
+      <option></option>
     </select>
   </label>
 
