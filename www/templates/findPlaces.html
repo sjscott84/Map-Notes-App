@@ -1,0 +1,21 @@
+<div class="list">
+
+  <label class="item item-input item-select">
+    <div class="input-label">
+      Group
+    </div>
+    <select ng-model="selectedGroup">
+      <option ng-repeat="item in group" value="{{item}}">{{item}}</option>
+    </select>
+  </label>
+
+  <label class="item item-input item-select">
+    <div class="input-label">
+      Type
+    </div>
+    <select ng-model="selectedType">
+      <option ng-repeat="item in type" value="{{item}}">{{item}}</option>
+    </select>
+  </label>
+
+</div>

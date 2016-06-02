@@ -6,6 +6,7 @@
 var app = angular.module('starter', ['ionic', 'ngCordova'])
 
 var map;
+var test = ['1', '2', '3', '4'];
 
 app.value('listView', []);
 app.value('existingPlaces', {
@@ -225,7 +226,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'listView'
 }]);
 
 
-app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server', 'listView', 'fitBounds', function($scope, $ionicSideMenuDelegate, popup, server, listView, fitBounds){
+app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server', 'listView', 'fitBounds', 'existingPlaces', function($scope, $ionicSideMenuDelegate, popup, server, listView, fitBounds, existingPlaces){
   $scope.tasks = [
     {title: 'Find places by location',
     func: 'searchByLocation'},
@@ -236,7 +237,12 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
     ];
 
     $scope.searchByWhat = function(){
-      console.log("It worked!");
+      //console.log("It worked!");
+      $ionicSideMenuDelegate.toggleLeft();
+      $scope.group  = existingPlaces.groups;
+      $scope.type = existingPlaces.types;
+
+        popup.getPlaces($scope);  
     };
 
     $scope.searchByLocation = function(){
@@ -357,6 +363,28 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup,
             type: 'button-positive',
             onTap: function() {
               inputPlaceInfoFn(placeObject, mapScope);
+            }
+          }
+        ]
+      })
+    }
+  },
+  {
+    getPlaces: function(scope){
+      var myPopup = $ionicPopup.show({
+        templateUrl: 'templates/findPlaces.html',
+        title: 'Find Places By Location',
+        scope : scope,
+        buttons: [
+          { text: 'Cancel',
+            onTap: function(){
+            } 
+          },
+          {
+            text: '<b>Retrieve Places</b>',
+            type: 'button-positive',
+            onTap: function() {
+              console.log('click');
             }
           }
         ]
