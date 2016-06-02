@@ -237,18 +237,19 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
     ];
 
     $scope.searchByWhat = function(){
-      //console.log("It worked!");
       $ionicSideMenuDelegate.toggleLeft();
-      $scope.group  = existingPlaces.groups;
-      $scope.type = existingPlaces.types;
-
-        popup.getPlaces($scope);  
+      var promise = server.pageSetUp();
+      promise.then(
+        function(){
+          $scope.group  = existingPlaces.groups;
+          $scope.type = existingPlaces.types;
+          popup.getPlaces($scope);
+        }
+      );
     };
 
     $scope.searchByLocation = function(){
       server.resultsByLocation();
-      //console.log(listView);
-      //fitBounds.fitBoundsToVisibleMarkers(listView);
       $ionicSideMenuDelegate.toggleLeft();
     };
 
@@ -264,11 +265,18 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
 app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', 'fitBounds', function($http, existingPlaces, listView, currentPosition, fitBounds){
   return {
     pageSetUp: function(){
-      $http({
+      return $http({
         method: 'GET',
         url: 'http://thescotts.mynetgear.com:3000/pageSetUp'
       }).then(function successCallback(response) {
-          console.log(response.data.groups);
+          if(existingPlaces.groups.length !== 0 || existingPlaces.types.length !== 0){
+            while(existingPlaces.groups.length !== 0){
+              existingPlaces.groups.pop();
+            }
+            while(existingPlaces.types.length !== 0){
+              existingPlaces.types.pop();
+            }
+          }
           for(var i=0; i<response.data.groups.length; i++){
             existingPlaces.groups.push(response.data.groups[i]);
           }
@@ -367,9 +375,7 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', function($ionicPopup,
           }
         ]
       })
-    }
-  },
-  {
+    },
     getPlaces: function(scope){
       var myPopup = $ionicPopup.show({
         templateUrl: 'templates/findPlaces.html',
