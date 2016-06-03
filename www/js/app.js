@@ -6,7 +6,6 @@
 var app = angular.module('starter', ['ionic', 'ngCordova'])
 
 var map;
-var test = ['1', '2', '3', '4'];
 
 app.value('listView', []);
 app.value('existingPlaces', {
@@ -21,7 +20,7 @@ app.value('currentPosition', {
 })
 
 //Place Constructor
-app.factory('placeConstructor', ['listView', function(listView){
+app.factory('placeConstructor', ['$cordovaAppAvailability', 'listView', function($cordovaAppAvailability, listView){
   var infoWindow = new google.maps.InfoWindow({
     disableAutoPan: false
   });
@@ -66,20 +65,41 @@ app.factory('placeConstructor', ['listView', function(listView){
     infoWindow.open(map, marker);
   };
 
-  /*function openGoogleMap (){
-    var lat = currentPlace.position.lat;
-    var lng = currentPlace.position.lng;
+  /*openGoogleMap = function (){
+    $cordovaAppAvailability.check('comgooglemaps://')
+    .then(function(){
+      //do somethng if app avaliable
+    }, function(){
+      var lat = currentPlace.position.lat;
+      var lng = currentPlace.position.lng;
 
-    window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
+      window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
+    });
   }*/
 }])
 
-openGoogleMap = function(){
+openGoogleMap = function (){
     var lat = currentPlace.position.lat;
     var lng = currentPlace.position.lng;
 
     window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
-};
+}
+
+/*app.factory('openGoogleMap',['$cordovaAppAvailability', function($cordovaAppAvailability){
+  return {
+    openNewMap: function(){
+      $cordovaAppAvailability.check('comgooglemaps://')
+      .then(function(){
+        //do somethng if app avaliable
+      }, function(){
+        var lat = currentPlace.position.lat;
+        var lng = currentPlace.position.lng;
+
+        window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
+      });
+    }
+  }
+}]);*/
 
 app.run( function($ionicPlatform, $http, existingPlaces, server) {
   $ionicPlatform.ready(function() {
@@ -246,6 +266,7 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
     ];
 
     $scope.searchByWhat = function(){
+      $scope.removePlacesFromList();
       $ionicSideMenuDelegate.toggleLeft();
       var promise = server.pageSetUp();
       promise.then(
@@ -258,16 +279,21 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
     };
 
     $scope.searchByLocation = function(){
+      $scope.removePlacesFromList();
       server.resultsByLocation();
       $ionicSideMenuDelegate.toggleLeft();
     };
 
     $scope.removePlaces = function(){
+      $scope.removePlacesFromList();
+      $ionicSideMenuDelegate.toggleLeft();
+    };
+
+    $scope.removePlacesFromList = function(){
       while(listView.length !== 0){
         var x = listView.pop();
         x.marker.setMap(null);
       }
-      $ionicSideMenuDelegate.toggleLeft();
     };
 }]);
 
@@ -373,7 +399,6 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', f
           text: '<b>Save</b>',
           type: 'button-positive',
           onTap: function(e) {
-            //listView = [];
             placeObject.group = mapScope.data.group;
             placeObject.type = mapScope.data.type;
             placeObject.notes = mapScope.data.notes;
