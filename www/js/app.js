@@ -12,7 +12,7 @@ app.value('existingPlaces', {
   groups: ["All"],
   types: ["All"]
 });
-app.value('currentPlace', undefined);
+app.value('currentPlace', {name:'Test', address: '1234 Test St'});
 app.value('currentPosition', {
   lat: '',
   lng: '',
@@ -20,7 +20,7 @@ app.value('currentPosition', {
 })
 
 //Place Constructor
-app.factory('placeConstructor', ['$cordovaAppAvailability', 'listView', function($cordovaAppAvailability, listView){
+app.factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeCurrentPlace', function($cordovaAppAvailability, $compile, changeCurrentPlace){
   var infoWindow = new google.maps.InfoWindow({
     disableAutoPan: false
   });
@@ -43,27 +43,13 @@ app.factory('placeConstructor', ['$cordovaAppAvailability', 'listView', function
         zoomOnClick: false,
       });
       google.maps.event.addListener(this.marker, 'click', function() {
-        addInfoWindow(self.map, self.name, self.address, self.type, self.note, self.marker);
-        currentPlace = self;
+        changeCurrentPlace.changePlace(self);
+        infoWindow.setContent(document.getElementById("infoWindow"));
+        infoWindow.open(self.map, self.marker);       
         //map.setCenter(self.marker.getPosition());
       });
     }
   }
-
-  function addInfoWindow (map, name, address, type, note, marker){
-    var contents;
-
-    if(infoWindow){
-      infoWindow.close();
-    }
-
-    listView.forEach(function(place){
-        contents = '<div class="infowindow"><b>'+name+'</b><br>'+address+'<br><b>What: </b>'+type+'<br><b>Notes: </b>'+note+'<br><a onclick="openGoogleMap()">View on google maps</a></div>';
-    });
-
-    infoWindow.setContent(contents);
-    infoWindow.open(map, marker);
-  };
 
   /*openGoogleMap = function (){
     $cordovaAppAvailability.check('comgooglemaps://')
@@ -75,15 +61,45 @@ app.factory('placeConstructor', ['$cordovaAppAvailability', 'listView', function
 
       window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
     });
+  }
+
+  function openGoogleMap (){
+      var lat = currentPlace.position.lat;
+      var lng = currentPlace.position.lng;
+
+      window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
   }*/
 }])
 
-openGoogleMap = function (){
-    var lat = currentPlace.position.lat;
-    var lng = currentPlace.position.lng;
+app.factory('changeCurrentPlace',['$timeout', 'currentPlace', function($timeout, currentPlace){
+  return {
+    changePlace: function(place){
+      $timeout(function(){
+        currentPlace.name = place.name;
+        console.log(currentPlace.name);
+      }, 0);
+    }
+  }
+}])
 
-    window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
-}
+app.directive('info', function(){
+  var directive = {};
+
+    directive.scope = {
+      place:  '=places'
+    }
+
+    directive.template = '<div class="infowindow"><b>{{place.name}}</b><br></div>',
+
+    directive.complile = function (elem, attr){
+      var linkFunction = function($scope, element, attributes){
+          console.log("link"+$scope.place.name)
+          element.html('<div class="infowindow"><b>'+$scope.place.name+'</b><br></div>')
+      }
+      return linkFunction;
+    }
+    return directive;
+})
 
 /*app.factory('openGoogleMap',['$cordovaAppAvailability', function($cordovaAppAvailability){
   return {
@@ -131,6 +147,31 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
   $urlRouterProvider.otherwise("/");
 })
+
+app.controller('MainCtrl', ['$scope', 'currentPlace', function($scope, currentPlace){
+  $scope.$watch(
+    function(){
+      return currentPlace.name;
+    },
+    function(newVal, oldVal){
+      if(newVal !== oldVal){
+        console.log(currentPlace.name);
+        $scope.thisplace = {name: currentPlace.name};
+        console.log($scope.thisplace);
+      }else{
+        console.log('No Change');
+      }
+    },true);
+
+//$scope.thisplace = {name: currentPlace.name, address: currentPlace.address};
+
+  $scope.openGoogleMap = function (){
+      var lat = currentPlace.position.lat;
+      var lng = currentPlace.position.lng;
+
+      window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
+  }
+}])
 
 app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'server', 'popup', 'existingPlaces', 'currentPosition',
                 function($scope, $state, $cordovaGeolocation, server, popup, existingPlaces, currentPosition) {
@@ -251,7 +292,6 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'server', 
         document.getElementById('pac-input').blur();
     });
   };
-
 }]);
 
 
@@ -263,38 +303,38 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
     func: 'searchByWhat'},
     {title: 'Remove current places',
     func: 'removePlaces'}
-    ];
+  ];
 
-    $scope.searchByWhat = function(){
-      $scope.removePlacesFromList();
-      $ionicSideMenuDelegate.toggleLeft();
-      var promise = server.pageSetUp();
-      promise.then(
-        function(){
-          $scope.group  = existingPlaces.groups;
-          $scope.type = existingPlaces.types;
-          popup.getPlaces($scope);
-        }
-      );
-    };
-
-    $scope.searchByLocation = function(){
-      $scope.removePlacesFromList();
-      server.resultsByLocation();
-      $ionicSideMenuDelegate.toggleLeft();
-    };
-
-    $scope.removePlaces = function(){
-      $scope.removePlacesFromList();
-      $ionicSideMenuDelegate.toggleLeft();
-    };
-
-    $scope.removePlacesFromList = function(){
-      while(listView.length !== 0){
-        var x = listView.pop();
-        x.marker.setMap(null);
+  $scope.searchByWhat = function(){
+    $scope.removePlacesFromList();
+    $ionicSideMenuDelegate.toggleLeft();
+    var promise = server.pageSetUp();
+    promise.then(
+      function(){
+        $scope.group  = existingPlaces.groups;
+        $scope.type = existingPlaces.types;
+        popup.getPlaces($scope);
       }
-    };
+    );
+  };
+
+  $scope.searchByLocation = function(){
+    $scope.removePlacesFromList();
+    server.resultsByLocation();
+    $ionicSideMenuDelegate.toggleLeft();
+  };
+
+  $scope.removePlaces = function(){
+    $scope.removePlacesFromList();
+    $ionicSideMenuDelegate.toggleLeft();
+  };
+
+  $scope.removePlacesFromList = function(){
+    while(listView.length !== 0){
+      var x = listView.pop();
+      x.marker.setMap(null);
+    }
+  };
 }]);
 
 app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', 'fitBounds', 'placeConstructor', function($http, existingPlaces, listView, currentPosition, fitBounds, placeConstructor){
