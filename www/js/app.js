@@ -12,7 +12,7 @@ app.value('existingPlaces', {
   groups: ["All"],
   types: ["All"]
 });
-app.value('currentPlace', {name:'Test', address: '1234 Test St'});
+app.value('currentPlace', {});
 app.value('currentPosition', {
   lat: '',
   lng: '',
@@ -83,27 +83,23 @@ app.factory('changeCurrentPlace',['$timeout', 'currentPlace', function($timeout,
 }])
 
 app.directive('info', function(){
-  var directive = {};
-
-    directive.scope = {
+  return {
+    scope: {
       place:  '=places'
-    }
-
-    directive.template = '<div class="infowindow"><b>{{place.name}}</b><br></div>',
-
-    directive.complile = function (elem, attr){
-      var linkFunction = function($scope, element, attributes){
-          console.log("link"+$scope.place.name)
-          element.html('<div class="infowindow"><b>'+$scope.place.name+'</b><br></div>')
+    },
+    template: '<div class="infowindow"><b>{{place.name}}</b><br><a ng-click="openNewMap()"">Open</a></div>',
+    link: function(scope, element, attrs) {
+      scope.openNewMap = function(){
+        console.log("Click click");
       }
-      return linkFunction;
     }
-    return directive;
+  }
 })
 
 /*app.factory('openGoogleMap',['$cordovaAppAvailability', function($cordovaAppAvailability){
   return {
     openNewMap: function(){
+      console.log("click")
       $cordovaAppAvailability.check('comgooglemaps://')
       .then(function(){
         //do somethng if app avaliable
@@ -155,7 +151,7 @@ app.controller('MainCtrl', ['$scope', 'currentPlace', function($scope, currentPl
     },
     function(newVal, oldVal){
       if(newVal !== oldVal){
-        console.log(currentPlace.name);
+        console.log(currentPlace);
         $scope.thisplace = {name: currentPlace.name};
         console.log($scope.thisplace);
       }else{
