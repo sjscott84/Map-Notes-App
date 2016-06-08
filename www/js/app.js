@@ -24,6 +24,7 @@ app.factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeC
   var infoWindow = new google.maps.InfoWindow({
     disableAutoPan: false
   });
+  var content = document.getElementById("infoWindow");
   return{
     Place: function (name, position, lat, lng, type, note, address){
       var self = this;
@@ -44,31 +45,12 @@ app.factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeC
       });
       google.maps.event.addListener(this.marker, 'click', function() {
         changeCurrentPlace.changePlace(self);
-        infoWindow.setContent(document.getElementById("infoWindow"));
+        infoWindow.setContent(content);
         infoWindow.open(self.map, self.marker);       
         //map.setCenter(self.marker.getPosition());
       });
     }
   }
-
-  /*openGoogleMap = function (){
-    $cordovaAppAvailability.check('comgooglemaps://')
-    .then(function(){
-      //do somethng if app avaliable
-    }, function(){
-      var lat = currentPlace.position.lat;
-      var lng = currentPlace.position.lng;
-
-      window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
-    });
-  }
-
-  function openGoogleMap (){
-      var lat = currentPlace.position.lat;
-      var lng = currentPlace.position.lng;
-
-      window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
-  }*/
 }])
 
 app.factory('changeCurrentPlace',['$timeout', 'currentPlace', function($timeout, currentPlace){
@@ -76,42 +58,38 @@ app.factory('changeCurrentPlace',['$timeout', 'currentPlace', function($timeout,
     changePlace: function(place){
       $timeout(function(){
         currentPlace.name = place.name;
-        console.log(currentPlace.name);
+        currentPlace.address = place.address;
+        currentPlace.note = place.note;
+        currentPlace.type = place.type;
+        currentPlace.lat = place.lat;
+        currentPlace.lng = place.lng;
       }, 0);
     }
   }
 }])
 
-app.directive('info', function(){
+app.directive('info',['$cordovaAppAvailability', 'currentPlace', function($cordovaAppAvailability, currentPlace){
   return {
     scope: {
       place:  '=places'
     },
-    template: '<div class="infowindow"><b>{{place.name}}</b><br><a ng-click="openNewMap()"">Open</a></div>',
+    template: '<div class="infowindow"><b>{{place.name}}</b><p>{{place.address}}</p><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">View On Google Maps</a></div>',
     link: function(scope, element, attrs) {
       scope.openNewMap = function(){
         console.log("Click click");
+        //$cordovaAppAvailability.check('comgooglemaps://')
+        //.then(function(){
+        //do somethng if app avaliable
+        //}, function(){
+          var lat = currentPlace.lat;
+          var lng = currentPlace.lng;
+
+          window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
+        //});
       }
     }
   }
-})
-
-/*app.factory('openGoogleMap',['$cordovaAppAvailability', function($cordovaAppAvailability){
-  return {
-    openNewMap: function(){
-      console.log("click")
-      $cordovaAppAvailability.check('comgooglemaps://')
-      .then(function(){
-        //do somethng if app avaliable
-      }, function(){
-        var lat = currentPlace.position.lat;
-        var lng = currentPlace.position.lng;
-
-        window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
-      });
-    }
-  }
-}]);*/
+}])
 
 app.run( function($ionicPlatform, $http, existingPlaces, server) {
   $ionicPlatform.ready(function() {
@@ -145,28 +123,17 @@ app.config(function($stateProvider, $urlRouterProvider) {
 })
 
 app.controller('MainCtrl', ['$scope', 'currentPlace', function($scope, currentPlace){
-  $scope.$watch(
+  $scope.$watchCollection(
     function(){
-      return currentPlace.name;
+      return currentPlace;
     },
     function(newVal, oldVal){
       if(newVal !== oldVal){
-        console.log(currentPlace);
-        $scope.thisplace = {name: currentPlace.name};
-        console.log($scope.thisplace);
+        $scope.thisplace = currentPlace;
       }else{
         console.log('No Change');
       }
     },true);
-
-//$scope.thisplace = {name: currentPlace.name, address: currentPlace.address};
-
-  $scope.openGoogleMap = function (){
-      var lat = currentPlace.position.lat;
-      var lng = currentPlace.position.lng;
-
-      window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
-  }
 }])
 
 app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'server', 'popup', 'existingPlaces', 'currentPosition',
