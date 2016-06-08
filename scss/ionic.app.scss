@@ -55,3 +55,23 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 	border-bottom-right-radius: 0;
 	padding-left: 20px;
 }
+
+.infowindow .iw-title {
+	color: #000;
+	font-weight: 500;
+	margin-bottom: 10px;
+	text-align: center;
+}
+
+.infowindow {
+	color: #444;
+	font-size: 15px;
+	font-weight: normal;
+	font-family: "-apple-system", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
+	line-height: 1.2
+	display: inline-block;
+}
+
+p {
+	margin-bottom: 5px;
+}

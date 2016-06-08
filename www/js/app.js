@@ -73,7 +73,7 @@ app.directive('info',['$cordovaAppAvailability', 'currentPlace', function($cordo
     scope: {
       place:  '=places'
     },
-    template: '<div class="infowindow"><b>{{place.name}}</b><p>{{place.address}}</p><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">View On Google Maps</a></div>',
+    template: '<div class="infowindow"><div class="iw-title">{{place.name}}</div><div class="iw-info"><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">View On Google Maps</a></div></div>',
     link: function(scope, element, attrs) {
       scope.openNewMap = function(){
         console.log("Click click");
@@ -305,7 +305,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
     pageSetUp: function(){
       return $http({
         method: 'GET',
-        url: 'http://thescotts.mynetgear.com:3000/pageSetUp'
+        url: 'http://thescotts.mynetgear.com:3001/pageSetUp'
       }).then(function successCallback(response) {
           if(existingPlaces.groups.length > 1 || existingPlaces.types.length > 1){
             while(existingPlaces.groups.length !== 1){
@@ -330,7 +330,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
     savePlace: function(placeObject){
       $http({
         method: 'POST',
-        url: 'http://thescotts.mynetgear.com:3000/writeFile',
+        url: 'http://thescotts.mynetgear.com:3001/writeFile',
         data: JSON.stringify(placeObject)
       }).then(function(response) {
           console.log("Succefully Saved");
@@ -342,7 +342,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
       var data = {"lat" : currentPosition.lat, "lng": currentPosition.lng, "distance": currentPosition.radius};
       $http({
         method: 'GET',
-        url: 'http://thescotts.mynetgear.com:3000/readFileForRadius',
+        url: 'http://thescotts.mynetgear.com:3001/readFileForRadius',
         params: data
       }).then(function(response){
         if(response.data.length !== 0){
@@ -364,7 +364,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
       var data = {"group" : group, "type" : type};
       $http({
         method: 'GET',
-        url: 'http://thescotts.mynetgear.com:3000/readFileForGroup',
+        url: 'http://thescotts.mynetgear.com:3001/readFileForGroup',
         params: data
       }).then(function(response){
         if(response.data.length !== 0){
