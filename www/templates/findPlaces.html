@@ -7,8 +7,8 @@
     <!--<select name="selected" ng-model="data.selected">
       <option ng-repeat="item in group" value="{{item}}">{{item}}</option>
     </select>-->
-    <select ng-model="data.selectedGroup" ng-options="item for item in group">
-      <option value="All">ALL</option>
+    <select ng-init="data.selectedGroup = group[0]" ng-model="data.selectedGroup" ng-options="item for item in group">
+      <option></option>
     </select>
   </label>
 
@@ -16,7 +16,7 @@
     <div class="input-label">
       Type
     </div>
-    <select ng-model="data.selectedType" ng-options="item for item in type">
+    <select  ng-init="data.selectedType = type[0]" ng-model="data.selectedType" ng-options="item for item in type">
       <option></option>
     </select>
   </label>

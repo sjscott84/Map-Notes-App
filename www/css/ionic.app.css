@@ -9851,12 +9851,18 @@ a.button {
   margin-bottom: 10px;
   text-align: center; }
 
+#infoWindow {
+  width: 100%;
+  display: inline-block; }
+
 .infowindow {
   color: #444;
   font-size: 15px;
   font-weight: normal;
   font-family: "-apple-system", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
-  line-height: 1.2; }
+  line-height: 1.2;
+  width: 100%;
+  display: inline-block; }
 
 p {
   margin-bottom: 5px; }
