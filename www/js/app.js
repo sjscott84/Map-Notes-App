@@ -219,7 +219,9 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'server', 
   });
 
   $scope.getGroups = function() {
-    var entry = $scope.data.group.length;
+    if($scope.data.type.length !== 0){
+      var entry = $scope.data.group.length;
+    }
     $scope.matchingGroups = [];
     for(var i = 1; i<existingPlaces.groups.length; i++){
         var what = existingPlaces.groups[i].slice(0, entry);
@@ -231,7 +233,9 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'server', 
   }
 
   $scope.getTypes = function() {
-    var entry = $scope.data.type.length;
+    if($scope.data.type.length !== 0){
+      var entry = $scope.data.type.length;
+    }
     $scope.matchingTypes = [];
     for(var i = 1; i<existingPlaces.types.length; i++){
         var what = existingPlaces.types[i].slice(0, entry);
@@ -387,7 +391,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
   }
 }]);
 
-app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', function($ionicPopup, server, listView, placeConstructor){
+app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', 'existingPlaces', function($ionicPopup, server, listView, placeConstructor, existingPlaces){
   function inputPlaceInfoFn(placeObject, mapScope){
     mapScope.data = {};
     var myPopup = $ionicPopup.show({
@@ -409,7 +413,8 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', f
             placeObject.notes = mapScope.data.notes;
 
             listView.push(new placeConstructor.Place(placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
-
+            existingPlaces.groups.push(placeObject.group);
+            existingPlaces.types.push(placeObject.type);
             server.savePlace(placeObject);
           }
         }
