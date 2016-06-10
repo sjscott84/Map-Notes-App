@@ -5,25 +5,6 @@
 // the 2nd parameter is an array of 'requires'
 var app = angular.module('starter', ['ionic', 'ngCordova'])
 
-app.controller('LoadingCtrl', function($scope, $ionicLoading) {
-  $scope.show = function() {
-    $ionicLoading.show({
-      content: 'Loading',
-      animation: 'fade-in',
-      showBackdrop: true,
-      maxWidth: 200,
-      showDelay: 0
-    }).then(function(){
-       console.log("The loading indicator is now displayed");
-    });
-  };
-  $scope.hide = function(){
-    $ionicLoading.hide().then(function(){
-       console.log("The loading indicator is now hidden");
-    });
-  };
-});
-
 var map;
 
 app.value('listView', []);
@@ -176,6 +157,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'server', 
       center: latLng,
       zoom: 15,
       disableDefaultUI: true,
+      zoomControl: true,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 
@@ -319,7 +301,7 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
   };
 }]);
 
-app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', 'fitBounds', 'placeConstructor', function($http, existingPlaces, listView, currentPosition, fitBounds, placeConstructor){
+app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', 'fitBounds', 'placeConstructor', 'ErrorMessage', function($http, existingPlaces, listView, currentPosition, fitBounds, placeConstructor, ErrorMessage){
   return {
     pageSetUp: function(){
       return $http({
@@ -367,13 +349,14 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
         if(response.data.length !== 0){
           response.data.forEach(function(value){
             listView.push(new placeConstructor.Place(value.name, value.location, value.latitude, value.longitude, value.type, value.notes, value.address));
-            //fitBounds.fitBoundsToVisibleMarkers(listView);
-            //var zoom = map.getZoom();
-              //map.setZoom(zoom > 15 ? 15 : zoom);
+            fitBounds.fitBoundsToVisibleMarkers(listView);
+            var zoom = map.getZoom();
+              map.setZoom(zoom > 15 ? 15 : zoom);
           });
           fitBounds.fitBoundsToVisibleMarkers(listView);
         }else{
-          alert("Error, no results found, please try again");
+          //alert("Error, no results found, please try again");
+          ErrorMessage.locationErrorAlert();
         }
       }), function(response){
             console.log(response);
@@ -395,7 +378,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
           });
           fitBounds.fitBoundsToVisibleMarkers(listView);
         }else{
-          alert("Error, no results found, please try again");
+          ErrorMessage.searchErrorAlert();
         }
       }), function(response){
             console.log(response);
@@ -477,6 +460,23 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', f
     }
   }
 }]);
+
+app.factory('ErrorMessage',['$ionicPopup', function($ionicPopup){
+  return{
+    searchErrorAlert: function(){
+       var alertPopup = $ionicPopup.alert({
+         title: 'Error',
+         template: 'No results found, please try a new search'
+       });
+    },
+    locationErrorAlert: function(){
+       var alertPopup = $ionicPopup.alert({
+         title: 'Error',
+         template: 'No results found for your location, please try searching'
+       });
+    }
+  }
+}])
 
 app.factory('fitBounds', function(){
   return {
