@@ -174,6 +174,10 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'server', 
     $scope.map.addListener('bounds_changed', function() {
       searchBox.setBounds($scope.map.getBounds());
     });
+
+    google.maps.event.addListenerOnce(map, 'idle', function(){
+    console.log("Loaded");
+});
     // Listen for the event fired when the user selects a prediction,
     // removes any existing search history and
     // retrieves more details for that place.
@@ -219,7 +223,7 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'server', 
   });
 
   $scope.getGroups = function() {
-    if($scope.data.type.length !== 0){
+    if($scope.data.group.length !== 0){
       var entry = $scope.data.group.length;
     }
     $scope.matchingGroups = [];
@@ -305,7 +309,7 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
   };
 }]);
 
-app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', 'fitBounds', 'placeConstructor', 'ErrorMessage', function($http, existingPlaces, listView, currentPosition, fitBounds, placeConstructor, ErrorMessage){
+app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', 'fitBounds', 'placeConstructor', 'ErrorMessage', 'firebaseService', function($http, existingPlaces, listView, currentPosition, fitBounds, placeConstructor, ErrorMessage, firebaseService){
   return {
     pageSetUp: function(){
       return $http({
@@ -332,7 +336,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
           console.log(response);
         });
       },
-    savePlace: function(placeObject){
+    /*savePlace: function(placeObject){
       $http({
         method: 'POST',
         url: 'http://thescotts.mynetgear.com:3001/writeFile',
@@ -342,6 +346,10 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
       }, function(response) {
           console.log(response);
       });
+    },*/
+    savePlace: function(placeObject){
+      var place = JSON.stringify(placeObject);
+      firebaseService.savePlace(placeObject.group, place);
     },
     resultsByLocation: function(){
       var data = {"lat" : currentPosition.lat, "lng": currentPosition.lng, "distance": currentPosition.radius};
@@ -413,8 +421,12 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', '
             placeObject.notes = mapScope.data.notes;
 
             listView.push(new placeConstructor.Place(placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
-            existingPlaces.groups.push(placeObject.group);
-            existingPlaces.types.push(placeObject.type);
+            if(existingPlaces.groups.indexOf(placeObject.group) === -1){
+              existingPlaces.groups.push(placeObject.group);
+            }
+            if(existingPlaces.types.indexOf(placeObject.type) === -1){
+              existingPlaces.types.push(placeObject.type);
+            }
             server.savePlace(placeObject);
           }
         }
@@ -497,6 +509,24 @@ app.factory('fitBounds', function(){
     }
   }
 });
+
+app.factory("firebaseService", function(){
+
+    var config = {
+      apiKey: "AIzaSyAQchOOXdXejiMOcTKoj_w6hDbg-01m3jQ",
+      authDomain: "map-notes-d1949.firebaseapp.com",
+      databaseURL: "https://map-notes-d1949.firebaseio.com",
+      storageBucket: "map-notes-d1949.appspot.com",
+    };
+    firebase.initializeApp(config);
+    var database = firebase.database();
+
+    return {
+      savePlace: function(group, placeObject){
+        database.ref('places/'+group).push(placeObject);
+      }
+    }
+  })
 
 
 

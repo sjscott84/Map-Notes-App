@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">git
+    <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title></title>
 
@@ -12,7 +12,6 @@
 
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
-
     <!-- cordova script (this will be a 404 during development) -->
     <script src="lib/ng-cordova/dist/ng-cordova.js"></script>
     <script src="cordova.js"></script>
@@ -46,10 +45,10 @@
       <div ng-controller="MenuCtrl">
         <ion-side-menu side="left">
             <ion-header-bar class="bar-stable">
-                <h1 class="title">Map Notes</h1>
+                <h1 class="title ng-cloak">Map Notes</h1>
             </ion-header-bar>
             <ion-content>
-              <ion-list>
+              <ion-list class="ng-cloak">
                 <ion-item ng-repeat="task in tasks" ng-click="this[task.func]()">
                   {{task.title}}
                 </ion-item>
@@ -63,5 +62,6 @@
     <!--<script async defer src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCZnUzSkNCumO4XVfZ9V26yLh9Y__14C9U&sensor=true&libraries=places"></script>-->
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCZnUzSkNCumO4XVfZ9V26yLh9Y__14C9U&amp;libraries=places"></script>
 
+    <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
   </body>
 </html>
