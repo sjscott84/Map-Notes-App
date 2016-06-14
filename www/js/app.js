@@ -214,7 +214,9 @@ app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'server', 
         }
         $scope.map.setCenter(place.geometry.location);
         $scope.map.fitBounds(bounds);
-        placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "location":place.geometry.location, "latitude":place.geometry.location.lat(), "longitude":place.geometry.location.lng(), "type": undefined, "notes": undefined};
+        var lat = place.geometry.location.lat();
+        var lng = place.geometry.location.lng();
+        placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "latitude":lat, "longitude":lng, "type": undefined, "notes": undefined};
       });
     });
 
@@ -280,14 +282,14 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
   $scope.searchByWhat = function(){
     $scope.removePlacesFromList();
     $ionicSideMenuDelegate.toggleLeft();
-    var promise = server.pageSetUp();
-    promise.then(
-      function(){
+    //var promise = server.pageSetUp();
+    //promise.then(
+      //function(){
         $scope.group  = existingPlaces.groups;
         $scope.type = existingPlaces.types;
         popup.getPlaces($scope);
-      }
-    );
+      //}
+    //);
   };
 
   $scope.searchByLocation = function(){
@@ -312,7 +314,9 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
 app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', 'fitBounds', 'placeConstructor', 'ErrorMessage', 'firebaseService', function($http, existingPlaces, listView, currentPosition, fitBounds, placeConstructor, ErrorMessage, firebaseService){
   return {
     pageSetUp: function(){
-      return $http({
+      firebaseService.pageSetUp();
+    },
+      /*return $http({
         method: 'GET',
         url: 'http://thescotts.mynetgear.com:3001/pageSetUp'
       }).then(function successCallback(response) {
@@ -348,11 +352,12 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
       });
     },*/
     savePlace: function(placeObject){
-      var place = JSON.stringify(placeObject);
-      firebaseService.savePlace(placeObject.group, place);
+      //var place = JSON.stringify(placeObject);
+      firebaseService.savePlace(placeObject.group, placeObject.type, placeObject);
     },
     resultsByLocation: function(){
       var data = {"lat" : currentPosition.lat, "lng": currentPosition.lng, "distance": currentPosition.radius};
+      //firebaseService.resultsByLocation(data.lat, data.lng, data.distance);
       $http({
         method: 'GET',
         url: 'http://thescotts.mynetgear.com:3001/readFileForRadius',
@@ -375,7 +380,8 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
       }
     },
     searchForPlaces: function(group, type){
-      var data = {"group" : group, "type" : type};
+      firebaseService.searchForPlaces(group, type);
+      /*var data = {"group" : group, "type" : type};
       $http({
         method: 'GET',
         url: 'http://thescotts.mynetgear.com:3001/readFileForGroup',
@@ -394,7 +400,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
         }
       }), function(response){
             console.log(response);
-      }
+      }*/
     }
   }
 }]);
@@ -510,23 +516,9 @@ app.factory('fitBounds', function(){
   }
 });
 
-app.factory("firebaseService", function(){
 
-    var config = {
-      apiKey: "AIzaSyAQchOOXdXejiMOcTKoj_w6hDbg-01m3jQ",
-      authDomain: "map-notes-d1949.firebaseapp.com",
-      databaseURL: "https://map-notes-d1949.firebaseio.com",
-      storageBucket: "map-notes-d1949.appspot.com",
-    };
-    firebase.initializeApp(config);
-    var database = firebase.database();
+ 
 
-    return {
-      savePlace: function(group, placeObject){
-        database.ref('places/'+group).push(placeObject);
-      }
-    }
-  })
 
 
 
