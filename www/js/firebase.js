@@ -10,6 +10,11 @@ angular.module('starter')
     firebase.initializeApp(config);
     var database = firebase.database();
 
+    savePlaceToListView = function(item){
+      listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address']));
+      fitBounds.fitBoundsToVisibleMarkers(listView);
+    }
+
     return {
       savePlace: function(group, type, placeObject){
         console.log(placeObject);
@@ -56,8 +61,7 @@ angular.module('starter')
             Object.keys(items).forEach(function(key){
               var item = items[key];
               Object.keys(item).forEach(function(key){
-                listView.push(new placeConstructor.Place(item[key]['name'], item[key]['latitude'], item[key]['longitude'], item[key]['type'], item[key]['notes'], item[key]['address']));
-                fitBounds.fitBoundsToVisibleMarkers(listView);
+                savePlaceToListView(item[key]);
               })
             })
           })
@@ -69,8 +73,7 @@ angular.module('starter')
               var item = items[key];
               Object.keys(item).forEach(function(key){
                 if(item[key]['type'] === type){
-                  listView.push(new placeConstructor.Place(item[key]['name'], item[key]['latitude'], item[key]['longitude'], item[key]['type'], item[key]['notes'], item[key]['address']));
-                  fitBounds.fitBoundsToVisibleMarkers(listView);
+                  savePlaceToListView(item[key]);
                 }
               })
             })
@@ -80,8 +83,7 @@ angular.module('starter')
           .then(function(response){
             var items = response.val();
             Object.keys(items).forEach(function(key){
-              listView.push(new placeConstructor.Place(items[key]['name'], items[key]['latitude'], items[key]['longitude'], items[key]['type'], items[key]['notes'], items[key]['address']));
-              fitBounds.fitBoundsToVisibleMarkers(listView);
+              savePlaceToListView(items[key]);
             })
           })
         }else{
@@ -90,8 +92,7 @@ angular.module('starter')
             var items = response.val();
             Object.keys(items).forEach(function(key){
               if(items[key]['type'] === type){
-                listView.push(new placeConstructor.Place(items[key]['name'], items[key]['latitude'], items[key]['longitude'], items[key]['type'], items[key]['notes'], items[key]['address']));
-                fitBounds.fitBoundsToVisibleMarkers(listView);
+                savePlaceToListView(items[key]);
               }
             })
             if(listView.length === 0){
@@ -112,8 +113,7 @@ angular.module('starter')
                 //calculate distance from start point to saved location
                 var resultDistance = location.calculateDistance(lat, item[key]["latitude"], lng, item[key]["longitude"]);
                 if(resultDistance < distance){
-                  listView.push(new placeConstructor.Place(item[key]['name'], item[key]['latitude'], item[key]['longitude'], item[key]['type'], item[key]['notes'], item[key]['address']));
-                  fitBounds.fitBoundsToVisibleMarkers(listView);
+                  savePlaceToListView(item[key]);
                 }
               }
             })
