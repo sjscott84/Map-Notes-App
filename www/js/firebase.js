@@ -1,5 +1,5 @@
 angular.module('starter')
-  .factory("firebaseService",['existingPlaces', 'listView', 'placeConstructor', 'fitBounds', 'errorMessage', 'location', function(existingPlaces, listView, placeConstructor, fitBounds, errorMessage, location){
+  .factory("firebaseService",['existingPlaces', 'listView', 'placeConstructor', 'fitBounds', 'errorMessage', 'location', 'allPlaces', function(existingPlaces, listView, placeConstructor, fitBounds, errorMessage, location, allPlaces){
 
     var config = {
       apiKey: "AIzaSyAQchOOXdXejiMOcTKoj_w6hDbg-01m3jQ",
@@ -17,10 +17,8 @@ angular.module('starter')
 
     return {
       savePlace: function(group, type, placeObject){
-        console.log(placeObject);
         //database.ref('places/places/'+group).push(placeObject);
         var key = database.ref('places/places/'+group).push(placeObject).key;
-        console.log(key);
         database.ref('places/catagories/'+'existingGroups').push(group);
         database.ref('places/catagories/'+'existingTypes').push(type);
         savePlaceToListView(placeObject, key);
@@ -121,6 +119,24 @@ angular.module('starter')
                 }
               }
             })
+          })
+        })
+      },
+      getPlaces: function(){
+        var place = {};
+        database.ref('places/places/').on('value', function(response){
+          while(allPlaces.length !== 0){
+            allPlaces.pop();
+          }
+          var items = response.val();
+          Object.keys(items).forEach(function(key){
+            var nameKey = key;
+            place = {name: nameKey, items:[]};
+            var item = items[key];
+            Object.keys(item).forEach(function(key){
+              place.items.push({name: item[key]['name'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], uid: key});
+            })
+            allPlaces.push(place);
           })
         })
       }

@@ -8,6 +8,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova'])
 var map;
 
 app.value('listView', []);
+app.value('allPlaces', []);
 app.value('existingPlaces', {
   groups: ["All"],
   types: ["All"]
@@ -70,7 +71,7 @@ app.factory('changeCurrentPlace',['$timeout', 'currentPlace', function($timeout,
   }
 }])
 
-app.directive('info',['$cordovaAppAvailability', 'currentPlace', function($cordovaAppAvailability, currentPlace){
+app.directive('info',['$cordovaAppAvailability', 'currentPlace', 'firebaseService', function($cordovaAppAvailability, currentPlace, firebaseService){
   return {
     scope: {
       place:  '=places'
@@ -93,7 +94,7 @@ app.directive('info',['$cordovaAppAvailability', 'currentPlace', function($cordo
   }
 }])
 
-app.run( function($ionicPlatform, $http, existingPlaces, server) {
+app.run( function($ionicPlatform, $http, existingPlaces, server, firebaseService) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -110,6 +111,7 @@ app.run( function($ionicPlatform, $http, existingPlaces, server) {
     }
   });
     server.pageSetUp();
+    firebaseService.getPlaces();
 })
 
 app.config(function($stateProvider, $urlRouterProvider) {
@@ -118,10 +120,48 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: '/',
     templateUrl: 'templates/map.html',
     controller: 'MapCtrl'
+  })
+  .state('edit', {
+    url: '/edit',
+    templateUrl: 'templates/edit.html',
+    controller: 'editCtrl'
   });
 
   $urlRouterProvider.otherwise("/");
 })
+
+app.controller('editCtrl',['$scope', 'firebaseService', 'allPlaces', function($scope, firebaseService, allPlaces){
+  $scope.list = allPlaces;
+
+  $scope.$watchCollection(
+    function(){
+      return allPlaces;
+    },
+    function(newVal, oldVal){
+      if(newVal !== oldVal){
+        $scope.list = allPlaces;
+      }else{
+        console.log('No Change');
+      }
+    },true);
+
+  $scope.returnToMap = function(){
+    console.log($scope.list);
+    document.location.href = '#/';
+  }
+
+  $scope.toggleGroup = function(group) {
+    if ($scope.isGroupShown(group)) {
+      $scope.shownGroup = null;
+    } else {
+      $scope.shownGroup = group;
+    }
+  };
+
+  $scope.isGroupShown = function(group) {
+    return $scope.shownGroup === group;
+  };
+}]);
 
 app.controller('MainCtrl', ['$scope', 'currentPlace', function($scope, currentPlace){
   $scope.$watchCollection(
@@ -277,7 +317,9 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
     {title: 'Search for places',
     func: 'searchByWhat'},
     {title: 'Remove current places',
-    func: 'removePlaces'}
+    func: 'removePlaces'},
+    {title: 'Edit Places',
+    func: 'editPlaces'}
   ];
 
   $scope.searchByWhat = function(){
@@ -297,6 +339,11 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
     $scope.removePlacesFromList();
     server.resultsByLocation();
     $ionicSideMenuDelegate.toggleLeft();
+  };
+
+  $scope.editPlaces = function(){
+    $ionicSideMenuDelegate.toggleLeft();
+    document.location.href = '#/edit';
   };
 
   $scope.removePlaces = function(){
