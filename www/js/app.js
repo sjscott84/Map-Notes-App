@@ -26,7 +26,7 @@ app.factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeC
   });
   var content = document.getElementById("infoWindow");
   return{
-    Place: function (name, position, lat, lng, type, note, address){
+    Place: function (name, lat, lng, type, note, address){
       var self = this;
       self.map = map;
       self.name = name;
@@ -46,7 +46,7 @@ app.factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeC
       google.maps.event.addListener(this.marker, 'click', function() {
         changeCurrentPlace.changePlace(self);
         infoWindow.setContent(content);
-        infoWindow.open(self.map, self.marker);       
+        infoWindow.open(self.map, self.marker);
         //map.setCenter(self.marker.getPosition());
       });
     }
@@ -311,48 +311,12 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
   };
 }]);
 
-app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition', 'fitBounds', 'placeConstructor', 'ErrorMessage', 'firebaseService', function($http, existingPlaces, listView, currentPosition, fitBounds, placeConstructor, ErrorMessage, firebaseService){
+app.factory('server', ['existingPlaces', 'listView', 'currentPosition', 'fitBounds', 'placeConstructor', 'ErrorMessage', 'firebaseService', function(existingPlaces, listView, currentPosition, fitBounds, placeConstructor, ErrorMessage, firebaseService){
   return {
     pageSetUp: function(){
       firebaseService.pageSetUp();
     },
-      /*return $http({
-        method: 'GET',
-        url: 'http://thescotts.mynetgear.com:3001/pageSetUp'
-      }).then(function successCallback(response) {
-          if(existingPlaces.groups.length > 1 || existingPlaces.types.length > 1){
-            while(existingPlaces.groups.length !== 1){
-              existingPlaces.groups.pop();
-            }
-            while(existingPlaces.types.length !== 1){
-              existingPlaces.types.pop();
-            }
-          }
-          for(var i=0; i<response.data.groups.length; i++){
-            existingPlaces.groups.push(response.data.groups[i]);
-          }
-          for(var i=0; i<response.data.types.length; i++){
-            existingPlaces.types.push(response.data.types[i]);
-          }
-          existingPlaces.groups.sort();
-          existingPlaces.types.sort();
-        }, function errorCallback(response) {
-          console.log(response);
-        });
-      },
-    /*savePlace: function(placeObject){
-      $http({
-        method: 'POST',
-        url: 'http://thescotts.mynetgear.com:3001/writeFile',
-        data: JSON.stringify(placeObject)
-      }).then(function(response) {
-          console.log("Succefully Saved");
-      }, function(response) {
-          console.log(response);
-      });
-    },*/
     savePlace: function(placeObject){
-      //var place = JSON.stringify(placeObject);
       firebaseService.savePlace(placeObject.group, placeObject.type, placeObject);
     },
     resultsByLocation: function(){
@@ -365,7 +329,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
       }).then(function(response){
         if(response.data.length !== 0){
           response.data.forEach(function(value){
-            listView.push(new placeConstructor.Place(value.name, value.location, value.latitude, value.longitude, value.type, value.notes, value.address));
+            listView.push(new placeConstructor.Place(value.name, value.latitude, value.longitude, value.type, value.notes, value.address));
             fitBounds.fitBoundsToVisibleMarkers(listView);
             var zoom = map.getZoom();
               map.setZoom(zoom > 15 ? 15 : zoom);
@@ -380,7 +344,7 @@ app.factory('server', ['$http', 'existingPlaces', 'listView', 'currentPosition',
       }
     },
     searchForPlaces: function(group, type){
-      firebaseService.searchForPlaces(group, type);
+      firebaseService.searchForPlaces(group, type)
       /*var data = {"group" : group, "type" : type};
       $http({
         method: 'GET',
@@ -426,7 +390,7 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', '
             placeObject.type = mapScope.data.type;
             placeObject.notes = mapScope.data.notes;
 
-            listView.push(new placeConstructor.Place(placeObject.name, placeObject.position, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
+            listView.push(new placeConstructor.Place(placeObject.name, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
             if(existingPlaces.groups.indexOf(placeObject.group) === -1){
               existingPlaces.groups.push(placeObject.group);
             }
@@ -502,6 +466,10 @@ app.factory('ErrorMessage',['$ionicPopup', function($ionicPopup){
 }])
 
 app.factory('fitBounds', function(){
+  function zoomControl(){
+    var zoom = map.getZoom();
+    map.setZoom(zoom > 15 ? 15 : zoom);
+  }
   return {
     fitBoundsToVisibleMarkers: function(listView){
       var bounds = new google.maps.LatLngBounds();
@@ -512,6 +480,7 @@ app.factory('fitBounds', function(){
         }
       }
       map.fitBounds(bounds);
+      zoomControl();
     }
   }
 });
