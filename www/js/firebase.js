@@ -1,5 +1,5 @@
 angular.module('starter')
-  .factory("firebaseService",['existingPlaces', 'listView', 'placeConstructor', 'fitBounds', 'errorMessage',  function(existingPlaces, listView, placeConstructor, fitBounds, errorMessage){
+  .factory("firebaseService",['existingPlaces', 'listView', 'placeConstructor', 'fitBounds', 'errorMessage', 'location', function(existingPlaces, listView, placeConstructor, fitBounds, errorMessage, location){
 
     var config = {
       apiKey: "AIzaSyAQchOOXdXejiMOcTKoj_w6hDbg-01m3jQ",
@@ -99,6 +99,66 @@ angular.module('starter')
             }
           })
         }
+      },
+      placesByLocation: function(lat, lng, distance){
+        database.ref('places/places/').once('value')
+        .then(function(response){
+          var minMax = location.findLocationsBasedOnRadius(lat, lng, distance);
+          var items = response.val();
+          Object.keys(items).forEach(function(key){
+            var item = items[key];
+            Object.keys(item).forEach(function(key){
+              if(item[key]["latitude"] > minMax.minLat && item[key]["latitude"] < minMax.maxLat && item[key]["longitude"] > minMax.minLng && item[key]["longitude"] < minMax.maxLng){
+                //calculate distance from start point to saved location
+                var resultDistance = location.calculateDistance(lat, item[key]["latitude"], lng, item[key]["longitude"]);
+                if(resultDistance < distance){
+                  listView.push(new placeConstructor.Place(item[key]['name'], item[key]['latitude'], item[key]['longitude'], item[key]['type'], item[key]['notes'], item[key]['address']));
+                  fitBounds.fitBoundsToVisibleMarkers(listView);
+                }
+              }
+            })
+          })
+        })
       }
     }
 }])
+
+  .factory('location', function(){
+    // Converts from degrees to radians.
+    Math.radians = function(degrees) {
+      return degrees * Math.PI / 180;
+    };
+    // Converts from radians to degrees.
+    Math.degrees = function(radians) {
+      return radians * 180 / Math.PI;
+    };
+
+    return {
+      findLocationsBasedOnRadius: function(lat, lng, distance){
+        var distance = distance;
+        var lat = lat;
+        var lng = lng;
+        var radius = 6371;//radius at equater = 6378, at poles 6356
+        var results = {};
+        var latDegrees = Math.degrees(distance/radius);
+
+        results.maxLat = (lat*1) + (latDegrees*1);//max
+        results.minLat = lat - latDegrees;//min
+
+        results.maxLng = (lng*1) + (Math.degrees(distance/radius/Math.cos(Math.radians(lat)))*1);//max
+        results.minLng = lng - Math.degrees(distance/radius/Math.cos(Math.radians(lat)));//min
+
+        return results;
+      },
+      calculateDistance: function (lat1, lat2, lng1, lng2){
+        var lat1 = Math.radians(lat1);
+        var lat2 = Math.radians(lat2);
+        var lng1 = Math.radians(lng1);
+        var lng2 = Math.radians(lng2);
+
+        var distance = Math.acos(Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng1 - lng2));
+
+        return 6371 * distance;
+      }
+    }
+  })

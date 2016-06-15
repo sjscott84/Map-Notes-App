@@ -320,7 +320,8 @@ app.factory('server', ['existingPlaces', 'listView', 'currentPosition', 'fitBoun
       firebaseService.savePlace(placeObject.group, placeObject.type, placeObject);
     },
     resultsByLocation: function(){
-      var data = {"lat" : currentPosition.lat, "lng": currentPosition.lng, "distance": currentPosition.radius};
+      firebaseService.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius);
+      /*var data = {"lat" : currentPosition.lat, "lng": currentPosition.lng, "distance": currentPosition.radius};
       //firebaseService.resultsByLocation(data.lat, data.lng, data.distance);
       $http({
         method: 'GET',
@@ -341,7 +342,7 @@ app.factory('server', ['existingPlaces', 'listView', 'currentPosition', 'fitBoun
         }
       }), function(response){
             console.log(response);
-      }
+      }*/
     },
     searchForPlaces: function(group, type){
       firebaseService.searchForPlaces(group, type)
