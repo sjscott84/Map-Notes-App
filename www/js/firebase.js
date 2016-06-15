@@ -1,5 +1,5 @@
 angular.module('starter')
-  .factory("firebaseService",['existingPlaces', 'listView', 'placeConstructor', 'fitBounds',  function(existingPlaces, listView, placeConstructor, fitBounds){
+  .factory("firebaseService",['existingPlaces', 'listView', 'placeConstructor', 'fitBounds', 'errorMessage',  function(existingPlaces, listView, placeConstructor, fitBounds, errorMessage){
 
     var config = {
       apiKey: "AIzaSyAQchOOXdXejiMOcTKoj_w6hDbg-01m3jQ",
@@ -94,6 +94,9 @@ angular.module('starter')
                 fitBounds.fitBoundsToVisibleMarkers(listView);
               }
             })
+            if(listView.length === 0){
+              errorMessage.searchErrorAlert();
+            }
           })
         }
       }

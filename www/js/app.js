@@ -311,7 +311,7 @@ app.controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'popup', 'server
   };
 }]);
 
-app.factory('server', ['existingPlaces', 'listView', 'currentPosition', 'fitBounds', 'placeConstructor', 'ErrorMessage', 'firebaseService', function(existingPlaces, listView, currentPosition, fitBounds, placeConstructor, ErrorMessage, firebaseService){
+app.factory('server', ['existingPlaces', 'listView', 'currentPosition', 'fitBounds', 'placeConstructor', 'errorMessage', 'firebaseService', function(existingPlaces, listView, currentPosition, fitBounds, placeConstructor, errorMessage, firebaseService){
   return {
     pageSetUp: function(){
       firebaseService.pageSetUp();
@@ -337,7 +337,7 @@ app.factory('server', ['existingPlaces', 'listView', 'currentPosition', 'fitBoun
           fitBounds.fitBoundsToVisibleMarkers(listView);
         }else{
           //alert("Error, no results found, please try again");
-          ErrorMessage.locationErrorAlert();
+          errorMessage.locationErrorAlert();
         }
       }), function(response){
             console.log(response);
@@ -448,18 +448,18 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', '
   }
 }]);
 
-app.factory('ErrorMessage',['$ionicPopup', function($ionicPopup){
+app.factory('errorMessage',['$ionicPopup', function($ionicPopup){
   return{
     searchErrorAlert: function(){
        var alertPopup = $ionicPopup.alert({
          title: 'Error',
-         template: 'No results found, please try a new search'
+         template: 'No results found please try a new search'
        });
     },
     locationErrorAlert: function(){
        var alertPopup = $ionicPopup.alert({
          title: 'Error',
-         template: 'No results found for your location, please try searching'
+         template: 'No results found for your location please try searching'
        });
     }
   }
