@@ -26,7 +26,7 @@ app.factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeC
   });
   var content = document.getElementById("infoWindow");
   return{
-    Place: function (name, lat, lng, type, note, address){
+    Place: function (name, lat, lng, type, note, address, key){
       var self = this;
       self.map = map;
       self.name = name;
@@ -35,6 +35,7 @@ app.factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeC
       self.type = type;
       self.note = note;
       self.address = address;
+      self.uid = key;
       self.position = {"lat":self.lat, "lng":self.lng};
       self.marker = new google.maps.Marker({
         map: map,
@@ -63,6 +64,7 @@ app.factory('changeCurrentPlace',['$timeout', 'currentPlace', function($timeout,
         currentPlace.type = place.type;
         currentPlace.lat = place.lat;
         currentPlace.lng = place.lng;
+        currentPlace.uid = place.uid;
       }, 0);
     }
   }
@@ -108,7 +110,6 @@ app.run( function($ionicPlatform, $http, existingPlaces, server) {
     }
   });
     server.pageSetUp();
-
 })
 
 app.config(function($stateProvider, $urlRouterProvider) {
@@ -321,51 +322,9 @@ app.factory('server', ['existingPlaces', 'listView', 'currentPosition', 'fitBoun
     },
     resultsByLocation: function(){
       firebaseService.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius);
-      /*var data = {"lat" : currentPosition.lat, "lng": currentPosition.lng, "distance": currentPosition.radius};
-      //firebaseService.resultsByLocation(data.lat, data.lng, data.distance);
-      $http({
-        method: 'GET',
-        url: 'http://thescotts.mynetgear.com:3001/readFileForRadius',
-        params: data
-      }).then(function(response){
-        if(response.data.length !== 0){
-          response.data.forEach(function(value){
-            listView.push(new placeConstructor.Place(value.name, value.latitude, value.longitude, value.type, value.notes, value.address));
-            fitBounds.fitBoundsToVisibleMarkers(listView);
-            var zoom = map.getZoom();
-              map.setZoom(zoom > 15 ? 15 : zoom);
-          });
-          fitBounds.fitBoundsToVisibleMarkers(listView);
-        }else{
-          //alert("Error, no results found, please try again");
-          errorMessage.locationErrorAlert();
-        }
-      }), function(response){
-            console.log(response);
-      }*/
     },
     searchForPlaces: function(group, type){
       firebaseService.searchForPlaces(group, type)
-      /*var data = {"group" : group, "type" : type};
-      $http({
-        method: 'GET',
-        url: 'http://thescotts.mynetgear.com:3001/readFileForGroup',
-        params: data
-      }).then(function(response){
-        if(response.data.length !== 0){
-          response.data.forEach(function(value){
-            listView.push(new placeConstructor.Place(value.name, value.location, value.latitude, value.longitude, value.type, value.notes, value.address));
-            //fitBounds.fitBoundsToVisibleMarkers(listView);
-            //var zoom = map.getZoom();
-              //map.setZoom(zoom > 15 ? 15 : zoom);
-          });
-          fitBounds.fitBoundsToVisibleMarkers(listView);
-        }else{
-          ErrorMessage.searchErrorAlert();
-        }
-      }), function(response){
-            console.log(response);
-      }*/
     }
   }
 }]);
@@ -391,7 +350,7 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', '
             placeObject.type = mapScope.data.type;
             placeObject.notes = mapScope.data.notes;
 
-            listView.push(new placeConstructor.Place(placeObject.name, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address));
+            //listView.push(new placeConstructor.Place(placeObject.name, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address, ''));
             if(existingPlaces.groups.indexOf(placeObject.group) === -1){
               existingPlaces.groups.push(placeObject.group);
             }
