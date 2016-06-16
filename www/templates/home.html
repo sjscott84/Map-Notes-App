@@ -1,0 +1,21 @@
+<ion-view view-title="Home">
+    <ion-content class="padding">
+
+        <div>
+            <button class="button button-block button-positive" ng-click="loginGoogle()" ng-if="!user.data">
+                Login with Google
+            </button>
+
+            <button class="button button-block button-positive" ng-click="loginFacebook()" ng-if="!user.data">
+                Login with Facebook
+            </button>
+
+            <button class="button button-block button-positive" ng-click="openMap()" ng-if="user.data">
+                Open Map
+            </button>
+
+            <button class="button button-block button-assertive" ng-click="logout()" ng-if="user.data">
+                Logout as {{user.data.displayName}}
+            </button>
+    </ion-content>
+</ion-view>

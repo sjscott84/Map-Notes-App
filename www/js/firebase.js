@@ -8,14 +8,17 @@ angular.module('starter')
       storageBucket: "map-notes-d1949.appspot.com",
     };
     firebase.initializeApp(config);
+
     var database = firebase.database();
+    //var userId = firebase.auth().currentUser.uid;
+    var userId = 'piyDDcON4kZPoS1KxwwE4tk7mGM2';
 
     savePlaceToListView = function(item, key){
       listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address'], key));
       fitBounds.fitBoundsToVisibleMarkers(listView);
     }
 
-    database.ref('places/places').on('value', function(response){
+    database.ref('/users/'+userId+'/places').on('value', function(response){
       if(existingPlaces.groups.length > 1 || existingPlaces.types.length > 1){
         while(existingPlaces.groups.length !== 1){
           existingPlaces.groups.pop();
@@ -25,25 +28,25 @@ angular.module('starter')
         }
       }
       var items = response.val();
-      Object.keys(items).forEach(function(key){
-        if(existingPlaces.groups.indexOf(key) === -1){
-          existingPlaces.groups.push(key);
-        }
-        var item = items[key];
-        Object.keys(item).forEach(function(key){
-          if(existingPlaces.types.indexOf(item[key]['type']) === -1){
-            existingPlaces.types.push(item[key]['type']);
+      if(items){
+        Object.keys(items).forEach(function(key){
+          if(existingPlaces.groups.indexOf(key) === -1){
+            existingPlaces.groups.push(key);
           }
+          var item = items[key];
+          Object.keys(item).forEach(function(key){
+            if(existingPlaces.types.indexOf(item[key]['type']) === -1){
+              existingPlaces.types.push(item[key]['type']);
+            }
+          })
         })
-      })
+      }
     });
 
     return {
       savePlace: function(group, type, placeObject){
         //database.ref('places/places/'+group).push(placeObject);
-        var key = database.ref('places/places/'+group).push(placeObject).key;
-        database.ref('places/catagories/'+'existingGroups').push(group);
-        database.ref('places/catagories/'+'existingTypes').push(type);
+        var key = database.ref('/users/'+userId+'/places/'+group).push(placeObject).key;
         savePlaceToListView(placeObject, key);
 
       },
@@ -58,32 +61,36 @@ angular.module('starter')
           }
         }
         //Add groups to ExistingPlaces array
-        database.ref('places/places/').once('value')
+        database.ref('/users/'+userId+'/places').once('value')
         .then(function (response) {
           var items = response.val();
-          Object.keys(items).forEach(function(key){
-            if(existingPlaces.groups.indexOf(key) === -1){
-              existingPlaces.groups.push(key);
-            }
-          });
+          if(items){
+            Object.keys(items).forEach(function(key){
+              if(existingPlaces.groups.indexOf(key) === -1){
+                existingPlaces.groups.push(key);
+              }
+            });
+          }
         })
         //Add types to ExistingPlaces array
-        database.ref('places/places/').once('value') 
+        database.ref('/users/'+userId+'/places').once('value') 
         .then(function (response) {
           var items = response.val();
-          Object.keys(items).forEach(function(key){
-            var item = items[key];
-            Object.keys(item).forEach(function(key){
-              if(existingPlaces.types.indexOf(item[key]['type']) === -1){
-                existingPlaces.types.push(item[key]['type']);
-              }
-            })
-          });
+          if(items){
+            Object.keys(items).forEach(function(key){
+              var item = items[key];
+              Object.keys(item).forEach(function(key){
+                if(existingPlaces.types.indexOf(item[key]['type']) === -1){
+                  existingPlaces.types.push(item[key]['type']);
+                }
+              })
+            });
+          }
         })
       },
       searchForPlaces: function(group, type){
         if(group === "All" && type === "All"){
-          database.ref('places/places/').once('value')
+          database.ref('/users/'+userId+'/places').once('value')
           .then(function(response){
             var items = response.val();
             Object.keys(items).forEach(function(key){
@@ -94,7 +101,7 @@ angular.module('starter')
             })
           })
         }else if(group === "All" && type !== "All"){
-          database.ref('places/places/').once('value')
+          database.ref('/users/'+userId+'/places').once('value')
           .then(function(response){
             var items = response.val();
             Object.keys(items).forEach(function(key){
@@ -107,7 +114,7 @@ angular.module('starter')
             })
           })
         }else if(group !== "All" && type === "All"){
-          database.ref('places/places/'+ group).once('value')
+          database.ref('/users/'+userId+'/places'+ group).once('value')
           .then(function(response){
             var items = response.val();
             Object.keys(items).forEach(function(key){
@@ -115,7 +122,7 @@ angular.module('starter')
             })
           })
         }else{
-          database.ref('places/places/'+ group).once('value')
+          database.ref('/users/'+userId+'/places'+ group).once('value')
           .then(function(response){
             var items = response.val();
             Object.keys(items).forEach(function(key){
@@ -130,7 +137,7 @@ angular.module('starter')
         }
       },
       placesByLocation: function(lat, lng, distance){
-        database.ref('places/places/').once('value')
+        database.ref('/users/'+userId+'/places').once('value')
         .then(function(response){
           var minMax = location.findLocationsBasedOnRadius(lat, lng, distance);
           var items = response.val();
@@ -150,35 +157,37 @@ angular.module('starter')
       },
       getPlaces: function(){
         var place = {};
-        database.ref('places/places/').on('value', function(response){
+        database.ref('/users/'+userId+'/places').on('value', function(response){
           while(allPlaces.length !== 0){
             allPlaces.pop();
           }
           var items = response.val();
-          Object.keys(items).forEach(function(key){
-            var nameKey = key;
-            place = {name: nameKey, items:[]};
-            var item = items[key];
-            Object.keys(item).forEach(function(key){
-              place.items.push({name: item[key]['name'], group: item[key]['group'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], latitude: item[key]['latitude'], longitude: item[key]['longitude'], uid: key});
+          if(items){
+            Object.keys(items).forEach(function(key){
+              var nameKey = key;
+              place = {name: nameKey, items:[]};
+              var item = items[key];
+              Object.keys(item).forEach(function(key){
+                place.items.push({name: item[key]['name'], group: item[key]['group'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], latitude: item[key]['latitude'], longitude: item[key]['longitude'], uid: key});
+              })
+              allPlaces.push(place);
             })
-            allPlaces.push(place);
-          })
+          }
         })
       },
       deletePlace: function(group, placeId){
-        database.ref('places/places/'+group+'/'+placeId).remove()
+        database.ref('/users/'+userId+'/places'+group+'/'+placeId).remove()
       },
       editPlace: function(group, type, notes, olditem){
         if(olditem.group !== group){
           var newPlace = {group: group, type: type, notes: notes, address: olditem.address, latitude: olditem.latitude, longitude: olditem.longitude, name: olditem.name}
-          database.ref('places/places/'+group).push(newPlace)
+          database.ref('/users/'+userId+'/places'+group).push(newPlace)
           .then(function(){
-            database.ref('places/places/'+olditem.group+'/'+olditem.uid).remove()
+            database.ref('/users/'+userId+'/places'+olditem.group+'/'+olditem.uid).remove()
           })
         }else{
         var updates = {type: type, notes: notes};
-        database.ref('places/places/'+group+'/'+olditem.uid).update(updates)
+        database.ref('/users/'+userId+'/places'+group+'/'+olditem.uid).update(updates)
         }
       }
     }
