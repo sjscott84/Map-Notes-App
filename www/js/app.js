@@ -130,7 +130,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise("/");
 })
 
-app.controller('editCtrl',['$scope', 'firebaseService', 'allPlaces', function($scope, firebaseService, allPlaces){
+app.controller('editCtrl',['$scope', 'firebaseService', 'allPlaces', 'popup', function($scope, firebaseService, allPlaces, popup){
   $scope.list = allPlaces;
 
   $scope.$watchCollection(
@@ -146,7 +146,6 @@ app.controller('editCtrl',['$scope', 'firebaseService', 'allPlaces', function($s
     },true);
 
   $scope.returnToMap = function(){
-    console.log($scope.list);
     document.location.href = '#/';
   }
 
@@ -161,6 +160,14 @@ app.controller('editCtrl',['$scope', 'firebaseService', 'allPlaces', function($s
   $scope.isGroupShown = function(group) {
     return $scope.shownGroup === group;
   };
+
+  $scope.edit= function(item){
+    console.log('Edit '+item.type);
+  }
+
+  $scope.delete= function(item){
+    popup.deletePlace($scope, item);
+  }
 }]);
 
 app.controller('MainCtrl', ['$scope', 'currentPlace', function($scope, currentPlace){
@@ -447,6 +454,25 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', '
             type: 'button-positive',
             onTap: function() {
               server.searchForPlaces(scope.data.selectedGroup, scope.data.selectedType);
+            }
+          }
+        ]
+      })
+    },
+    deletePlace: function(scope, item){
+      var myPopup = $ionicPopup.show({
+        title: "Are you sure you want to delete "+item.name+"?",
+        scope : scope,
+        buttons: [
+          { text: 'Cancel',
+            onTap: function(){
+            } 
+          },
+          {
+            text: '<b>Delete</b>',
+            type: 'button-assertive',
+            onTap: function() {
+              console.log("delete");
             }
           }
         ]
