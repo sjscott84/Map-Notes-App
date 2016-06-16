@@ -160,16 +160,26 @@ angular.module('starter')
             place = {name: nameKey, items:[]};
             var item = items[key];
             Object.keys(item).forEach(function(key){
-              place.items.push({name: item[key]['name'], group: item[key]['group'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], uid: key});
+              place.items.push({name: item[key]['name'], group: item[key]['group'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], latitude: item[key]['latitude'], longitude: item[key]['longitude'], uid: key});
             })
             allPlaces.push(place);
           })
         })
       },
       deletePlace: function(group, placeId){
-        database.ref('places/places/'+group+'/'+placeId).remove(function(){
-
-        })
+        database.ref('places/places/'+group+'/'+placeId).remove()
+      },
+      editPlace: function(group, type, notes, olditem){
+        if(olditem.group !== group){
+          var newPlace = {group: group, type: type, notes: notes, address: olditem.address, latitude: olditem.latitude, longitude: olditem.longitude, name: olditem.name}
+          database.ref('places/places/'+group).push(newPlace)
+          .then(function(){
+            database.ref('places/places/'+olditem.group+'/'+olditem.uid).remove()
+          })
+        }else{
+        var updates = {type: type, notes: notes};
+        database.ref('places/places/'+group+'/'+olditem.uid).update(updates)
+        }
       }
     }
 }])

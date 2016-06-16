@@ -162,7 +162,9 @@ app.controller('editCtrl',['$scope', 'firebaseService', 'allPlaces', 'popup', fu
   };
 
   $scope.edit= function(item){
-    console.log('Edit '+item.type);
+    //console.log('Edit '+item.type);
+    popup.editItem($scope, item);
+    console.log(item);
   }
 
   $scope.delete= function(item){
@@ -378,7 +380,6 @@ app.factory('server', ['existingPlaces', 'listView', 'currentPosition', 'fitBoun
       firebaseService.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius);
     },
     searchForPlaces: function(group, type){
-      firebaseService.pageSetUp();
       firebaseService.searchForPlaces(group, type)
     }
   }
@@ -475,6 +476,29 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', '
             onTap: function() {
               console.log("delete");
               firebaseService.deletePlace(item.group, item.uid);
+            }
+          }
+        ]
+      })
+    },
+    editItem: function(scope, item){
+      scope.data = {group: item.group, type: item.type, note: item.notes};
+      scope.item = item;
+      var myPopup = $ionicPopup.show({
+        templateUrl: 'templates/editPopup.html',
+        title: item.name,
+        scope: scope,
+        buttons: [
+          {
+          text: 'Cancel',
+            onTap: function(){
+            }
+          },
+          {
+          text: '<b>Save</b>',
+          type: 'button-positive',
+            onTap: function(e) {
+              firebaseService.editPlace(scope.data.group, scope.data.type, scope.data.note, scope.item);
             }
           }
         ]
