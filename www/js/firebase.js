@@ -15,6 +15,29 @@ angular.module('starter')
       fitBounds.fitBoundsToVisibleMarkers(listView);
     }
 
+    database.ref('places/places').on('value', function(response){
+      if(existingPlaces.groups.length > 1 || existingPlaces.types.length > 1){
+        while(existingPlaces.groups.length !== 1){
+          existingPlaces.groups.pop();
+        }
+        while(existingPlaces.types.length !== 1){
+          existingPlaces.types.pop();
+        }
+      }
+      var items = response.val();
+      Object.keys(items).forEach(function(key){
+        if(existingPlaces.groups.indexOf(key) === -1){
+          existingPlaces.groups.push(key);
+        }
+        var item = items[key];
+        Object.keys(item).forEach(function(key){
+          if(existingPlaces.types.indexOf(item[key]['type']) === -1){
+            existingPlaces.types.push(item[key]['type']);
+          }
+        })
+      })
+    });
+
     return {
       savePlace: function(group, type, placeObject){
         //database.ref('places/places/'+group).push(placeObject);
@@ -35,23 +58,26 @@ angular.module('starter')
           }
         }
         //Add groups to ExistingPlaces array
-        database.ref('places/catagories/'+'existingGroups').once('value')
+        database.ref('places/places/').once('value')
         .then(function (response) {
           var items = response.val();
           Object.keys(items).forEach(function(key){
-            if(existingPlaces.groups.indexOf(items[key]) === -1){
-              existingPlaces.groups.push(items[key]);
+            if(existingPlaces.groups.indexOf(key) === -1){
+              existingPlaces.groups.push(key);
             }
           });
         })
         //Add types to ExistingPlaces array
-        database.ref('places/catagories/'+'existingTypes').once('value')
+        database.ref('places/places/').once('value') 
         .then(function (response) {
           var items = response.val();
           Object.keys(items).forEach(function(key){
-            if(existingPlaces.types.indexOf(items[key]) === -1){
-              existingPlaces.types.push(items[key]);
-            }
+            var item = items[key];
+            Object.keys(item).forEach(function(key){
+              if(existingPlaces.types.indexOf(item[key]['type']) === -1){
+                existingPlaces.types.push(item[key]['type']);
+              }
+            })
           });
         })
       },
@@ -134,10 +160,15 @@ angular.module('starter')
             place = {name: nameKey, items:[]};
             var item = items[key];
             Object.keys(item).forEach(function(key){
-              place.items.push({name: item[key]['name'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], uid: key});
+              place.items.push({name: item[key]['name'], group: item[key]['group'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], uid: key});
             })
             allPlaces.push(place);
           })
+        })
+      },
+      deletePlace: function(group, placeId){
+        database.ref('places/places/'+group+'/'+placeId).remove(function(){
+
         })
       }
     }

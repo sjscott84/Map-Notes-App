@@ -378,12 +378,13 @@ app.factory('server', ['existingPlaces', 'listView', 'currentPosition', 'fitBoun
       firebaseService.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius);
     },
     searchForPlaces: function(group, type){
+      firebaseService.pageSetUp();
       firebaseService.searchForPlaces(group, type)
     }
   }
 }]);
 
-app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', 'existingPlaces', function($ionicPopup, server, listView, placeConstructor, existingPlaces){
+app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', 'existingPlaces', 'firebaseService', function($ionicPopup, server, listView, placeConstructor, existingPlaces, firebaseService){
   function inputPlaceInfoFn(placeObject, mapScope){
     mapScope.data = {};
     var myPopup = $ionicPopup.show({
@@ -473,6 +474,7 @@ app.factory('popup', ['$ionicPopup', 'server', 'listView', 'placeConstructor', '
             type: 'button-assertive',
             onTap: function() {
               console.log("delete");
+              firebaseService.deletePlace(item.group, item.uid);
             }
           }
         ]
