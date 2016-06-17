@@ -1,5 +1,5 @@
 angular.module('starter')  
-  .controller('editCtrl',['$scope', '$state', 'firebaseService', 'allPlaces', 'popup', function($scope, $state, firebaseService, allPlaces, popup){
+  .controller('editCtrl',['$scope', '$state', 'allPlaces', 'popup', function($scope, $state, allPlaces, popup){
     $scope.list = allPlaces;
 
     $scope.$watchCollection(

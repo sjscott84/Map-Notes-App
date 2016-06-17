@@ -1,6 +1,6 @@
 angular.module('starter')
-  .controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition',
-                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition) {
+  .controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition', 'firebaseAuth',
+                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition, firebaseAuth) {
     var options = {timeout: 10000, enableHighAccuracy: true};
     var button = document.getElementById('button');
     var marker;

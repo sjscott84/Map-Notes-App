@@ -1,5 +1,5 @@
 angular.module('starter')
-  .controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', '$state', 'popup', 'listView', 'fitBounds', 'existingPlaces', 'currentPosition', function($scope, $ionicSideMenuDelegate, $state, popup, listView, fitBounds, existingPlaces, currentPosition){
+  .controller('MenuCtrl', ['$scope', '$ionicSideMenuDelegate', '$state', 'popup', 'listView', 'fitBounds', 'existingPlaces', 'currentPosition', 'firebaseData', function($scope, $ionicSideMenuDelegate, $state, popup, listView, fitBounds, existingPlaces, currentPosition, firebaseData){
     $scope.tasks = [
       {title: 'Find places by location',
       func: 'searchByLocation'},
@@ -8,7 +8,9 @@ angular.module('starter')
       {title: 'Remove current places',
       func: 'removePlaces'},
       {title: 'Edit Places',
-      func: 'editPlaces'}
+      func: 'editPlaces'},
+      {title: 'Logout',
+      func: 'logoutScreen'}
     ];
 
     $scope.searchByWhat = function(){
@@ -26,7 +28,7 @@ angular.module('starter')
 
     $scope.searchByLocation = function(){
       $scope.removePlacesFromList();
-      firebaseService.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius);
+      firebaseData.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius);
       $ionicSideMenuDelegate.toggleLeft();
     };
 
@@ -47,4 +49,9 @@ angular.module('starter')
         x.marker.setMap(null);
       }
     };
+
+    $scope.logoutScreen = function(){
+      $ionicSideMenuDelegate.toggleLeft();
+      $state.go('home');
+    }
   }]);

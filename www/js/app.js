@@ -19,10 +19,14 @@ app.value('currentPosition', {
   lng: '',
   radius: 2
 })
+app.value('appState',{ready: false});
 
-app.run( function($ionicPlatform, $http, $rootScope, user, existingPlaces, firebaseService) {
+app.run( function($ionicPlatform, $http, $rootScope, user, existingPlaces, firebaseData, firebaseService, appState) {
   $rootScope.user = user;
+  $rootScope.appState = appState;
+  window.appState = appState;
   $ionicPlatform.ready(function() {
+    appState.ready = true;
     if(window.cordova && window.cordova.plugins.Keyboard) {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
@@ -37,8 +41,8 @@ app.run( function($ionicPlatform, $http, $rootScope, user, existingPlaces, fireb
       StatusBar.styleDefault();
     }
   });
-    firebaseService.pageSetUp();
-    firebaseService.getPlaces();
+    //firebaseData.pageSetUp();
+    //firebaseData.getPlaces();
 })
 
 app.config(function($stateProvider, $urlRouterProvider) {
@@ -113,7 +117,7 @@ app.factory('changeCurrentPlace',['$timeout', 'currentPlace', function($timeout,
   }
 }])
 
-app.directive('info',['$cordovaAppAvailability', 'currentPlace', 'firebaseService', function($cordovaAppAvailability, currentPlace, firebaseService){
+app.directive('info',['$cordovaAppAvailability', 'currentPlace', 'firebaseData', function($cordovaAppAvailability, currentPlace, firebaseData){
   return {
     scope: {
       place:  '=places'
@@ -136,7 +140,7 @@ app.directive('info',['$cordovaAppAvailability', 'currentPlace', 'firebaseServic
   }
 }])
 
-app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', 'firebaseService', function($ionicPopup, listView, placeConstructor, existingPlaces, firebaseService){
+app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', 'firebaseData', function($ionicPopup, listView, placeConstructor, existingPlaces, firebaseData){
   function inputPlaceInfoFn(placeObject, mapScope){
     mapScope.data = {};
     var myPopup = $ionicPopup.show({
@@ -164,7 +168,7 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
             if(existingPlaces.types.indexOf(placeObject.type) === -1){
               existingPlaces.types.push(placeObject.type);
             }
-            firebaseService.savePlace(placeObject.group, placeObject.type, placeObject);
+            firebaseData.savePlace(placeObject.group, placeObject.type, placeObject);
           }
         }
       ]
@@ -206,7 +210,7 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
             text: 'Retrieve Places',
             type: 'button-positive',
             onTap: function() {
-              firebaseService.searchForPlaces(scope.data.selectedGroup, scope.data.selectedType);
+              firebaseData.searchForPlaces(scope.data.selectedGroup, scope.data.selectedType);
             }
           }
         ]
@@ -226,7 +230,7 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
             type: 'button-assertive',
             onTap: function() {
               console.log("delete");
-              firebaseService.deletePlace(item.group, item.uid);
+              firebaseData.deletePlace(item.group, item.uid);
             }
           }
         ]
@@ -249,7 +253,7 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
           text: '<b>Save</b>',
           type: 'button-positive',
             onTap: function(e) {
-              firebaseService.editPlace(scope.data.group, scope.data.type, scope.data.note, scope.item);
+              firebaseData.editPlace(scope.data.group, scope.data.type, scope.data.note, scope.item);
             }
           }
         ]
