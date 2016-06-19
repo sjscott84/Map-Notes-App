@@ -9867,5 +9867,44 @@ a.button {
 p {
   margin-bottom: 5px; }
 
+#appDescription{
+  color: #444;
+  margin-top: 50%;
+  font-family: "-apple-system", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
+  font-size: 15px;
+  font-weight: normal;
+  text-align: center;
+}
+
+#loginButtons{
+  margin-top: 45%;
+}
+
+#twitter{
+  margin-left: 5px;
+  border-radius: 5px;
+}
+
+#facebook{
+  margin-right: 5px;
+  border-radius: 5px;
+}
+
+#emailAccounts{
+  margin-top: 5%;
+}
+
+#googleButton{
+  color: red;
+}
+
+#logout{
+  color: red;
+}
+
+#logoutButtons{
+  margin-top: 60%;
+}
+
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important; }

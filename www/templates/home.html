@@ -1,22 +1,45 @@
 <ion-view view-title="Home">
     <ion-content class="padding">
 
-        <div ng-show="appState.ready">
-            <button class="button button-block button-positive" ng-click="loginGoogle()" ng-show="!user.data">
+        <div id="appDescription">
+            <h1>Map Notes</h1>
+            <h4>Save all your must see locations in one place, in catagories that make sense to you</h4>
+        </div>
+
+        <div id="loginButtons" ng-show="appState.ready">
+            <button id="googleButton" class="button button-block" ng-click="loginGoogle()" ng-show="!user.data">
                 Login with Google
             </button>
 
-            <button class="button button-block button-positive" ng-click="loginFacebook()" ng-show="!user.data">
-                Login with Facebook
-            </button>
+            <div class="button-bar">
+                <button id="facebook" class="button button-positive" ng-click="loginFacebook()" ng-show="!user.data">
+                Facebook
+                </button>
 
-            <button class="button button-block button-positive" ng-click="openMap()" ng-show="user.data">
-                Open Map
-            </button>
+                <button id="twitter" class="button button-calm" ng-click="loginFacebook()" ng-show="!user.data">
+                Twitter
+                </button>
+            </div>
 
-            <button class="button button-block button-assertive" ng-click="logout()" ng-show="user.data">
-                Logout as {{user.data.displayName}}
-            </button>
+            <div class="button-bar" id="emailAccounts">
+                <button class="button button-clear button-stable" ng-show="!user.data">
+                  Sign in with email
+                </button>
+
+                <button class="button button-clear button-stable" ng-show="!user.data">
+                  Create Account
+                </button>
+            </div>
+
+            <div id="logoutButtons">
+                <button id="logout" class="button button-block" ng-click="logout()" ng-show="user.data">
+                    Logout as {{user.data.displayName}}
+                </button>
+
+                <button class="button button-block button-positive" ng-click="openMap()" ng-show="user.data">
+                    Back to Map
+                </button>
+            </div>
         </div>
     </ion-content>
 </ion-view>

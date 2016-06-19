@@ -24,10 +24,12 @@ angular.module('starter')
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
 
+      if(!map){
       $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
       $scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
 
       map = $scope.map;
+    }
 
       // Create the search box and link it to the UI element.
       var input = document.getElementById('pac-input');
@@ -39,8 +41,8 @@ angular.module('starter')
       });
 
       google.maps.event.addListenerOnce(map, 'idle', function(){
-      console.log("Loaded");
-  });
+        console.log("Loaded");
+      });
       // Listen for the event fired when the user selects a prediction,
       // removes any existing search history and
       // retrieves more details for that place.
