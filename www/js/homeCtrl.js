@@ -4,7 +4,6 @@ angular.module('starter')
     $scope.loginGoogle = function(){
       console.log('Google');
       firebaseAuth.googleLogin();
-      $state.go('map');
     }
 
     $scope.loginFacebook = function(){
@@ -16,7 +15,7 @@ angular.module('starter')
     }
 
     $scope.loginEmail = function(){
-      console.log('Email');
+      popup.signinEmail($scope);
     }
 
     $scope.createAccount = function(){

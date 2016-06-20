@@ -194,7 +194,7 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
             } 
           },
           {
-            text: '<b>Save</b>',
+            text: '<b>Create Account</b>',
             type: 'button-positive',
             onTap: function() {
               firebaseAuth.createAccount(scope.data.email, scope.data.password, function(code, message){
@@ -209,6 +209,29 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
                   codeForPopup === 'Error';
                 }
                 createAccountErrors(codeForPopup, message);
+              });
+            }
+          }
+        ]
+      })
+    },
+    signinEmail: function(scope){
+      scope.data = {};
+      var myPopup = $ionicPopup.show({
+        title: 'Sign In',
+        template: '<input placeholder=" Email" type="text" ng-model="data.email"><br><input placeholder=" Password" type="password" ng-model="data.password">',
+        scope: scope,
+        buttons: [
+          { text: 'Cancel',
+            onTap: function(){
+            } 
+          },
+          {
+            text: '<b>Sign In</b>',
+            type: 'button-positive',
+            onTap: function() {
+              firebaseAuth.signinEmail(scope.data.email, scope.data.password, function(code, message){
+                createAccountErrors(code, message);
               });
             }
           }

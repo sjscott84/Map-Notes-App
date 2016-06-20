@@ -1,14 +1,23 @@
 angular.module('starter')
   .value("user", {})
-  .factory('firebaseAuth', ['$state', 'user', 'firebaseService', 'firebaseData', function($state, user, firebaseService, firebaseData){
+  .factory('firebaseAuth', ['$state', 'user', 'firebaseService', 'firebaseData', '$timeout', function($state, user, firebaseService, firebaseData, $timeout){
     var firebase = firebaseService.fb;
     var provider = new firebase.auth.GoogleAuthProvider();
 
     firebase.auth().onAuthStateChanged(function(currentUser) {
       if (currentUser) {
-        user.data = currentUser;
-        firebaseData.pageSetUp();
-        firebaseData.getPlaces();
+        $timeout(function(){
+          console.log(currentUser);
+          user.data = currentUser;
+          user.displayName = user.data.displayName;
+          if(!user.data.displayName){
+            user.displayName = currentUser.email;
+          }
+          console.log(user.data.displayName);
+          $state.go('map');
+          firebaseData.pageSetUp();
+          firebaseData.getPlaces();
+        }, 0);
       } else {
         console.log(user);
       }
@@ -30,6 +39,13 @@ angular.module('starter')
       },
       createAccount: function(email, password, callback){
         firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          callback(errorCode, errorMessage);
+        });
+      },
+      signinEmail: function(email, password, callback){
+        firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
           var errorCode = error.code;
           var errorMessage = error.message;
           callback(errorCode, errorMessage);
