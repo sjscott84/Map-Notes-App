@@ -1,5 +1,5 @@
 angular.module('starter')
-  .controller('homeCtrl',['$scope', '$state', 'firebaseAuth', 'appState', 'user', function($scope, $state, firebaseAuth, appState, user){
+  .controller('homeCtrl',['$scope', '$state', 'firebaseAuth', 'appState', 'user', 'popup', function($scope, $state, firebaseAuth, appState, user, popup){
 
     $scope.loginGoogle = function(){
       console.log('Google');
@@ -9,6 +9,19 @@ angular.module('starter')
 
     $scope.loginFacebook = function(){
       console.log('Facebook');
+    }
+
+    $scope.loginTwitter = function(){
+      console.log('Twitter');
+    }
+
+    $scope.loginEmail = function(){
+      console.log('Email');
+    }
+
+    $scope.createAccount = function(){
+      console.log('CreateAccount');
+      popup.createAccount($scope);
     }
 
     $scope.logout = function(){

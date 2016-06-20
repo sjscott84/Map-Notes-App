@@ -15,10 +15,10 @@ angular.module('starter')
     });
 
     return {
-      googleLogin: function(callback){
+      googleLogin: function(){
         firebase.auth().signInWithRedirect(provider)
         .then(function(){
-          callback();
+          //
           console.log("google sign in successful (apparently)")
         }).catch(function(err) {
           console.log(err);
@@ -27,6 +27,13 @@ angular.module('starter')
       logout: function(){
         firebase.auth().signOut().then(function(){
         })
+      },
+      createAccount: function(email, password, callback){
+        firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          callback(errorCode, errorMessage);
+        });
       }
     }
 }])

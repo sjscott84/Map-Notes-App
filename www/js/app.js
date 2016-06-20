@@ -140,7 +140,7 @@ app.directive('info',['$cordovaAppAvailability', 'currentPlace', 'firebaseData',
   }
 }])
 
-app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', 'firebaseData', function($ionicPopup, listView, placeConstructor, existingPlaces, firebaseData){
+app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', 'firebaseData', 'firebaseAuth', function($ionicPopup, listView, placeConstructor, existingPlaces, firebaseData, firebaseAuth){
   function inputPlaceInfoFn(placeObject, mapScope){
     mapScope.data = {};
     var myPopup = $ionicPopup.show({
@@ -174,7 +174,47 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
       ]
     })
   }
+
+  function createAccountErrors (code, message){
+    var alertPopup = $ionicPopup.alert({
+      title: code,
+      template: message
+     });
+  }
   return {
+    createAccount: function(scope){
+      scope.data = {};
+      var myPopup = $ionicPopup.show({
+        title: 'Create Account',
+        template: '<input placeholder=" Email" type="text" ng-model="data.email"><br><input placeholder=" Password" type="password" ng-model="data.password">',
+        scope: scope,
+        buttons: [
+          { text: 'Cancel',
+            onTap: function(){
+            } 
+          },
+          {
+            text: '<b>Save</b>',
+            type: 'button-positive',
+            onTap: function() {
+              firebaseAuth.createAccount(scope.data.email, scope.data.password, function(code, message){
+                var codeForPopup;
+                if(code === 'auth/email-already-in-use'){
+                  codeForPopup = 'Error with Email';
+                }else if(code === 'auth/weak-password'){
+                  codeForPopup = 'Error with Password';
+                }else if(code === 'auth/invalid-email'){
+                  codeForPopup = 'Error with Email';
+                }else{
+                  codeForPopup === 'Error';
+                }
+                createAccountErrors(codeForPopup, message);
+              });
+            }
+          }
+        ]
+      })
+    },
     saveRequest: function(placeObject, mapScope){
       var myPopup = $ionicPopup.show({
         title: placeObject.name,
