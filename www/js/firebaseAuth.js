@@ -1,12 +1,11 @@
 angular.module('starter')
   .value("user", {})
-  .factory('firebaseAuth', ['$state', 'user', 'firebaseService', 'firebaseData', '$timeout', function($state, user, firebaseService, firebaseData, $timeout){
+  .factory('firebaseAuth', ['$state', 'user', 'firebaseService', 'firebaseData', '$timeout', '$cordovaOauth', 'appState', function($state, user, firebaseService, firebaseData, $timeout, $cordovaOauth, appState){
     var firebase = firebaseService.fb;
     var provider = new firebase.auth.GoogleAuthProvider();
     var fbProvider = new firebase.auth.FacebookAuthProvider();
 
     firebase.auth().onAuthStateChanged(function(currentUser){
-      console.log(currentUser);
       if(currentUser){
         $timeout(function(){
           user.data = currentUser;
@@ -24,14 +23,30 @@ angular.module('starter')
       }
     });
 
+    function signInWithCredential(credential, callback) {
+      firebase.auth().signInWithCredential(credential)
+          .then(function(result) {
+          })
+          .catch(function(error){callback(error)});
+    }
+
     return {
       googleLogin: function(callback){
-        firebase.auth().signInWithRedirect(provider)
-        .then(function(){
-          console.log("google sign in successful (apparently)");
-        }).catch(function(err) {
-          callback(err);
-        });
+        console.log(appState.cordova);
+        if (appState.cordova) {
+          $cordovaOauth.google("225031542438-trph43971tepg2g6085aoci4sujs26hb.apps.googleusercontent.com", ["email"])
+            .then(function(result) {
+                var credential = firebase.auth.GoogleAuthProvider.credential(result.id_token, result.access_token);
+                signInWithCredential(credential, callback);
+            });
+        }else{
+          firebase.auth().signInWithRedirect(provider)
+          .then(function(){
+            console.log("google sign in successful (apparently)");
+          }).catch(function(err) {
+            callback(err);
+          });
+        }
       },
       facebookLogin: function(callback){
         firebase.auth().signInWithPopup(fbProvider).catch(function(error){callback(error)})

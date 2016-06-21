@@ -3,9 +3,9 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var app = angular.module('starter', ['ionic', 'ngCordova'])
+var app = angular.module('starter', ['ionic', 'ngCordovaOauth', 'ngCordova'])
 
-var map;
+//var map;
 
 app.value('listView', []);
 app.value('allPlaces', []);
@@ -19,26 +19,38 @@ app.value('currentPosition', {
   lng: '',
   radius: 2
 })
-app.value('appState',{ready: false});
+app.value('appState',{
+  ready: false,
+  cordova: false
+});
 
 app.run( function($ionicPlatform, $http, $rootScope, user, existingPlaces, firebaseData, firebaseService, appState) {
   $rootScope.user = user;
   $rootScope.appState = appState;
   window.appState = appState;
+
   $ionicPlatform.ready(function() {
     appState.ready = true;
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-      // for form inputs)
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 
-      // Don't remove this line unless you know what you are doing. It stops the viewport
-      // from snapping when text inputs are focused. Ionic handles this internally for
-      // a much nicer keyboard experience.
-      cordova.plugins.Keyboard.disableScroll(true);
-    }
-    if(window.StatusBar) {
-      StatusBar.styleDefault();
+    if(window.cordova){
+      appState.cordova = true;
+
+      if(window.cordova && window.cordova.plugins.Keyboard) {
+        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+        // for form inputs)
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+
+        // Don't remove this line unless you know what you are doing. It stops the viewport
+        // from snapping when text inputs are focused. Ionic handles this internally for
+        // a much nicer keyboard experience.
+        cordova.plugins.Keyboard.disableScroll(true);
+      }
+      if(window.StatusBar) {
+        StatusBar.styleDefault();
+      }
+      if (cordova.InAppBrowser) {
+        window.open = cordova.InAppBrowser.open
+      }
     }
   });
     //firebaseData.pageSetUp();
@@ -73,7 +85,7 @@ app.factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeC
   });
   var content = document.getElementById("infoWindow");
   return{
-    Place: function (name, lat, lng, type, note, address, key){
+    Place: function (name, lat, lng, type, note, address, key, map){
       var self = this;
       self.map = map;
       self.name = name;
@@ -261,7 +273,7 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
         ]
       })
     },
-    getPlaces: function(scope){
+    getPlaces: function(scope, map){
       scope.data = {};
       var myPopup = $ionicPopup.show({
         templateUrl: 'templates/findPlaces.html',
@@ -276,7 +288,8 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
             text: 'Retrieve Places',
             type: 'button-positive',
             onTap: function() {
-              firebaseData.searchForPlaces(scope.data.selectedGroup, scope.data.selectedType);
+              console.log(scope.data.selectedGroup);
+              firebaseData.searchForPlaces(scope.data.selectedGroup, scope.data.selectedType, map);
             }
           }
         ]
@@ -346,12 +359,12 @@ app.factory('errorMessage',['$ionicPopup', function($ionicPopup){
 }])
 
 app.factory('fitBounds', function(){
-  function zoomControl(){
+  function zoomControl(map){
     var zoom = map.getZoom();
     map.setZoom(zoom > 15 ? 15 : zoom);
   }
   return {
-    fitBoundsToVisibleMarkers: function(listView){
+    fitBoundsToVisibleMarkers: function(listView, map){
       var bounds = new google.maps.LatLngBounds();
 
       for (var i=0; i<listView.length; i++) {
@@ -360,7 +373,7 @@ app.factory('fitBounds', function(){
         }
       }
       map.fitBounds(bounds);
-      zoomControl();
+      zoomControl(map);
     }
   }
 });

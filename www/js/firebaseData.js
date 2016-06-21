@@ -6,9 +6,9 @@ angular.module('starter')
     //var userId = user.data.uid;
 
 
-    savePlaceToListView = function(item, key){
-      listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address'], key));
-      fitBounds.fitBoundsToVisibleMarkers(listView);
+    savePlaceToListView = function(item, key, map){
+      listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address'], key, map));
+      fitBounds.fitBoundsToVisibleMarkers(listView, map);
     }
 
     /*database.ref('/users/'+userId+'/places').on('value', function(response){
@@ -37,10 +37,10 @@ angular.module('starter')
     });*/
 
     return {
-      savePlace: function(group, type, placeObject){
+      savePlace: function(group, type, placeObject, map){
         //database.ref('places/places/'+group).push(placeObject);
         var key = database.ref('/users/'+user.data.uid+'/places/'+group).push(placeObject).key;
-        savePlaceToListView(placeObject, key);
+        savePlaceToListView(placeObject, key, map);
 
       },
       pageSetUp: function(){
@@ -81,7 +81,7 @@ angular.module('starter')
           }
         })
       },
-      searchForPlaces: function(group, type){
+      searchForPlaces: function(group, type, map){
         if(group === "All" && type === "All"){
           database.ref('/users/'+user.data.uid+'/places').once('value')
           .then(function(response){
@@ -89,7 +89,7 @@ angular.module('starter')
             Object.keys(items).forEach(function(key){
               var item = items[key];
               Object.keys(item).forEach(function(key){
-                savePlaceToListView(item[key], key);
+                savePlaceToListView(item[key], key, map);
               })
             })
           })
@@ -101,26 +101,28 @@ angular.module('starter')
               var item = items[key];
               Object.keys(item).forEach(function(key){
                 if(item[key]['type'] === type){
-                  savePlaceToListView(item[key], key);
+                  savePlaceToListView(item[key], key, map);
                 }
               })
             })
           })
         }else if(group !== "All" && type === "All"){
-          database.ref('/users/'+user.data.uid+'/places'+ group).once('value')
+          database.ref('/users/'+user.data.uid+'/places/'+group).once('value')
           .then(function(response){
             var items = response.val();
+            console.log(items); 
             Object.keys(items).forEach(function(key){
-              savePlaceToListView(items[key], key);
+              savePlaceToListView(items[key], key, map);
             })
           })
         }else{
-          database.ref('/users/'+user.data.uid+'/places'+ group).once('value')
+          database.ref('/users/'+user.data.uid+'/places/'+group).once('value')
           .then(function(response){
             var items = response.val();
+            console.log(items);
             Object.keys(items).forEach(function(key){
               if(items[key]['type'] === type){
-                savePlaceToListView(items[key], key);
+                savePlaceToListView(items[key], key, map);
               }
             })
             if(listView.length === 0){
@@ -129,7 +131,7 @@ angular.module('starter')
           })
         }
       },
-      placesByLocation: function(lat, lng, distance){
+      placesByLocation: function(lat, lng, distance, map){
         database.ref('/users/'+user.data.uid+'/places').once('value')
         .then(function(response){
           var minMax = location.findLocationsBasedOnRadius(lat, lng, distance);
@@ -141,7 +143,7 @@ angular.module('starter')
                 //calculate distance from start point to saved location
                 var resultDistance = location.calculateDistance(lat, item[key]["latitude"], lng, item[key]["longitude"]);
                 if(resultDistance < distance){
-                  savePlaceToListView(item[key], key);
+                  savePlaceToListView(item[key], key, map);
                 }
               }
             })

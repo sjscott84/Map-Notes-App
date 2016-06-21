@@ -15,7 +15,7 @@
     <!-- cordova script (this will be a 404 during development) -->
     <script src="lib/ng-cordova/dist/ng-cordova.js"></script>
     <script src="cordova.js"></script>
-
+    <script src="lib/ng-cordova-oauth/dist/ng-cordova-oauth.min.js"></script>
     <!-- your app's js -->
     <script src="js/app.js"></script>
     <script src="js/firebase.js"></script>
@@ -24,48 +24,15 @@
     <script src="js/homeCtrl.js"></script>
     <script src="js/editCtrl.js"></script>
     <script src="js/mapCtrl.js"></script>
-    <script src="js/menuCtrl.js"></script>
     <script src="js/mainCtrl.js"></script>
     
   </head>
   <body ng-app="starter" data-tap-disabled="true">
-      <ion-side-menus>
-        <div ng-controller="MainCtrl">
-          <!--Center content-->
-          <!--<ion-pane>-->
-          <ion-side-menu-content>
-            <!--<ion-nav-bar>-->
+    <div ng-controller="MainCtrl">
+      <ion-nav-view></ion-nav-view>
+      <info id="infoWindow" places="thisplace"></info>
 
-                <!--<ion-nav-buttons side="left">-->
-                <!-- Toggle left side menu -->
-                  <!--<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>-->
-                <!--</ion-nav-buttons>-->
-   
-            <!--</ion-nav-bar>-->
-          <ion-nav-view></ion-nav-view>
-          <info id="infoWindow" places="thisplace"></info>
-            <!--<ion-content>
-            </ion-content>-->
-          </ion-side-menu-content>
-        </div>
-        <!--</ion-pane>-->
-
-        <!-- Left Menu -->
-      <div ng-controller="MenuCtrl" ng-show"map"="">
-        <ion-side-menu side="left">
-            <ion-header-bar class="bar-stable">
-                <h1 class="title ng-cloak">Map Notes</h1>
-            </ion-header-bar>
-            <ion-content>
-              <ion-list class="ng-cloak">
-                <ion-item ng-repeat="task in tasks" ng-click="this[task.func]()">
-                  {{task.title}}
-                </ion-item>
-              </ion-list>
-            </ion-content>
-        </ion-side-menu>
-      </div></ion-side-menus>
-    
+    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!--<script async defer src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCZnUzSkNCumO4XVfZ9V26yLh9Y__14C9U&sensor=true&libraries=places"></script>-->

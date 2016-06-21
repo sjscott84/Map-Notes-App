@@ -1,13 +1,15 @@
-angular.module('starter')
-  .controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition', 'firebaseAuth',
-                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition, firebaseAuth) {
+var app = angular.module('starter')
+  app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition', 'firebaseAuth', 'menu',
+                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition, firebaseAuth, menu) {
+    scope = $scope;
     var options = {timeout: 10000, enableHighAccuracy: true};
     var button = document.getElementById('button');
     var marker;
-    //var infoWindow;
     var placeObject = {};
-    $scope.matchingGroups = [];
-    $scope.matchingTypes = [];
+    var input;
+    var searchBox;
+    scope.matchingGroups = [];
+    scope.matchingTypes = [];
 
     $cordovaGeolocation.getCurrentPosition(options).then(function(position){
 
@@ -24,20 +26,18 @@ angular.module('starter')
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
 
-      if(!map){
-      $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-      $scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
+      scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
 
-      map = $scope.map;
-    }
+      //map = scope.map;
 
       // Create the search box and link it to the UI element.
-      var input = document.getElementById('pac-input');
-      var searchBox = new google.maps.places.SearchBox(input);
-      $scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+      input = document.getElementById('pac-input');
+      searchBox = new google.maps.places.SearchBox(input);
+      scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
       //Bias the SearchBox results towards current map's viewport.
-      $scope.map.addListener('bounds_changed', function() {
-        searchBox.setBounds($scope.map.getBounds());
+      scope.map.addListener('bounds_changed', function() {
+        searchBox.setBounds(scope.map.getBounds());
       });
 
       google.maps.event.addListenerOnce(map, 'idle', function(){
@@ -61,13 +61,13 @@ angular.module('starter')
         places.forEach(function(place) {
         // Create a marker for each place.
           marker = new google.maps.Marker({
-            map: $scope.map,
+            map: scope.map,
             title: place.name,
             position: place.geometry.location
           });
 
           google.maps.event.addListener(marker, 'click', function() {
-            popup.saveRequest(placeObject, $scope);
+            popup.saveRequest(placeObject, scope);
             marker.setMap(null);
           });
 
@@ -77,8 +77,8 @@ angular.module('starter')
           } else {
             bounds.extend(place.geometry.location);
           }
-          $scope.map.setCenter(place.geometry.location);
-          $scope.map.fitBounds(bounds);
+          scope.map.setCenter(place.geometry.location);
+          scope.map.fitBounds(bounds);
           var lat = place.geometry.location.lat();
           var lng = place.geometry.location.lng();
           placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "latitude":lat, "longitude":lng, "type": undefined, "notes": undefined};
@@ -89,40 +89,40 @@ angular.module('starter')
       console.log("Could not get location");
     });
 
-    $scope.getGroups = function() {
-      if($scope.data.group.length !== 0){
-        var entry = $scope.data.group.length;
+    scope.getGroups = function() {
+      if(scope.data.group.length !== 0){
+        var entry = scope.data.group.length;
       }
-      $scope.matchingGroups = [];
+      scope.matchingGroups = [];
       for(var i = 1; i<existingPlaces.groups.length; i++){
           var what = existingPlaces.groups[i].slice(0, entry);
-          if($scope.data.group.match(new RegExp([what], 'i'))){
+          if(scope.data.group.match(new RegExp([what], 'i'))){
             //console.log(existingPlaces.groups[i]);
-            $scope.matchingGroups.push(existingPlaces.groups[i]);
+            scope.matchingGroups.push(existingPlaces.groups[i]);
         }
       }
     }
 
-    $scope.getTypes = function() {
-      if($scope.data.type.length !== 0){
-        var entry = $scope.data.type.length;
+    scope.getTypes = function() {
+      if(scope.data.type.length !== 0){
+        var entry = scope.data.type.length;
       }
-      $scope.matchingTypes = [];
+      scope.matchingTypes = [];
       for(var i = 1; i<existingPlaces.types.length; i++){
           var what = existingPlaces.types[i].slice(0, entry);
-          if($scope.data.type.match(new RegExp([what], 'i'))){
+          if(scope.data.type.match(new RegExp([what], 'i'))){
             //console.log(existingPlaces.groups[i]);
-            $scope.matchingTypes.push(existingPlaces.types[i]);
+            scope.matchingTypes.push(existingPlaces.types[i]);
         }
       }
     }
 
-    $scope.closeList = function(){
-      $scope.matchingGroups = [];
-      $scope.matchingTypes = [];
+    scope.closeList = function(){
+      scope.matchingGroups = [];
+      scope.matchingTypes = [];
     }
 
-    $scope.disableTap = function(){
+    scope.disableTap = function(){
       container = document.getElementsByClassName('pac-container');
       // disable ionic data tab
       angular.element(container).attr('data-tap-disabled', 'true');
@@ -131,4 +131,68 @@ angular.module('starter')
           document.getElementById('pac-input').blur();
       });
     };
+
+    scope.tasks = [
+      {title: 'Find places by location',
+      func: 'searchByLocation'},
+      {title: 'Search for places',
+      func: 'searchByWhat'},
+      {title: 'Remove current places',
+      func: 'removePlaces'},
+      {title: 'Edit Places',
+      func: 'editPlaces'},
+      {title: 'Logout',
+      func: 'logoutScreen'}
+    ];
+
+    scope.getFunctions = function(task){
+      var func = task.func;
+      //if(func = 'searchByWhat'){
+        menu[func](scope, scope.map);
+      //}else if(func = 'searchByLocation'){
+        //menu[func](scope.map);
+      //}else{
+        //menu[func]();
+      //}
+    }
   }]);
+
+app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popup', 'currentPosition', 'firebaseData', '$state', function(listView, $ionicSideMenuDelegate, existingPlaces, popup, currentPosition, firebaseData, $state){
+  removePlacesFromList = function(){
+    while(listView.length !== 0){
+      var x = listView.pop();
+      x.marker.setMap(null);
+    }
+  };
+  return{
+    searchByWhat: function(mapScope, map){
+      removePlacesFromList();
+      $ionicSideMenuDelegate.toggleLeft();
+      //var promise = server.pageSetUp();
+      //promise.then(
+        //function(){
+          mapScope.group  = existingPlaces.groups;
+          mapScope.type = existingPlaces.types;
+          popup.getPlaces(mapScope, map);
+        //}
+      //);
+    },
+    searchByLocation: function(mapScope, map){
+      removePlacesFromList();
+      firebaseData.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
+      $ionicSideMenuDelegate.toggleLeft();
+    },
+    editPlaces: function(){
+      $ionicSideMenuDelegate.toggleLeft();
+      $state.go('edit');
+    },
+    removePlaces: function(){
+      removePlacesFromList();
+      $ionicSideMenuDelegate.toggleLeft();
+    },
+    logoutScreen: function(){
+      $ionicSideMenuDelegate.toggleLeft();
+      $state.go('home');
+    }
+  }
+}])
