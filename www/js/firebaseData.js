@@ -11,7 +11,7 @@ angular.module('starter')
       fitBounds.fitBoundsToVisibleMarkers(listView, map);
     }
 
-    /*database.ref('/users/'+userId+'/places').on('value', function(response){
+    clearExistingPlaces = function(){
       if(existingPlaces.groups.length > 1 || existingPlaces.types.length > 1){
         while(existingPlaces.groups.length !== 1){
           existingPlaces.groups.pop();
@@ -20,39 +20,35 @@ angular.module('starter')
           existingPlaces.types.pop();
         }
       }
-      var items = response.val();
+    }
+
+    updateAllPlaces = function(items){
+      var place = {};
+      while(allPlaces.length !== 0){
+        allPlaces.pop();
+      }
       if(items){
         Object.keys(items).forEach(function(key){
-          if(existingPlaces.groups.indexOf(key) === -1){
-            existingPlaces.groups.push(key);
-          }
+          var nameKey = key;
+          place = {name: nameKey, items:[]};
           var item = items[key];
           Object.keys(item).forEach(function(key){
-            if(existingPlaces.types.indexOf(item[key]['type']) === -1){
-              existingPlaces.types.push(item[key]['type']);
-            }
+            place.items.push({name: item[key]['name'], group: item[key]['group'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], latitude: item[key]['latitude'], longitude: item[key]['longitude'], uid: key});
           })
+          allPlaces.push(place);
         })
       }
-    });*/
+    }
 
     return {
       savePlace: function(group, type, placeObject, map){
         //database.ref('places/places/'+group).push(placeObject);
         var key = database.ref('/users/'+user.data.uid+'/places/'+group).push(placeObject).key;
         savePlaceToListView(placeObject, key, map);
-
       },
       pageSetUp: function(){
         //Clear out existingPlaces before repopulating
-        if(existingPlaces.groups.length > 1 || existingPlaces.types.length > 1){
-          while(existingPlaces.groups.length !== 1){
-            existingPlaces.groups.pop();
-          }
-          while(existingPlaces.types.length !== 1){
-            existingPlaces.types.pop();
-          }
-        }
+        clearExistingPlaces();
         //Add groups to ExistingPlaces array
         database.ref('/users/'+user.data.uid+'/places').once('value')
         .then(function (response) {
@@ -150,24 +146,11 @@ angular.module('starter')
           })
         })
       },
+      //Used by firebaseAuth at page setup
       getPlaces: function(){
-        var place = {};
         database.ref('/users/'+user.data.uid+'/places').on('value', function(response){
-          while(allPlaces.length !== 0){
-            allPlaces.pop();
-          }
           var items = response.val();
-          if(items){
-            Object.keys(items).forEach(function(key){
-              var nameKey = key;
-              place = {name: nameKey, items:[]};
-              var item = items[key];
-              Object.keys(item).forEach(function(key){
-                place.items.push({name: item[key]['name'], group: item[key]['group'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], latitude: item[key]['latitude'], longitude: item[key]['longitude'], uid: key});
-              })
-              allPlaces.push(place);
-            })
-          }
+          updateAllPlaces(items);
         })
       },
       deletePlace: function(group, placeId){
@@ -176,14 +159,33 @@ angular.module('starter')
       editPlace: function(group, type, notes, olditem){
         if(olditem.group !== group){
           var newPlace = {group: group, type: type, notes: notes, address: olditem.address, latitude: olditem.latitude, longitude: olditem.longitude, name: olditem.name}
-          database.ref('/users/'+user.data.uid+'/places'+group).push(newPlace)
+          database.ref('/users/'+user.data.uid+'/places/'+group).push(newPlace)
           .then(function(){
-            database.ref('/users/'+user.data.uid+'/places'+olditem.group+'/'+olditem.uid).remove()
+            database.ref('/users/'+user.data.uid+'/places/'+olditem.group+'/'+olditem.uid).remove()
           })
         }else{
         var updates = {type: type, notes: notes};
-        database.ref('/users/'+user.data.uid+'/places'+group+'/'+olditem.uid).update(updates)
+        database.ref('/users/'+user.data.uid+'/places/'+group+'/'+olditem.uid).update(updates)
         }
+        //Update the existingPlaces arrays for searching
+        database.ref('/users/'+user.data.uid+'/places').on('value', function(response){
+          clearExistingPlaces();
+          var items = response.val();
+          updateAllPlaces(items);
+          if(items){
+            Object.keys(items).forEach(function(key){
+              if(existingPlaces.groups.indexOf(key) === -1){
+                existingPlaces.groups.push(key);
+              }
+              var item = items[key];
+              Object.keys(item).forEach(function(key){
+                if(existingPlaces.types.indexOf(item[key]['type']) === -1){
+                  existingPlaces.types.push(item[key]['type']);
+                }
+              })
+            })
+          }
+        });
       }
     }
   }])

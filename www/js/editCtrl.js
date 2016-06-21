@@ -31,9 +31,7 @@ angular.module('starter')
     };
 
     $scope.edit= function(item){
-      //console.log('Edit '+item.type);
       popup.editItem($scope, item);
-      console.log(item);
     }
 
     $scope.delete= function(item){
