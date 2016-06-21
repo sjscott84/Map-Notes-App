@@ -182,6 +182,9 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
      });
   }
   return {
+    loginErrors: function(error){
+      createAccountErrors(error.code, error.message);
+    },
     createAccount: function(scope){
       scope.data = {};
       var myPopup = $ionicPopup.show({

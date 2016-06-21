@@ -2,12 +2,15 @@ angular.module('starter')
   .controller('homeCtrl',['$scope', '$state', 'firebaseAuth', 'appState', 'user', 'popup', function($scope, $state, firebaseAuth, appState, user, popup){
 
     $scope.loginGoogle = function(){
-      console.log('Google');
-      firebaseAuth.googleLogin();
+      firebaseAuth.googleLogin(function(error){
+        popup.loginErrors(error);
+      });
     }
 
     $scope.loginFacebook = function(){
-      console.log('Facebook');
+      firebaseAuth.facebookLogin(function(error){
+        popup.loginErrors(error);
+      });
     }
 
     $scope.loginTwitter = function(){

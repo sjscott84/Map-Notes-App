@@ -3,11 +3,12 @@ angular.module('starter')
   .factory('firebaseAuth', ['$state', 'user', 'firebaseService', 'firebaseData', '$timeout', function($state, user, firebaseService, firebaseData, $timeout){
     var firebase = firebaseService.fb;
     var provider = new firebase.auth.GoogleAuthProvider();
+    var fbProvider = new firebase.auth.FacebookAuthProvider();
 
-    firebase.auth().onAuthStateChanged(function(currentUser) {
-      if (currentUser) {
+    firebase.auth().onAuthStateChanged(function(currentUser){
+      console.log(currentUser);
+      if(currentUser){
         $timeout(function(){
-          console.log(currentUser);
           user.data = currentUser;
           user.displayName = user.data.displayName;
           if(!user.data.displayName){
@@ -18,20 +19,30 @@ angular.module('starter')
           firebaseData.pageSetUp();
           firebaseData.getPlaces();
         }, 0);
-      } else {
-        console.log(user);
+      }else{
+        console.log('No User');
       }
     });
 
     return {
-      googleLogin: function(){
+      googleLogin: function(callback){
         firebase.auth().signInWithRedirect(provider)
         .then(function(){
-          //
-          console.log("google sign in successful (apparently)")
+          console.log("google sign in successful (apparently)");
         }).catch(function(err) {
-          console.log(err);
+          callback(err);
         });
+      },
+      facebookLogin: function(callback){
+        firebase.auth().signInWithPopup(fbProvider).catch(function(error){callback(error)})
+        /*firebase.auth().signInWithRedirect(fbProvider)
+        firebase.auth().getRedirectResult().then(function(result){
+          if(!result){
+            console.log("Null User")
+          }else{
+            console.log(result);
+          }
+          }).catch(function(error) {callback(error)})*/
       },
       logout: function(){
         firebase.auth().signOut().then(function(){
