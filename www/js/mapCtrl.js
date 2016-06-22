@@ -67,7 +67,7 @@ var app = angular.module('starter')
           });
 
           google.maps.event.addListener(marker, 'click', function() {
-            popup.saveRequest(placeObject, scope);
+            popup.saveRequest(placeObject, scope, scope.map);
             marker.setMap(null);
           });
 

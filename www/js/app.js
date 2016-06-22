@@ -153,7 +153,7 @@ app.directive('info',['$cordovaAppAvailability', 'currentPlace', 'firebaseData',
 }])
 
 app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', 'firebaseData', 'firebaseAuth', function($ionicPopup, listView, placeConstructor, existingPlaces, firebaseData, firebaseAuth){
-  function inputPlaceInfoFn(placeObject, mapScope){
+  function inputPlaceInfoFn(placeObject, mapScope, map){
     mapScope.data = {};
     var myPopup = $ionicPopup.show({
       templateUrl: 'templates/popup.html',
@@ -180,7 +180,7 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
             if(existingPlaces.types.indexOf(placeObject.type) === -1){
               existingPlaces.types.push(placeObject.type);
             }
-            firebaseData.savePlace(placeObject.group, placeObject.type, placeObject);
+            firebaseData.savePlace(placeObject.group, placeObject.type, placeObject, map);
           }
         }
       ]
@@ -253,7 +253,7 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
         ]
       })
     },
-    saveRequest: function(placeObject, mapScope){
+    saveRequest: function(placeObject, mapScope, map){
       var myPopup = $ionicPopup.show({
         title: placeObject.name,
         subTitle: "Do you want to save this place?",
@@ -267,7 +267,7 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
             text: '<b>Save</b>',
             type: 'button-positive',
             onTap: function() {
-              inputPlaceInfoFn(placeObject, mapScope);
+              inputPlaceInfoFn(placeObject, mapScope, map);
             }
           }
         ]
