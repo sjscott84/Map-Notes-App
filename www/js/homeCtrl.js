@@ -13,10 +13,6 @@ angular.module('starter')
       });
     }
 
-    $scope.loginTwitter = function(){
-      console.log('Twitter');
-    }
-
     $scope.loginEmail = function(){
       popup.signinEmail($scope);
     }

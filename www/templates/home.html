@@ -9,11 +9,12 @@
     <div id="loginButtons" ng-show="appState.ready">
       <button id="googleButton" class="button button-block" ng-click="loginGoogle()" ng-show="!user.data">Login with Google</button>
 
-      <div class="button-bar">
-        <button id="facebook" class="button button-positive" ng-click="loginFacebook()" ng-show="!user.data">Facebook</button>
+      <!--<div class="button-bar">
+          REMEMBER: If reinstating twitter login remove button-block from facebook button-->
+        <button id="facebook" class="button button-positive button-block" ng-click="loginFacebook()" ng-show="!user.data">Login with Facebook</button>
 
-        <button id="twitter" class="button button-calm" ng-click="loginTwitter()" ng-show="!user.data">Twitter</button>
-      </div>
+        <!--<button id="twitter" class="button button-calm" ng-click="loginTwitter()" ng-show="!user.data">Twitter</button>
+      </div>-->
 
       <div class="button-bar" id="emailAccounts">
         <button class="button button-clear button-stable" ng-click="loginEmail()" ng-show="!user.data">Sign in with email</button>
