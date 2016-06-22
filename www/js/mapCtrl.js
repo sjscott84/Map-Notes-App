@@ -4,6 +4,7 @@ var app = angular.module('starter')
     scope = $scope;
     var options = {timeout: 10000, enableHighAccuracy: true};
     var button = document.getElementById('button');
+    var closeButton = document.getElementById('closeButton');
     var marker;
     var placeObject = {};
     var input;
@@ -35,6 +36,7 @@ var app = angular.module('starter')
       input = document.getElementById('pac-input');
       searchBox = new google.maps.places.SearchBox(input);
       scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+      scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(closeButton);
       //Bias the SearchBox results towards current map's viewport.
       scope.map.addListener('bounds_changed', function() {
         searchBox.setBounds(scope.map.getBounds());
@@ -133,13 +135,13 @@ var app = angular.module('starter')
     };
 
     scope.tasks = [
-      {title: 'Find places by location',
+      {title: 'Location',
       func: 'searchByLocation'},
-      {title: 'Search for places',
+      {title: 'Catagories',
       func: 'searchByWhat'},
-      {title: 'Remove current places',
+      {title: 'Remove',
       func: 'removePlaces'},
-      {title: 'Edit Places',
+      {title: 'Edit',
       func: 'editPlaces'},
       {title: 'Logout',
       func: 'logoutScreen'}
@@ -147,13 +149,14 @@ var app = angular.module('starter')
 
     scope.getFunctions = function(task){
       var func = task.func;
-      //if(func = 'searchByWhat'){
-        menu[func](scope, scope.map);
-      //}else if(func = 'searchByLocation'){
-        //menu[func](scope.map);
-      //}else{
-        //menu[func]();
-      //}
+      menu[func](scope, scope.map);
+    }
+
+    scope.emptySearch = function(){
+      document.getElementById("pac-input").value = "";
+      if(marker){
+        marker.setMap(null);
+      }
     }
   }]);
 
