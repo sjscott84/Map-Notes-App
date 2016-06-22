@@ -175,7 +175,8 @@ angular.module('starter')
         })
       },
       deletePlace: function(group, placeId){
-        database.ref('/users/'+user.data.uid+'/places'+group+'/'+placeId).remove(function(){
+        database.ref('/users/'+user.data.uid+'/places/'+group+'/'+placeId).remove()
+        .then(function(){
           updateAfterChange();
         })
       },
