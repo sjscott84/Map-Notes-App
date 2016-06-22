@@ -7690,8 +7690,7 @@ textarea {
   -webkit-border-radius: 2px;
   border-radius: 2px;
   padding: 4px 8px 3px 0;
-  border: none;
-  background-color: #fff; }
+  border: none;}
 
 .item-stacked-label input {
   overflow: hidden;
@@ -9904,6 +9903,10 @@ p {
 
 #logoutButtons{
   margin-top: 60%;
+}
+
+#slideIcon {
+  float: right;
 }
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
