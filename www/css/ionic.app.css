@@ -9824,22 +9824,23 @@ a.button {
 #pac-input {
   background-color: #fff;
   font-family: Roboto;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 300;
   text-overflow: ellipsis;
   margin-top: 20px;
-  margin-left: -10px;
-  width: 80% !important;
-  height: 55px;
+  margin-left: 27px;
+  width: 75%;
+  height: 65px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
-  position: -6px;
-  padding-left: 30px; }
+  position: 0;
+  padding-left: 10px; }
 
 #button {
   background-color: #fff;
   margin-top: 20px;
-  height: 55px;
+  height: 65px;
+  width: 75px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   padding-left: 20px; }
