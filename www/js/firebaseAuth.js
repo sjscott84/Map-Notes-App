@@ -13,10 +13,9 @@ angular.module('starter')
           if(!user.data.displayName){
             user.displayName = currentUser.email;
           }
-          console.log(user.data.displayName);
-          $state.go('map');
           firebaseData.pageSetUp();
           firebaseData.getPlaces();
+          $state.go('map');
         }, 0);
       }else{
         console.log('No User');
@@ -24,40 +23,42 @@ angular.module('starter')
     });
 
     function signInWithCredential(credential, callback) {
-      firebase.auth().signInWithCredential(credential)
-          .then(function(result) {
-          })
-          .catch(function(error){callback(error)});
+      firebase.auth().signInWithCredential(credential).catch(function(error){callback(error)});
+    }
+    function signInWithRedirect(provider, callback){
+      firebase.auth().signInWithRedirect(provider)
+      .catch(function(err) {
+        callback(err);
+      });
     }
 
     return {
       googleLogin: function(callback){
-        console.log(appState.cordova);
-        if (appState.cordova) {
+        if(appState.cordova){
           $cordovaOauth.google("225031542438-trph43971tepg2g6085aoci4sujs26hb.apps.googleusercontent.com", ["email"])
-            .then(function(result) {
-                var credential = firebase.auth.GoogleAuthProvider.credential(result.id_token, result.access_token);
-                signInWithCredential(credential, callback);
-            });
-        }else{
-          firebase.auth().signInWithRedirect(provider)
-          .then(function(){
-            console.log("google sign in successful (apparently)");
-          }).catch(function(err) {
+          .then(function(result) {
+              var credential = firebase.auth.GoogleAuthProvider.credential(result.id_token, result.access_token);
+              signInWithCredential(credential, callback);
+          }).catch(function(err){
             callback(err);
           });
+        }else{
+          signInWithRedirect(new firebase.auth.GoogleAuthProvider(), callback);
         }
       },
       facebookLogin: function(callback){
-        firebase.auth().signInWithPopup(fbProvider).catch(function(error){callback(error)})
-        /*firebase.auth().signInWithRedirect(fbProvider)
-        firebase.auth().getRedirectResult().then(function(result){
-          if(!result){
-            console.log("Null User")
-          }else{
+        if(appState.cordova){
+          $cordovaOauth.facebook('247208372329875', [ "public_profile", "email"])
+          .then(function(result){
             console.log(result);
-          }
-          }).catch(function(error) {callback(error)})*/
+            var credential = firebase.auth.FacebookAuthProvider.credential(result.access_token);
+            signInWithCredential(credential, callback);
+          }).catch(function(err){
+            callback(err);
+          })
+        }else{
+          signInWithRedirect(new firebase.auth.FacebookAuthProvider(), callback);
+        }
       },
       logout: function(){
         firebase.auth().signOut().then(function(){

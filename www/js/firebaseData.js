@@ -40,6 +40,27 @@ angular.module('starter')
       }
     }
 
+  updateAfterChange = function(){
+    database.ref('/users/'+user.data.uid+'/places').on('value', function(response){
+      clearExistingPlaces();
+      var items = response.val();
+      updateAllPlaces(items);
+      if(items){
+        Object.keys(items).forEach(function(key){
+          if(existingPlaces.groups.indexOf(key) === -1){
+            existingPlaces.groups.push(key);
+          }
+          var item = items[key];
+          Object.keys(item).forEach(function(key){
+            if(existingPlaces.types.indexOf(item[key]['type']) === -1){
+              existingPlaces.types.push(item[key]['type']);
+            }
+          })
+        })
+      }
+    });
+  }
+
     return {
       savePlace: function(group, type, placeObject, map){
         //database.ref('places/places/'+group).push(placeObject);
@@ -154,7 +175,9 @@ angular.module('starter')
         })
       },
       deletePlace: function(group, placeId){
-        database.ref('/users/'+user.data.uid+'/places'+group+'/'+placeId).remove()
+        database.ref('/users/'+user.data.uid+'/places'+group+'/'+placeId).remove(function(){
+          updateAfterChange();
+        })
       },
       editPlace: function(group, type, notes, olditem){
         if(olditem.group !== group){
@@ -162,30 +185,15 @@ angular.module('starter')
           database.ref('/users/'+user.data.uid+'/places/'+group).push(newPlace)
           .then(function(){
             database.ref('/users/'+user.data.uid+'/places/'+olditem.group+'/'+olditem.uid).remove()
+            updateAfterChange();
           })
         }else{
-        var updates = {type: type, notes: notes};
-        database.ref('/users/'+user.data.uid+'/places/'+group+'/'+olditem.uid).update(updates)
+          var updates = {type: type, notes: notes};
+          database.ref('/users/'+user.data.uid+'/places/'+group+'/'+olditem.uid).update(updates)
+          .then(function(){
+            updateAfterChange();
+          })
         }
-        //Update the existingPlaces arrays for searching
-        database.ref('/users/'+user.data.uid+'/places').on('value', function(response){
-          clearExistingPlaces();
-          var items = response.val();
-          updateAllPlaces(items);
-          if(items){
-            Object.keys(items).forEach(function(key){
-              if(existingPlaces.groups.indexOf(key) === -1){
-                existingPlaces.groups.push(key);
-              }
-              var item = items[key];
-              Object.keys(item).forEach(function(key){
-                if(existingPlaces.types.indexOf(item[key]['type']) === -1){
-                  existingPlaces.types.push(item[key]['type']);
-                }
-              })
-            })
-          }
-        });
       }
     }
   }])
