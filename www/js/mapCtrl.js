@@ -12,6 +12,7 @@ var app = angular.module('starter')
     scope.matchingGroups = [];
     scope.matchingTypes = [];
 
+    //Opens the map based on the coordinates passed in
     function openMap (lat, lng){
 
       var latLng = new google.maps.LatLng(lat, lng);
@@ -29,8 +30,6 @@ var app = angular.module('starter')
 
       scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
       scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
-
-      //map = scope.map;
 
       // Create the search box and link it to the UI element.
       input = document.getElementById('pac-input');
@@ -89,6 +88,7 @@ var app = angular.module('starter')
 
     }
 
+    //Looks for current location and passes this to openMap, if can'g find location opens map in San Francisco
     $cordovaGeolocation.getCurrentPosition(options).then(function(position){
       openMap(position.coords.latitude, position.coords.longitude);
     }, function(error){
@@ -97,6 +97,7 @@ var app = angular.module('starter')
       openMap(37.773972, -122.431297);
     });
 
+    //Updates the groups that display on screen that match the search term
     scope.getGroups = function() {
       if(scope.data.group.length !== 0){
         var entry = scope.data.group.length;
@@ -105,12 +106,12 @@ var app = angular.module('starter')
       for(var i = 1; i<existingPlaces.groups.length; i++){
           var what = existingPlaces.groups[i].slice(0, entry);
           if(scope.data.group.match(new RegExp([what], 'i'))){
-            //console.log(existingPlaces.groups[i]);
             scope.matchingGroups.push(existingPlaces.groups[i]);
         }
       }
     }
 
+    //Updates the types that display on screen that match the search term
     scope.getTypes = function() {
       if(scope.data.type.length !== 0){
         var entry = scope.data.type.length;
@@ -125,11 +126,13 @@ var app = angular.module('starter')
       }
     }
 
+    //Not sure what this is for....
     scope.closeList = function(){
       scope.matchingGroups = [];
       scope.matchingTypes = [];
     }
 
+    //Not sure what this is for
     scope.disableTap = function(){
       container = document.getElementsByClassName('pac-container');
       // disable ionic data tab
@@ -140,6 +143,7 @@ var app = angular.module('starter')
       });
     };
 
+    //List of items that display in the side menu
     scope.tasks = [
       {title: 'Location',
       func: 'searchByLocation'},
@@ -153,11 +157,13 @@ var app = angular.module('starter')
       func: 'logoutScreen'}
     ];
 
+    //Calls a function based on what item was clicked in the side menu
     scope.getFunctions = function(task){
       var func = task.func;
       menu[func](scope, scope.map);
     }
 
+    //Resets the search box
     scope.emptySearch = function(){
       document.getElementById("pac-input").value = "";
       if(marker){
@@ -166,7 +172,9 @@ var app = angular.module('starter')
     }
   }]);
 
+//Functions based on the items in the side menu
 app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popup', 'currentPosition', 'firebaseData', '$state', function(listView, $ionicSideMenuDelegate, existingPlaces, popup, currentPosition, firebaseData, $state){
+  //Clear the screen of previous searches
   removePlacesFromList = function(){
     while(listView.length !== 0){
       var x = listView.pop();
@@ -174,6 +182,7 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
     }
   };
   return{
+    //Search by group and/or type
     searchByWhat: function(mapScope, map){
       removePlacesFromList();
       $ionicSideMenuDelegate.toggleLeft();
@@ -186,19 +195,24 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
         //}
       //);
     },
+    //Search based on location (if avaiable)
+    //TODO: Add error handling when location is not available
     searchByLocation: function(mapScope, map){
       removePlacesFromList();
       firebaseData.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
       $ionicSideMenuDelegate.toggleLeft();
     },
+    //Open the edit page
     editPlaces: function(){
       $ionicSideMenuDelegate.toggleLeft();
       $state.go('edit');
     },
+    //Clear screen of previous searches
     removePlaces: function(){
       removePlacesFromList();
       $ionicSideMenuDelegate.toggleLeft();
     },
+    //Open the home screen
     logoutScreen: function(){
       $ionicSideMenuDelegate.toggleLeft();
       $state.go('home');

@@ -5,6 +5,7 @@ angular.module('starter')
     var provider = new firebase.auth.GoogleAuthProvider();
     var fbProvider = new firebase.auth.FacebookAuthProvider();
 
+    //Watch for changes to the currently logged in user
     firebase.auth().onAuthStateChanged(function(currentUser){
       if(currentUser){
         $timeout(function(){
@@ -22,9 +23,11 @@ angular.module('starter')
       }
     });
 
+    //Sign in with cordova
     function signInWithCredential(credential, callback) {
       firebase.auth().signInWithCredential(credential).catch(function(error){callback(error)});
     }
+    //Sign in when cordova is not avaliable
     function signInWithRedirect(provider, callback){
       firebase.auth().signInWithRedirect(provider)
       firebase.auth().getRedirectResult()
@@ -34,6 +37,7 @@ angular.module('starter')
     }
 
     return {
+      //Login using google sign in
       googleLogin: function(callback){
         if(appState.cordova){
           $cordovaOauth.google("225031542438-trph43971tepg2g6085aoci4sujs26hb.apps.googleusercontent.com", ["email"])
@@ -47,6 +51,7 @@ angular.module('starter')
           signInWithRedirect(new firebase.auth.GoogleAuthProvider(), callback);
         }
       },
+      //Login using facebook sign in
       facebookLogin: function(callback){
         if(appState.cordova){
           $cordovaOauth.facebook('247208372329875', [ "public_profile", "email"])
@@ -61,10 +66,12 @@ angular.module('starter')
           signInWithRedirect(new firebase.auth.FacebookAuthProvider(), callback);
         }
       },
+      //Logout
       logout: function(){
         firebase.auth().signOut().then(function(){
         })
       },
+      //Create an account using email
       createAccount: function(email, password, callback){
         firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
           var errorCode = error.code;
@@ -72,6 +79,7 @@ angular.module('starter')
           callback(errorCode, errorMessage);
         });
       },
+      //Sign in with email account
       signinEmail: function(email, password, callback){
         firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
           var errorCode = error.code;
