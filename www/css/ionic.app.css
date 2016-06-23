@@ -9828,11 +9828,10 @@ a.button {
   font-weight: 300;
   text-overflow: ellipsis;
   margin-top: 20px;
-  margin-left: 0px;
+  margin-left: -1px;
   width: 60%;
   height: 65px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+  border-radius: 0;
   position: -6px;
   padding-left: 10px; }
 
@@ -9849,7 +9848,7 @@ a.button {
 #closeButton {
   background-color: #fff;
   margin-top: 20px;
-  margin-left: -1px;
+  margin-left: -2px;
   margin-right: 10%;
   height: 65px;
   width: 15%;
