@@ -9839,8 +9839,9 @@ a.button {
 #button {
   background-color: #fff;
   margin-top: 20px;
+  margin-left: 10%;
   height: 65px;
-  width: 75px;
+  width: 20%;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   padding-left: 5px; }
@@ -9849,8 +9850,9 @@ a.button {
   background-color: #fff;
   margin-top: 20px;
   margin-left: -1px;
+  margin-right: 10%;
   height: 65px;
-  width: 75px;
+  width: 15%;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   border-top-left-radius: 0;

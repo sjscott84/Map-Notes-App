@@ -149,11 +149,9 @@ app.directive('info',['$cordovaAppAvailability', 'currentPlace', 'firebaseData',
     template: '<div class="infowindow"><div class="iw-title">{{place.name}}</div><div class="iw-info"><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">View On Google Maps</a></div></div>',
     link: function(scope, element, attrs) {
       scope.openNewMap = function(){
-          var lat = currentPlace.lat;
-          var lng = currentPlace.lng;
-        //console.log(lat, lng);
-        //console.log("Click click");
-        $cordovaAppAvailability.check('comgooglemaps://')
+        var lat = currentPlace.lat;
+        var lng = currentPlace.lng;
+        /*$cordovaAppAvailability.check('comgooglemaps://')
         .then(function(){
         var sApp = startApp.set('comgooglemaps://?q='+lat+'+'+lng+'&zoom=13');
         console.log("map avaliable")
@@ -163,13 +161,22 @@ app.directive('info',['$cordovaAppAvailability', 'currentPlace', 'firebaseData',
           alert(error);
         });
         })
-        .catch(function(){
-          console.log("map not avaliable")
-          //var lat = currentPlace.lat;
-          //var lng = currentPlace.lng;
-
+        .catch(function(){*/
+          $cordovaAppAvailability.check('http://maps.apple.com')
+          .then(function(){
+            console.log('Apple map avaliable')
+            var sApp = startApp.set('http://maps.apple.com/?q='+lat+'+'+lng+'&z=13');
+            sApp.start(function() {
+              console.log("OK");
+            }, function(error) {
+              alert(error);
+            });
+          })
+          .catch(function(){
+            console.log("map not avaliable")
+          })
           //window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
-        });
+        //});
       }
     }
   }

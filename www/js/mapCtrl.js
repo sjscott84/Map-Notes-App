@@ -89,6 +89,7 @@ var app = angular.module('starter')
 
     }, function(error){
       console.log(error);
+      //TODO: IF can't find position open map at a set lat and lng
     });
 
     scope.getGroups = function() {
