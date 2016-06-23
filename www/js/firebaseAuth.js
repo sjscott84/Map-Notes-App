@@ -27,6 +27,7 @@ angular.module('starter')
     }
     function signInWithRedirect(provider, callback){
       firebase.auth().signInWithRedirect(provider)
+      firebase.auth().getRedirectResult()
       .catch(function(err) {
         callback(err);
       });

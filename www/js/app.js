@@ -130,6 +130,18 @@ app.factory('changeCurrentPlace',['$timeout', 'currentPlace', function($timeout,
 }])
 
 app.directive('info',['$cordovaAppAvailability', 'currentPlace', 'firebaseData', function($cordovaAppAvailability, currentPlace, firebaseData){
+
+  var name = currentPlace.name;
+
+  /*changeNameForGoogleSearch = function(name){
+    for(var i=0; i<name.length; i++){
+      if(name[i] === ' '){
+        name[i] = '+';
+      }
+    }
+    console.log(name)
+  };*/
+
   return {
     scope: {
       place:  '=places'
@@ -137,16 +149,27 @@ app.directive('info',['$cordovaAppAvailability', 'currentPlace', 'firebaseData',
     template: '<div class="infowindow"><div class="iw-title">{{place.name}}</div><div class="iw-info"><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">View On Google Maps</a></div></div>',
     link: function(scope, element, attrs) {
       scope.openNewMap = function(){
-        console.log("Click click");
-        //$cordovaAppAvailability.check('comgooglemaps://')
-        //.then(function(){
-        //do somethng if app avaliable
-        //}, function(){
           var lat = currentPlace.lat;
           var lng = currentPlace.lng;
+        //console.log(lat, lng);
+        //console.log("Click click");
+        $cordovaAppAvailability.check('comgooglemaps://')
+        .then(function(){
+        var sApp = startApp.set('comgooglemaps://?q='+lat+'+'+lng+'&zoom=13');
+        console.log("map avaliable")
+        sApp.start(function() {
+          console.log("OK");
+        }, function(error) {
+          alert(error);
+        });
+        })
+        .catch(function(){
+          console.log("map not avaliable")
+          //var lat = currentPlace.lat;
+          //var lng = currentPlace.lng;
 
-          window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
-        //});
+          //window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng);
+        });
       }
     }
   }

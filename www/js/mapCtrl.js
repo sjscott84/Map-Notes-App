@@ -1,6 +1,6 @@
 var app = angular.module('starter')
-  app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition', 'firebaseAuth', 'menu',
-                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition, firebaseAuth, menu) {
+  app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition', 'firebaseAuth', 'menu', 'listView',
+                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition, firebaseAuth, menu, listView) {
     scope = $scope;
     var options = {timeout: 10000, enableHighAccuracy: true};
     var button = document.getElementById('button');
@@ -88,7 +88,7 @@ var app = angular.module('starter')
       });
 
     }, function(error){
-      console.log("Could not get location");
+      console.log(error);
     });
 
     scope.getGroups = function() {

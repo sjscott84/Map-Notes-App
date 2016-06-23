@@ -1,5 +1,6 @@
-angular.module('starter')  
-  .controller('editCtrl',['$scope', '$state', 'allPlaces', 'popup', function($scope, $state, allPlaces, popup){
+var app = angular.module('starter')  
+  app.controller('editCtrl',['$scope', '$state', 'allPlaces', 'popup', 'editPage', function($scope, $state, allPlaces, popup, editPage){
+
     $scope.list = allPlaces;
 
     $scope.$watchCollection(
@@ -38,3 +39,11 @@ angular.module('starter')
       popup.deletePlace($scope, item);
     }
   }]);
+
+  app.factory('editPage',['$state', function($state){
+    return{
+      openEditPage: function(scope, item){
+        $state.go('editPage');
+      }
+    }
+  }])
