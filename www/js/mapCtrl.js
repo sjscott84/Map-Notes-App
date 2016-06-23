@@ -12,12 +12,12 @@ var app = angular.module('starter')
     scope.matchingGroups = [];
     scope.matchingTypes = [];
 
-    $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+    function openMap (lat, lng){
 
-      var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      var latLng = new google.maps.LatLng(lat, lng);
 
-      currentPosition.lat = position.coords.latitude;
-      currentPosition.lng = position.coords.longitude;
+      currentPosition.lat = lat;
+      currentPosition.lng = lng;
 
       var mapOptions = {
         center: latLng,
@@ -87,9 +87,14 @@ var app = angular.module('starter')
         });
       });
 
+    }
+
+    $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+      openMap(position.coords.latitude, position.coords.longitude);
     }, function(error){
       console.log(error);
-      //TODO: IF can't find position open map at a set lat and lng
+      popup.couldNotGetLocation();
+      openMap(37.773972, -122.431297);
     });
 
     scope.getGroups = function() {

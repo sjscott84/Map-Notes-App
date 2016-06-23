@@ -367,6 +367,12 @@ app.factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPl
           }
         ]
       })
+    },
+    couldNotGetLocation: function(){
+      var alertPopup = $ionicPopup.alert({
+        title: 'Error',
+        template: 'Could not get your location, please use the Catagories search to find things near you'
+       });
     }
   }
 }]);
