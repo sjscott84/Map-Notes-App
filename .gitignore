@@ -7,4 +7,5 @@ plugins/
 www/lib/
 resources/
 .DS_Store
+bower.json
 
