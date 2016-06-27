@@ -199,7 +199,7 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
     //TODO: Add error handling when location is not available
     searchByLocation: function(mapScope, map){
       removePlacesFromList();
-      firebaseData.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
+      firebaseData.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map, function(){popup.couldNotGetLocation()});
       $ionicSideMenuDelegate.toggleLeft();
     },
     //Open the edit page

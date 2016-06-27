@@ -148,7 +148,7 @@ angular.module('starter')
           })
         }
       },
-      placesByLocation: function(lat, lng, distance, map){
+      placesByLocation: function(lat, lng, distance, map, callback){
         database.ref('/users/'+user.data.uid+'/places').once('value')
         .then(function(response){
           var minMax = location.findLocationsBasedOnRadius(lat, lng, distance);
@@ -165,6 +165,8 @@ angular.module('starter')
               }
             })
           })
+        }).catch(function(){
+          callback();
         })
       },
       //Used by firebaseAuth at page setup
