@@ -153,6 +153,8 @@ var app = angular.module('starter')
       func: 'removePlaces'},
       {title: 'Edit',
       func: 'editPlaces'},
+      {title: 'Save for offline use',
+      func: 'saveForOffline'},
       {title: 'Logout',
       func: 'logoutScreen'}
     ];
@@ -173,7 +175,7 @@ var app = angular.module('starter')
   }]);
 
 //Functions based on the items in the side menu
-app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popup', 'currentPosition', 'firebaseData', '$state', function(listView, $ionicSideMenuDelegate, existingPlaces, popup, currentPosition, firebaseData, $state){
+app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popup', 'currentPosition', 'firebaseData', '$state', 'allPlaces', function(listView, $ionicSideMenuDelegate, existingPlaces, popup, currentPosition, firebaseData, $state, allPlaces){
   //Clear the screen of previous searches
   removePlacesFromList = function(){
     while(listView.length !== 0){
@@ -199,7 +201,7 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
     //TODO: Add error handling when location is not available
     searchByLocation: function(mapScope, map){
       removePlacesFromList();
-      firebaseData.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map, function(){popup.couldNotGetLocation()});
+      firebaseData.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
       $ionicSideMenuDelegate.toggleLeft();
     },
     //Open the edit page
@@ -216,6 +218,12 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
     logoutScreen: function(){
       $ionicSideMenuDelegate.toggleLeft();
       $state.go('home');
+    },
+    saveForOffline: function(map){
+      //localStorage.setItem('map', JSON.stringify(map));
+      localStorage.setItem('places', JSON.stringify(allPlaces));
+      console.log(listView)
+      console.log('button works');
     }
   }
 }])

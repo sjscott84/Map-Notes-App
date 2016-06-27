@@ -22,7 +22,7 @@ angular.module('starter')
       }
     }
 
-    updateAllPlaces = function(items){
+    updateAllPlaces = function(items, callback){
       var place = {};
       while(allPlaces.length !== 0){
         allPlaces.pop();
@@ -38,6 +38,7 @@ angular.module('starter')
           allPlaces.push(place);
         })
       }
+      callback();
     }
 
   updateAfterChange = function(){
@@ -165,15 +166,18 @@ angular.module('starter')
               }
             })
           })
-        }).catch(function(){
-          callback();
+          if(listView.length === 0){
+            errorMessage.searchErrorAlert();
+          }
         })
       },
       //Used by firebaseAuth at page setup
       getPlaces: function(){
         database.ref('/users/'+user.data.uid+'/places').on('value', function(response){
           var items = response.val();
-          updateAllPlaces(items);
+          updateAllPlaces(items, function(){
+            localStorage.setItem('places', JSON.stringify(allPlaces));
+          });
         })
       },
       deletePlace: function(group, placeId){

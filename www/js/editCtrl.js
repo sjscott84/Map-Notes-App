@@ -10,6 +10,7 @@ var app = angular.module('starter')
       function(newVal, oldVal){
         if(newVal !== oldVal){
           $scope.list = allPlaces;
+          localStorage.setItem('places', JSON.stringify(allPlaces));
         }else{
           console.log('No Change');
         }
