@@ -1,0 +1,36 @@
+<ion-header-bar align-title="center" class="bar-positive">
+  <div class="buttons">
+    <button class="button icon-left ion-chevron-left button-clear button-white" ng-click="returnToMap()"></button>
+  </div>
+  <h1 class="title">All Places</h1>
+</ion-header-bar>
+
+<ion-content class="has-header">
+	<ion-list>
+		<div ng-repeat="thing in list">
+			<ion-item class="item-stable" ng-click="toggleGroup(thing)" ng-class="{active: isGroupShown(thing)}">
+				<i class="icon" ng-class="isGroupShown(thing) ? 'ion-minus' : 'ion-plus'"></i>
+				{{thing.name}}
+			</ion-item>
+			<div ng-repeat="item in thing.items">
+			<ion-item class="item-accordion" ng-show="isGroupShown(thing)" ng-click="togglePlace(item)">
+			<i class="icon" ng-class="isPlaceShown(item) ? 'ion-minus' : 'ion-plus'"></i>
+				{{item.name}}
+			</ion-item>
+
+			<ion-item class="item-accordion" ng-show="isPlaceShown(item)">
+				<div>
+					<p>Address: </p>{{item.address}}
+				</div>
+				<div>
+					<p>Type: </p>{{item.type}}
+				</div>
+				<div>
+					<p>Note: </p>{{item.notes}}
+				</div>
+			</ion-item>
+		</div>
+		</div>
+	</ion-list>
+</ion-content>
+

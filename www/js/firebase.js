@@ -1,5 +1,5 @@
 angular.module('starter')
-  .factory("firebaseService",['existingPlaces', 'listView', 'placeConstructor', 'fitBounds', 'errorMessage', 'location', 'allPlaces', function(existingPlaces, listView, placeConstructor, fitBounds, errorMessage, location, allPlaces){
+  .factory("firebaseService",['appState', function(appState){
 
     var config = {
       apiKey: "AIzaSyAQchOOXdXejiMOcTKoj_w6hDbg-01m3jQ",
@@ -9,6 +9,7 @@ angular.module('starter')
     };
 
     firebase.initializeApp(config);
+
     //var userId = firebase.auth().currentUser.uid;
     //var userId = 'piyDDcON4kZPoS1KxwwE4tk7mGM2';
     return{

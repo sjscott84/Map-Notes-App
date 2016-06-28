@@ -19,13 +19,23 @@ app.value('currentPosition', {
 })
 app.value('appState',{
   ready: false,
-  cordova: false
+  cordova: false,
+  online: false
 });
 
 app.run( function($ionicPlatform, $http, $rootScope, user, existingPlaces, firebaseData, firebaseService, appState) {
   $rootScope.user = user;
   $rootScope.appState = appState;
   window.appState = appState;
+  var isDeviceOnline = navigator.onLine;
+
+  if(isDeviceOnline){
+    console.log(appState.online)
+    appState.online = true;
+    console.log(appState.online);
+  }else{
+    appState.online = false;
+  }
 
   $ionicPlatform.ready(function() {
     appState.ready = true;
@@ -71,16 +81,22 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: '/edit',
     templateUrl: 'templates/edit.html',
     controller: 'editCtrl'
+  })
+  .state('offline', {
+    url: '/offline',
+    templateUrl: 'templates/offline.html',
+    controller: 'offlineCtrl'
   });
 
   $urlRouterProvider.otherwise("/home");
 })
 
 //Place Constructor
-app.factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeCurrentPlace', function($cordovaAppAvailability, $compile, changeCurrentPlace){
-  var infoWindow = new google.maps.InfoWindow({
-    disableAutoPan: false
-  });
+app.factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeCurrentPlace', 'appState', function($cordovaAppAvailability, $compile, changeCurrentPlace, appState){
+  //var infoWindow = new google.maps.InfoWindow();
+  var infoWindow;
+  //var infoWindow = (appState.online) ? 'online' : 'not online';
+  //console.log(infoWindow)
   var content = document.getElementById("infoWindow");
   return{
     Place: function (name, lat, lng, type, note, address, key, map){
@@ -102,6 +118,10 @@ app.factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeC
         zoomOnClick: false,
       });
       google.maps.event.addListener(this.marker, 'click', function() {
+        if(infoWindow){
+          infoWindow.close();
+        }
+        infoWindow = (appState.online) ? new google.maps.InfoWindow() : '';
         changeCurrentPlace.changePlace(self);
         infoWindow.setContent(content);
         infoWindow.open(self.map, self.marker);

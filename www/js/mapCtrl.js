@@ -85,10 +85,9 @@ var app = angular.module('starter')
           placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "latitude":lat, "longitude":lng, "type": undefined, "notes": undefined};
         });
       });
-
     }
 
-    //Looks for current location and passes this to openMap, if can'g find location opens map in San Francisco
+    //Looks for current location and passes this to openMap, if can't find location opens map in San Francisco
     $cordovaGeolocation.getCurrentPosition(options).then(function(position){
       openMap(position.coords.latitude, position.coords.longitude);
     }, function(error){
@@ -221,9 +220,9 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
     },
     saveForOffline: function(map){
       //localStorage.setItem('map', JSON.stringify(map));
-      localStorage.setItem('places', JSON.stringify(allPlaces));
-      console.log(listView)
-      console.log('button works');
+      //localStorage.setItem('places', JSON.stringify(allPlaces));
+      $state.go('offline');
+      $ionicSideMenuDelegate.toggleLeft();
     }
   }
 }])
