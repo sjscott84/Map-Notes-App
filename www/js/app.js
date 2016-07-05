@@ -23,8 +23,8 @@ app.value('appState',{
   online: false
 });
 
-app.run( function($ionicPlatform, $http, $rootScope, user, existingPlaces, firebaseData, firebaseService, appState) {
-  $rootScope.user = user;
+app.run( function($ionicPlatform, $http, $rootScope, appState) {
+  //$rootScope.user = user;
   $rootScope.appState = appState;
   window.appState = appState;
   var isDeviceOnline = navigator.onLine;
@@ -33,6 +33,9 @@ app.run( function($ionicPlatform, $http, $rootScope, user, existingPlaces, fireb
     console.log(appState.online)
     appState.online = true;
     console.log(appState.online);
+    var script   = document.createElement("script");
+    script.setAttribute("src", "js/firebase.js");
+    document.head.appendChild(script);
   }else{
     appState.online = false;
   }
@@ -91,159 +94,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise("/home");
 })
 
-//Place Constructor
-app.factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeCurrentPlace', 'appState', function($cordovaAppAvailability, $compile, changeCurrentPlace, appState){
-  //var infoWindow = new google.maps.InfoWindow();
-  var infoWindow;
-  //var infoWindow = (appState.online) ? 'online' : 'not online';
-  //console.log(infoWindow)
-  var content = document.getElementById("infoWindow");
-  return{
-    Place: function (name, lat, lng, type, note, address, key, map){
-      var self = this;
-      self.map = map;
-      self.name = name;
-      self.lat = lat;
-      self.lng = lng;
-      self.type = type;
-      self.note = note;
-      self.address = address;
-      self.uid = key;
-      self.position = {"lat":self.lat, "lng":self.lng};
-      self.marker = new google.maps.Marker({
-        map: map,
-        title: name,
-        icon: 'img/star_gold_16.png',
-        position: self.position,
-        zoomOnClick: false,
-      });
-      google.maps.event.addListener(this.marker, 'click', function() {
-        if(infoWindow){
-          infoWindow.close();
-        }
-        infoWindow = (appState.online) ? new google.maps.InfoWindow() : '';
-        changeCurrentPlace.changePlace(self);
-        infoWindow.setContent(content);
-        infoWindow.open(self.map, self.marker);
-        //map.setCenter(self.marker.getPosition());
-      });
-    }
-  }
-}])
-
-//Update the currentPlace when a new marker is clicked
-app.factory('changeCurrentPlace',['$timeout', 'currentPlace', function($timeout, currentPlace){
-  return {
-    changePlace: function(place){
-      $timeout(function(){
-        currentPlace.name = place.name;
-        currentPlace.address = place.address;
-        currentPlace.note = place.note;
-        currentPlace.type = place.type;
-        currentPlace.lat = place.lat;
-        currentPlace.lng = place.lng;
-        currentPlace.uid = place.uid;
-      }, 0);
-    }
-  }
-}])
-
-//Controls the content of the infowindow when a marker is clicked
-app.directive('info',['$cordovaAppAvailability', 'currentPlace', 'firebaseData', function($cordovaAppAvailability, currentPlace, firebaseData){
-
-  var name = currentPlace.name;
-
-  /*changeNameForGoogleSearch = function(name){
-    for(var i=0; i<name.length; i++){
-      if(name[i] === ' '){
-        name[i] = '+';
-      }
-    }
-    console.log(name)
-  };*/
-
-  return {
-    scope: {
-      place:  '=places'
-    },
-    template: '<div class="infowindow"><div class="iw-title">{{place.name}}</div><div class="iw-info"><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">Navigation</a></div></div>',
-    link: function(scope, element, attrs) {
-      scope.openNewMap = function(){
-        var lat = currentPlace.lat;
-        var lng = currentPlace.lng;
-        if(appState.cordova){
-          $cordovaAppAvailability.check('comgooglemaps://')
-          .then(function(){
-          var sApp = startApp.set('comgooglemaps://?q='+lat+'+'+lng+'&zoom=13');
-          //console.log("map avaliable")
-          sApp.start(function() {
-            console.log("OK");
-          }, function(error) {
-            alert(error);
-          });
-          })
-          .catch(function(){
-            $cordovaAppAvailability.check('http://maps.apple.com')
-            .then(function(){
-              //console.log('Apple map avaliable')
-              var sApp = startApp.set('http://maps.apple.com/?q='+lat+'+'+lng+'&z=13');
-              sApp.start(function() {
-                console.log("OK");
-              }, function(error) {
-                alert(error);
-              });
-            })
-            .catch(function(){
-              //console.log("map not avaliable")
-              window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng, "_blank");
-            })
-          });
-        }else{
-          window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng, "_blank");
-        }
-      }
-    }
-  }
-}])
-
-//TODO: Why is this not in the popup factory????
-app.factory('errorMessage',['$ionicPopup', function($ionicPopup){
-  return{
-    searchErrorAlert: function(){
-       var alertPopup = $ionicPopup.alert({
-         title: 'Error',
-         template: 'No results found please try a new search'
-       });
-    },
-    locationErrorAlert: function(){
-       var alertPopup = $ionicPopup.alert({
-         title: 'Error',
-         template: 'No results found for your location please try searching'
-       });
-    }
-  }
-}])
-
-//Change the map bounds based on the markers on the screen
-app.factory('fitBounds', function(){
-  function zoomControl(map){
-    var zoom = map.getZoom();
-    map.setZoom(zoom > 15 ? 15 : zoom);
-  }
-  return {
-    fitBoundsToVisibleMarkers: function(listView, map){
-      var bounds = new google.maps.LatLngBounds();
-
-      for (var i=0; i<listView.length; i++) {
-        if(listView[i].marker.getVisible()) {
-          bounds.extend(listView[i].marker.getPosition() );
-        }
-      }
-      map.fitBounds(bounds);
-      zoomControl(map);
-    }
-  }
-});
 
 
  
