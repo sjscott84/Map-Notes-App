@@ -1,12 +1,8 @@
 var app = angular.module('starter')  
-  app.controller('offlineCtrl',['$scope', '$state', 'allPlaces', 'popup', 'editPage', function($scope, $state, allPlaces, popup, editPage){
+  app.controller('offlineCtrl',['$scope', '$state', function($scope, $state){
 
     var toParse = localStorage.getItem('places');
     $scope.list = JSON.parse(toParse);
-
-    $scope.returnToMap = function(){
-      $state.go('map');
-    }
 
     $scope.toggleGroup = function(group) {
       if ($scope.isGroupShown(group)) {

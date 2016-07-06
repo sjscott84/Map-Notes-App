@@ -1,6 +1,6 @@
 var app = angular.module('starter')
-  app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition', 'firebaseAuth', 'menu', 'listView',
-                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition, firebaseAuth, menu, listView) {
+  app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition', 'menu', 'listView',
+                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition, menu, listView) {
     scope = $scope;
     var options = {timeout: 10000, enableHighAccuracy: true};
     var button = document.getElementById('button');

@@ -205,6 +205,7 @@ angular.module('starter')
     }
   }])
 
+  //Returns places based on radius around current location
   .factory('location', function(){
     // Converts from degrees to radians.
     Math.radians = function(degrees) {

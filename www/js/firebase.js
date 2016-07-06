@@ -1,5 +1,5 @@
 angular.module('starter')
-  .factory("firebaseService",['appState', function(appState){
+  .factory("firebaseService",['appState', '$state', function(appState, $state){
 
     var config = {
       apiKey: "AIzaSyAQchOOXdXejiMOcTKoj_w6hDbg-01m3jQ",
@@ -8,7 +8,12 @@ angular.module('starter')
       storageBucket: "map-notes-d1949.appspot.com",
     };
 
-    firebase.initializeApp(config);
+    try {
+      firebase.initializeApp(config);
+    } catch (e){
+      $state.go('offline');
+      //console.log(e);
+    }
 
     //var userId = firebase.auth().currentUser.uid;
     //var userId = 'piyDDcON4kZPoS1KxwwE4tk7mGM2';

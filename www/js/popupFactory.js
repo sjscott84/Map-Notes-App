@@ -1,5 +1,5 @@
 angular.module('starter')
-  .factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', 'firebaseData', 'firebaseAuth', function($ionicPopup, listView, placeConstructor, existingPlaces, firebaseData, firebaseAuth){
+  .factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', 'firebaseData', 'firebaseAuth', '$state', function($ionicPopup, listView, placeConstructor, existingPlaces, firebaseData, firebaseAuth, $state){
     //Input details and save a new search to database
     function inputPlaceInfoFn(placeObject, mapScope, map){
       mapScope.data = {};
@@ -199,6 +199,33 @@ angular.module('starter')
           title: 'Error',
           template: 'Could not get your location, please use the Catagories search to find things near you'
          });
+      },
+      offlineMessage: function(){
+        var alertPopup = $ionicPopup.alert({
+          title: 'Offline',
+          template: 'You are appear to be offline, you can still view a list of your places, but maps will be unavaiable until you are back online'
+         });
+      },
+      onlineMessage: function(){
+        var myPopup = $ionicPopup.show({
+          title: 'Internet Connection Detected',
+          subTitle: "Internet connection detected, would you like to return to the map?",
+          buttons: [
+            {
+            text: 'Cancel',
+              onTap: function(){
+              }
+            },
+            {
+            text: '<b>Return to Map</b>',
+            type: 'button-positive',
+              onTap: function() {
+                $state.go('map');
+                //$window.location.reload();
+              }
+            }
+          ]
+        })
       }
     }
   }]);

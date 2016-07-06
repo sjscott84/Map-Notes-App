@@ -20,25 +20,38 @@ app.value('currentPosition', {
 app.value('appState',{
   ready: false,
   cordova: false,
-  online: false
+  offline: true
 });
 
-app.run( function($ionicPlatform, $http, $rootScope, appState) {
+app.run( function($ionicPlatform, $http, $rootScope, appState, $window, $state, popup) {
   //$rootScope.user = user;
   $rootScope.appState = appState;
-  window.appState = appState;
-  var isDeviceOnline = navigator.onLine;
-
-  if(isDeviceOnline){
-    console.log(appState.online)
-    appState.online = true;
-    console.log(appState.online);
-    var script   = document.createElement("script");
-    script.setAttribute("src", "js/firebase.js");
-    document.head.appendChild(script);
+  var deviceOnline = navigator.onLine;
+  //window.appState = appState;
+  if(deviceOnline){
+    appState.offline = false;
   }else{
-    appState.online = false;
+    appState.offline = true;
   }
+
+  $window.addEventListener("offline", function () {
+    $rootScope.$apply(function() {
+      appState.offline = true;
+      popup.offlineMessage();
+      $state.go('offline');
+      console.log(appState.offline);
+    });
+  }, false);
+  $window.addEventListener("online", function () {
+    $rootScope.$apply(function() {
+      appState.offline = false;
+      popup.onlineMessage();
+      //$state.go('map');
+      //$window.location.reload();
+      //$state.go('map');
+      console.log(appState.offline);
+    });
+  }, false);
 
   $ionicPlatform.ready(function() {
     appState.ready = true;
