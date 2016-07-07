@@ -1,30 +1,34 @@
 <ion-header-bar align-title="center" class="bar-positive">
+  <div class="buttons" ng-hide="appState.offline">
+    <button class="button icon-left ion-chevron-left button-clear button-white" ng-click="returnToMap()"></button>
+  </div>
   <h1 class="title">All Places</h1>
 </ion-header-bar>
 
 <ion-content class="has-header">
-	<ion-list>
-		<div ng-repeat="thing in list">
-			<ion-item class="item-stable" ng-click="toggleGroup(thing)" ng-class="{active: isGroupShown(thing)}">
-				<i class="icon" ng-class="isGroupShown(thing) ? 'ion-minus' : 'ion-plus'"></i>
-				{{thing.name}}
-			</ion-item>
-			<div ng-repeat="item in thing.items">
-			<ion-item class="item-accordion" ng-show="isGroupShown(thing)" ng-click="togglePlace(item)">
-			<i class="icon" ng-class="isPlaceShown(item) ? 'ion-minus' : 'ion-plus'"></i>
-				{{item.name}}
-			</ion-item>
+  <ion-list>
+    <div ng-repeat="thing in list">
+      <ion-item class="item-stable" ng-click="toggleGroup(thing)" ng-class="{active: isGroupShown(thing)}">
+        <i class="icon" ng-class="isGroupShown(thing) ? 'ion-minus' : 'ion-plus'"></i>
+        {{thing.name}}
+      </ion-item>
 
-			<ion-item class="item-accordion item-text-wrap" ng-show="isPlaceShown(item)">
+      <div ng-repeat="item in thing.items">
+        <ion-item class="item-accordion" ng-show="isGroupShown(thing)" ng-click="togglePlace(item)">
+          <i class="icon" ng-class="isPlaceShown(item) ? 'ion-minus' : 'ion-plus'"></i>
+          {{item.name}}
+        </ion-item>
 
-					<p><b>Address:</b> {{item.address}}</p>
-					<p><b>Type:</b> {{item.type}}</p>
-					<p><b>Note:</b> {{item.notes}}</p>
+        <ion-item class="item-accordion item-text-wrap" ng-show="isPlaceShown(item)">
 
-			</ion-item>
-		</div>
-		</div>
-	</ion-list>
+          <p><b>Address:</b> {{item.address}}</p>
+          <p><b>Type:</b> {{item.type}}</p>
+          <p><b>Note:</b> {{item.notes}}</p>
+
+        </ion-item>
+      </div>
+    </div>
+  </ion-list>
 </ion-content>
 
 

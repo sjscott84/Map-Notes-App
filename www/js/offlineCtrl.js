@@ -1,5 +1,5 @@
 var app = angular.module('starter')  
-  app.controller('offlineCtrl',['$scope', '$state', function($scope, $state){
+  app.controller('offlineCtrl',['$scope', '$state', function($scope, $state, appState){
 
     var toParse = localStorage.getItem('places');
     $scope.list = JSON.parse(toParse);
@@ -27,5 +27,9 @@ var app = angular.module('starter')
 
     $scope.isPlaceShown = function(place){
       return $scope.shownPlace === place;
+    }
+
+    $scope.returnToMap = function(){
+      $state.go('map');
     }
   }]);
