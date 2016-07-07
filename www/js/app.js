@@ -27,33 +27,14 @@ app.run( function($ionicPlatform, $http, $rootScope, appState, $window, $state, 
   //$rootScope.user = user;
   $rootScope.appState = appState;
   var deviceOnline = navigator.onLine;
+  console.log(deviceOnline);
   //window.appState = appState;
-  if(deviceOnline){
-    appState.offline = false;
-  }else{
+  if(!deviceOnline){
+    $state.go('offline');
     appState.offline = true;
-  }
-
-  $window.addEventListener("offline", function () {
-    $rootScope.$apply(function() {
-      appState.offline = true;
-      popup.offlineMessage();
-      $state.go('offline');
-      console.log(appState.offline);
-    });
-  }, false);
-  $window.addEventListener("online", function () {
-    $rootScope.$apply(function() {
-      appState.offline = false;
-      popup.onlineMessage();
-      //$state.go('map');
-      //$window.location.reload();
-      //$state.go('map');
-      console.log(appState.offline);
-    });
-  }, false);
-
-  $ionicPlatform.ready(function() {
+  }else{
+    appState.offline = false;
+    $ionicPlatform.ready(function() {
     appState.ready = true;
 
     if(window.cordova){
@@ -77,8 +58,21 @@ app.run( function($ionicPlatform, $http, $rootScope, appState, $window, $state, 
       }
     }
   });
-    //firebaseData.pageSetUp();
-    //firebaseData.getPlaces();
+  }
+
+  $window.addEventListener("offline", function () {
+    $rootScope.$apply(function() {
+      appState.offline = true;
+      popup.offlineMessage();
+      $state.go('offline');
+    });
+  }, false);
+  $window.addEventListener("online", function () {
+    $rootScope.$apply(function() {
+      appState.offline = false;
+      popup.onlineMessage();
+    });
+  }, false);
 })
 
 app.config(function($stateProvider, $urlRouterProvider) {
@@ -91,7 +85,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state('map', {
     url: '/map',
     templateUrl: 'templates/map.html',
-    controller: 'MapCtrl'
+    controller: 'MapCtrl',
   })
   .state('edit', {
     url: '/edit',

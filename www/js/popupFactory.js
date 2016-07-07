@@ -1,5 +1,5 @@
 angular.module('starter')
-  .factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', 'firebaseData', 'firebaseAuth', '$state', function($ionicPopup, listView, placeConstructor, existingPlaces, firebaseData, firebaseAuth, $state){
+  .factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', '$state', '$window', 'appState', '$injector', 'firebaseAuth', function($ionicPopup, listView, placeConstructor, existingPlaces, $state, $window, appState, $injector, firebaseAuth){
     //Input details and save a new search to database
     function inputPlaceInfoFn(placeObject, mapScope, map){
       mapScope.data = {};
@@ -28,7 +28,11 @@ angular.module('starter')
               if(existingPlaces.types.indexOf(placeObject.type) === -1){
                 existingPlaces.types.push(placeObject.type);
               }
-              firebaseData.savePlace(placeObject.group, placeObject.type, placeObject, map);
+              var service;
+              if(!appState.offline){
+                service = $injector.get('firebaseData');
+              }
+              service.savePlace(placeObject.group, placeObject.type, placeObject, map);
             }
           }
         ]
@@ -62,7 +66,11 @@ angular.module('starter')
               text: '<b>Create Account</b>',
               type: 'button-positive',
               onTap: function() {
-                firebaseAuth.createAccount(scope.data.email, scope.data.password, function(code, message){
+                var service;
+                if(!appState.offline){
+                  service = $injector.get('firebaseAuth');
+                }
+                service.createAccount(scope.data.email, scope.data.password, function(code, message){
                   var codeForPopup;
                   if(code === 'auth/email-already-in-use'){
                     codeForPopup = 'Error with Email';
@@ -96,7 +104,11 @@ angular.module('starter')
               text: '<b>Sign In</b>',
               type: 'button-positive',
               onTap: function() {
-                firebaseAuth.signinEmail(scope.data.email, scope.data.password, function(code, message){
+                var service;
+                if(!appState.offline){
+                  service = $injector.get('firebaseAuth');
+                }
+                service.signinEmail(scope.data.email, scope.data.password, function(code, message){
                   createAccountErrors(code, message);
                 });
               }
@@ -142,7 +154,11 @@ angular.module('starter')
               type: 'button-positive',
               onTap: function() {
                 //console.log(scope.data.selectedGroup);
-                firebaseData.searchForPlaces(scope.data.selectedGroup, scope.data.selectedType, map);
+                var service;
+                if(!appState.offline){
+                  service = $injector.get('firebaseData');
+                }
+                service.searchForPlaces(scope.data.selectedGroup, scope.data.selectedType, map);
               }
             }
           ]
@@ -162,8 +178,11 @@ angular.module('starter')
               text: '<b>Delete</b>',
               type: 'button-assertive',
               onTap: function() {
-                console.log("delete");
-                firebaseData.deletePlace(item.group, item.uid);
+                var service;
+                if(!appState.offline){
+                  service = $injector.get('firebaseData');
+                }
+                service.deletePlace(item.group, item.uid);
               }
             }
           ]
@@ -187,7 +206,11 @@ angular.module('starter')
             text: '<b>Save</b>',
             type: 'button-positive',
               onTap: function(e) {
-                firebaseData.editPlace(scope.data.group, scope.data.type, scope.data.note, scope.item);
+                var service;
+                if(!appState.offline){
+                  service = $injector.get('firebaseData');
+                }
+                service.editPlace(scope.data.group, scope.data.type, scope.data.note, scope.item);
               }
             }
           ]
@@ -221,7 +244,7 @@ angular.module('starter')
             type: 'button-positive',
               onTap: function() {
                 $state.go('map');
-                //$window.location.reload();
+                $window.location.reload();
               }
             }
           ]

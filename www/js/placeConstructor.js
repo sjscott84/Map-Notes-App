@@ -28,7 +28,7 @@ angular.module('starter')
           if(infoWindow){
             infoWindow.close();
           }
-          infoWindow = (appState.online) ? new google.maps.InfoWindow() : '';
+          infoWindow = (!appState.offline) ? new google.maps.InfoWindow() : '';
           changeCurrentPlace.changePlace(self);
           infoWindow.setContent(content);
           infoWindow.open(self.map, self.marker);

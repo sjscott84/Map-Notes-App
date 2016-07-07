@@ -1,6 +1,6 @@
 var app = angular.module('starter')
-  app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition', 'menu', 'listView',
-                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition, menu, listView) {
+  app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition', 'menu', 'listView', '$state',
+                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition, menu, listView, $state) {
     scope = $scope;
     var options = {timeout: 10000, enableHighAccuracy: true};
     var button = document.getElementById('button');
@@ -9,82 +9,88 @@ var app = angular.module('starter')
     var placeObject = {};
     var input;
     var searchBox;
+    var isDeviceOnline = navigator.onLine;
     scope.matchingGroups = [];
     scope.matchingTypes = [];
 
     //Opens the map based on the coordinates passed in
     function openMap (lat, lng){
 
-      var latLng = new google.maps.LatLng(lat, lng);
+      if(!isDeviceOnline){
+        popup.offlineMessage();
+        $state.go('offline');
+      }else{
+        var latLng = new google.maps.LatLng(lat, lng);
 
-      currentPosition.lat = lat;
-      currentPosition.lng = lng;
+        currentPosition.lat = lat;
+        currentPosition.lng = lng;
 
-      var mapOptions = {
-        center: latLng,
-        zoom: 15,
-        disableDefaultUI: true,
-        zoomControl: true,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
+        var mapOptions = {
+          center: latLng,
+          zoom: 15,
+          disableDefaultUI: true,
+          zoomControl: true,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
 
-      scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-      scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
+        scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
 
-      // Create the search box and link it to the UI element.
-      input = document.getElementById('pac-input');
-      searchBox = new google.maps.places.SearchBox(input);
-      scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
-      scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(closeButton);
-      //Bias the SearchBox results towards current map's viewport.
-      scope.map.addListener('bounds_changed', function() {
-        searchBox.setBounds(scope.map.getBounds());
-      });
-
-      google.maps.event.addListenerOnce(map, 'idle', function(){
-        console.log("Loaded");
-      });
-      // Listen for the event fired when the user selects a prediction,
-      // removes any existing search history and
-      // retrieves more details for that place.
-      searchBox.addListener('places_changed', function() {
-        var places = searchBox.getPlaces();
-        if (places.length === 0) {
-          return;
-        }
-        // Clear out the old marker
-        if(marker){
-          marker.setMap(null);
-        }
-        // For each place, get the icon, name and location.
-        var bounds = new google.maps.LatLngBounds();
-
-        places.forEach(function(place) {
-        // Create a marker for each place.
-          marker = new google.maps.Marker({
-            map: scope.map,
-            title: place.name,
-            position: place.geometry.location
-          });
-
-          google.maps.event.addListener(marker, 'click', function() {
-            popup.saveRequest(placeObject, scope, scope.map);
-            marker.setMap(null);
-          });
-
-          if (place.geometry.viewport) {
-          // Only geocodes have viewport.
-            bounds.union(place.geometry.viewport);
-          } else {
-            bounds.extend(place.geometry.location);
-          }
-          scope.map.setCenter(place.geometry.location);
-          scope.map.fitBounds(bounds);
-          var lat = place.geometry.location.lat();
-          var lng = place.geometry.location.lng();
-          placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "latitude":lat, "longitude":lng, "type": undefined, "notes": undefined};
+        // Create the search box and link it to the UI element.
+        input = document.getElementById('pac-input');
+        searchBox = new google.maps.places.SearchBox(input);
+        scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+        scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(closeButton);
+        //Bias the SearchBox results towards current map's viewport.
+        scope.map.addListener('bounds_changed', function() {
+          searchBox.setBounds(scope.map.getBounds());
         });
-      });
+
+        google.maps.event.addListenerOnce(map, 'idle', function(){
+          console.log("Loaded");
+        });
+        // Listen for the event fired when the user selects a prediction,
+        // removes any existing search history and
+        // retrieves more details for that place.
+        searchBox.addListener('places_changed', function() {
+          var places = searchBox.getPlaces();
+          if (places.length === 0) {
+            return;
+          }
+          // Clear out the old marker
+          if(marker){
+            marker.setMap(null);
+          }
+          // For each place, get the icon, name and location.
+          var bounds = new google.maps.LatLngBounds();
+
+          places.forEach(function(place) {
+          // Create a marker for each place.
+            marker = new google.maps.Marker({
+              map: scope.map,
+              title: place.name,
+              position: place.geometry.location
+            });
+
+            google.maps.event.addListener(marker, 'click', function() {
+              popup.saveRequest(placeObject, scope, scope.map);
+              marker.setMap(null);
+            });
+
+            if (place.geometry.viewport) {
+            // Only geocodes have viewport.
+              bounds.union(place.geometry.viewport);
+            } else {
+              bounds.extend(place.geometry.location);
+            }
+            scope.map.setCenter(place.geometry.location);
+            scope.map.fitBounds(bounds);
+            var lat = place.geometry.location.lat();
+            var lng = place.geometry.location.lng();
+            placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "latitude":lat, "longitude":lng, "type": undefined, "notes": undefined};
+          });
+        });
+      }
     }
 
     //Looks for current location and passes this to openMap, if can't find location opens map in San Francisco
@@ -92,7 +98,9 @@ var app = angular.module('starter')
       openMap(position.coords.latitude, position.coords.longitude);
     }, function(error){
       console.log(error);
-      popup.couldNotGetLocation();
+      if(isDeviceOnline){
+        popup.couldNotGetLocation();
+      }
       openMap(37.773972, -122.431297);
     });
 
@@ -174,7 +182,7 @@ var app = angular.module('starter')
   }]);
 
 //Functions based on the items in the side menu
-app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popup', 'currentPosition', 'firebaseData', '$state', 'allPlaces', function(listView, $ionicSideMenuDelegate, existingPlaces, popup, currentPosition, firebaseData, $state, allPlaces){
+app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popup', 'currentPosition', '$injector', '$state', 'allPlaces', 'appState', function(listView, $ionicSideMenuDelegate, existingPlaces, popup, currentPosition, $injector, $state, allPlaces, appState){
   //Clear the screen of previous searches
   removePlacesFromList = function(){
     while(listView.length !== 0){
@@ -199,8 +207,14 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
     //Search based on location (if avaiable)
     //TODO: Add error handling when location is not available
     searchByLocation: function(mapScope, map){
+      var service;
+      if(!appState.offline){
+        service = $injector.get('firebaseData');
+      }
       removePlacesFromList();
-      firebaseData.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
+      //firebaseData.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
+      service.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
+
       $ionicSideMenuDelegate.toggleLeft();
     },
     //Open the edit page
