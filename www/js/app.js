@@ -20,7 +20,8 @@ app.value('currentPosition', {
 app.value('appState',{
   ready: false,
   cordova: false,
-  offline: true
+  offline: true,
+  mapReady: false
 });
 
 app.run( function($ionicPlatform, $http, $rootScope, appState, $window, $state, popup) {

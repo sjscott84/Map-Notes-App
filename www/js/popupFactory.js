@@ -243,8 +243,12 @@ angular.module('starter')
             text: '<b>Return to Map</b>',
             type: 'button-positive',
               onTap: function() {
-                $state.go('map');
-                $window.location.reload();
+                if(appState.mapReady){
+                  $state.go('map');
+                }else{
+                  $state.go('map');
+                  $window.location.reload();
+                }
               }
             }
           ]

@@ -1,5 +1,5 @@
 var app = angular.module('starter')  
-  app.controller('offlineCtrl',['$scope', '$state', function($scope, $state, appState){
+  app.controller('offlineCtrl',['$scope', '$state', 'appState', '$window', function($scope, $state, appState, $window){
 
     var toParse = localStorage.getItem('places');
     $scope.list = JSON.parse(toParse);
@@ -30,6 +30,11 @@ var app = angular.module('starter')
     }
 
     $scope.returnToMap = function(){
-      $state.go('map');
+      if(appState.mapReady){
+        $state.go('map');
+      }else{
+        $state.go('map');
+        $window.location.reload();
+      }
     }
   }]);

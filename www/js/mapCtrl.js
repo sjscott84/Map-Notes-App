@@ -1,6 +1,6 @@
 var app = angular.module('starter')
-  app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition', 'menu', 'listView', '$state',
-                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition, menu, listView, $state) {
+  app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition', 'menu', 'listView', '$state', 'appState',
+                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition, menu, listView, $state, appState) {
     scope = $scope;
     var options = {timeout: 10000, enableHighAccuracy: true};
     var button = document.getElementById('button');
@@ -46,8 +46,9 @@ var app = angular.module('starter')
           searchBox.setBounds(scope.map.getBounds());
         });
 
-        google.maps.event.addListenerOnce(map, 'idle', function(){
-          console.log("Loaded");
+        google.maps.event.addListenerOnce(scope.map, 'idle', function(){
+          appState.mapReady = true;
+          console.log(appState.mapReady);
         });
         // Listen for the event fired when the user selects a prediction,
         // removes any existing search history and
