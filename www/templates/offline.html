@@ -15,16 +15,12 @@
 				{{item.name}}
 			</ion-item>
 
-			<ion-item class="item-accordion" ng-show="isPlaceShown(item)">
-				<div>
-					<p>Address: </p>{{item.address}}
-				</div>
-				<div>
-					<p>Type: </p>{{item.type}}
-				</div>
-				<div>
-					<p>Note: </p>{{item.notes}}
-				</div>
+			<ion-item class="item-accordion item-text-wrap" ng-show="isPlaceShown(item)">
+
+					<p><b>Address:</b> {{item.address}}</p>
+					<p><b>Type:</b> {{item.type}}</p>
+					<p><b>Note:</b> {{item.notes}}</p>
+
 			</ion-item>
 		</div>
 		</div>
