@@ -7,6 +7,7 @@ var app = angular.module('starter')
     $scope.toggleGroup = function(group) {
       if ($scope.isGroupShown(group)) {
         $scope.shownGroup = null;
+        $scope.shownPlace = null;
       } else {
         $scope.shownGroup = group;
       }
