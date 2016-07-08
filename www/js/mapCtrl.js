@@ -211,6 +211,7 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
         service = $injector.get('firebaseData');
       }
       removePlacesFromList();
+      map.setCenter({lat:currentPosition.lat, lng: currentPosition.lng});
       //firebaseData.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
       service.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
 
