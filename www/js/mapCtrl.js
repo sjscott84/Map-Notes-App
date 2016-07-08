@@ -161,8 +161,6 @@ var app = angular.module('starter')
       func: 'removePlaces'},
       {title: 'Edit',
       func: 'editPlaces'},
-      {title: 'Save for offline use',
-      func: 'saveForOffline'},
       {title: 'Logout',
       func: 'logoutScreen'}
     ];
@@ -232,12 +230,6 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
     logoutScreen: function(){
       $ionicSideMenuDelegate.toggleLeft();
       $state.go('home');
-    },
-    saveForOffline: function(map){
-      //localStorage.setItem('map', JSON.stringify(map));
-      //localStorage.setItem('places', JSON.stringify(allPlaces));
-      $state.go('offline');
-      $ionicSideMenuDelegate.toggleLeft();
     }
   }
 }])
