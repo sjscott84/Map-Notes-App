@@ -40,8 +40,10 @@
   <body ng-app="starter" data-tap-disabled="true">
     <div ng-controller="MainCtrl">
       <ion-nav-view></ion-nav-view>
-      <info id="infoWindow" places="thisplace"></info>
-
+      <div id="spinnerDiv">
+        <ion-spinner icon="bubbles" ng-hide="appState.mapReady"></ion-spinner>
+      </div>
+      <info id="infoWindow" places="thisplace" ng-show="appState.mapReady"></info>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

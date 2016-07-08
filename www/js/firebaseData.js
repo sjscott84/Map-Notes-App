@@ -22,7 +22,7 @@ angular.module('starter')
       }
     }
 
-    updateAllPlaces = function(items, callback){
+    updateAllPlaces = function(items){
       var place = {};
       while(allPlaces.length !== 0){
         allPlaces.pop();
@@ -38,7 +38,6 @@ angular.module('starter')
           allPlaces.push(place);
         })
       }
-      callback();
     }
 
   updateAfterChange = function(){

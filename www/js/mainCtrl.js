@@ -1,5 +1,5 @@
 angular.module('starter')
-  .controller('MainCtrl', ['$scope', 'currentPlace', function($scope, currentPlace){
+  .controller('MainCtrl', ['$scope', 'currentPlace', 'appState', function($scope, currentPlace, appState){
     $scope.$watchCollection(
       function(){
         return currentPlace;

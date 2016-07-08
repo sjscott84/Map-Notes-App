@@ -9923,5 +9923,19 @@ p {
   float: right;
 }
 
+#spinnerDiv {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  margin-top: 65%
+}
+
+.spinner svg {
+  width: 75px;
+  height: 75px;
+  display: block;
+  margin: auto;
+}
+
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important; }

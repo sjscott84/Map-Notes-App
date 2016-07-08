@@ -1,6 +1,6 @@
 angular.module('starter')
 //Controls the content of the infowindow when a marker is clicked
-  .directive('info',['$cordovaAppAvailability', 'currentPlace', function($cordovaAppAvailability, currentPlace){
+  .directive('info',['$cordovaAppAvailability', 'currentPlace', 'appState', function($cordovaAppAvailability, currentPlace, appState){
 
     var name = currentPlace.name;
 
