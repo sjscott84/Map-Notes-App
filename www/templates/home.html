@@ -7,25 +7,19 @@
     </div>
 
     <div id="loginButtons" ng-show="appState.ready">
-      <button id="googleButton" class="button button-block" ng-click="loginGoogle()" ng-show="!user.data">Login with Google</button>
+      <button id="googleButton" class="button button-block" ng-click="loginGoogle()" ng-hide="activeUser">Login with Google</button>
 
-      <!--<div class="button-bar">
-          REMEMBER: If reinstating twitter login remove button-block from facebook button-->
-        <button id="facebook" class="button button-positive button-block" ng-click="loginFacebook()" ng-show="!user.data">Login with Facebook</button>
-
-        <!--<button id="twitter" class="button button-calm" ng-click="loginTwitter()" ng-show="!user.data">Twitter</button>
-      </div>-->
+      <button id="facebook" class="button button-positive button-block" ng-click="loginFacebook()" ng-hide="activeUser">Login with Facebook</button>
 
       <div class="button-bar" id="emailAccounts">
-        <button class="button button-clear button-stable" ng-click="loginEmail()" ng-show="!user.data">Sign in with email</button>
+        <button class="button button-clear button-stable" ng-click="loginEmail()" ng-hide="activeUser">Sign in with email</button>
 
-        <button class="button button-clear button-stable" ng-click="createAccount()" ng-show="!user.data">Create Account</button>
+        <button class="button button-clear button-stable" ng-click="createAccount()" ng-hide="activeUser">Create Account</button>
       </div>
 
       <div id="logoutButtons">
-        <button id="logout" class="button button-block" ng-click="logout()" ng-show="user.data">Logout as {{user.displayName}}</button>
-
-        <button class="button button-block button-positive" ng-click="openMap()" ng-show="user.data">Back to Map</button>
+        <button id="logout" class="button button-block" ng-click="logout()" ng-show="activeUser">Logout as {{displayName}}</button>
+        <button class="button button-block button-positive" ng-click="openMap()" ng-show="activeUser">Back to Map</button>
       </div>
     </div>
   </ion-content>
