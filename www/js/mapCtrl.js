@@ -48,7 +48,6 @@ var app = angular.module('starter')
 
         google.maps.event.addListenerOnce(scope.map, 'idle', function(){
           appState.mapReady = true;
-          console.log(appState.mapReady);
         });
         // Listen for the event fired when the user selects a prediction,
         // removes any existing search history and

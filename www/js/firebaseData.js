@@ -22,7 +22,7 @@ angular.module('starter')
       }
     }
 
-    updateAllPlaces = function(items){
+    updateAllPlaces = function(items, callback){
       var place = {};
       while(allPlaces.length !== 0){
         allPlaces.pop();
@@ -38,13 +38,16 @@ angular.module('starter')
           allPlaces.push(place);
         })
       }
+      callback();
     }
 
   updateAfterChange = function(){
     database.ref('/users/'+user.data.uid+'/places').on('value', function(response){
       clearExistingPlaces();
       var items = response.val();
-      updateAllPlaces(items);
+      updateAllPlaces(items, function(){
+        localStorage.setItem('places', JSON.stringify(allPlaces));
+      });
       if(items){
         Object.keys(items).forEach(function(key){
           if(existingPlaces.groups.indexOf(key) === -1){

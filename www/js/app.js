@@ -28,7 +28,6 @@ app.run( function($ionicPlatform, $http, $rootScope, appState, $window, $state, 
   //$rootScope.user = user;
   $rootScope.appState = appState;
   var deviceOnline = navigator.onLine;
-  console.log(deviceOnline);
   //window.appState = appState;
   if(!deviceOnline){
     $state.go('offline');
@@ -36,29 +35,29 @@ app.run( function($ionicPlatform, $http, $rootScope, appState, $window, $state, 
   }else{
     appState.offline = false;
     $ionicPlatform.ready(function() {
-    appState.ready = true;
+      appState.ready = true;
 
-    if(window.cordova){
-      appState.cordova = true;
+      if(window.cordova){
+        appState.cordova = true;
 
-      if(window.cordova && window.cordova.plugins.Keyboard) {
-        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-        // for form inputs)
-        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        if(window.cordova && window.cordova.plugins.Keyboard) {
+          // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+          // for form inputs)
+          cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 
-        // Don't remove this line unless you know what you are doing. It stops the viewport
-        // from snapping when text inputs are focused. Ionic handles this internally for
-        // a much nicer keyboard experience.
-        cordova.plugins.Keyboard.disableScroll(true);
+          // Don't remove this line unless you know what you are doing. It stops the viewport
+          // from snapping when text inputs are focused. Ionic handles this internally for
+          // a much nicer keyboard experience.
+          cordova.plugins.Keyboard.disableScroll(true);
+        }
+        if(window.StatusBar) {
+          StatusBar.styleDefault();
+        }
+        if (cordova.InAppBrowser) {
+          window.open = cordova.InAppBrowser.open
+        }
       }
-      if(window.StatusBar) {
-        StatusBar.styleDefault();
-      }
-      if (cordova.InAppBrowser) {
-        window.open = cordova.InAppBrowser.open
-      }
-    }
-  });
+    });
   }
 
   $window.addEventListener("offline", function () {

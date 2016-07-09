@@ -12,7 +12,6 @@ var app = angular.module('starter')
           $scope.list = allPlaces;
           localStorage.setItem('places', JSON.stringify(allPlaces));
         }else{
-          console.log('No Change');
         }
       },true);
 

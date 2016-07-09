@@ -8,7 +8,6 @@ angular.module('starter')
         if(newVal !== oldVal){
           $scope.thisplace = currentPlace;
         }else{
-          console.log('No Change');
         }
       },true);
   }])
