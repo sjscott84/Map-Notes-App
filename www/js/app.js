@@ -21,7 +21,8 @@ app.value('appState',{
   ready: false,
   cordova: false,
   offline: true,
-  mapReady: false
+  mapReady: false,
+  appActive: true
 });
 
 app.run( function($ionicPlatform, $http, $rootScope, appState, $window, $state, popup) {
@@ -54,18 +55,32 @@ app.run( function($ionicPlatform, $http, $rootScope, appState, $window, $state, 
     }
   });
 
+  document.addEventListener("pause", function(){
+    appState.appActive = false;
+    console.log(appState.appActive);
+  }, false);
+
+  document.addEventListener("resume", function(){
+    appState.appActive = true;
+    console.log(appState.appActive);
+  }, false);
+
   $window.addEventListener("offline", function () {
-    $rootScope.$apply(function() {
-      appState.offline = true;
-      popup.offlineMessage();
-      $state.go('offline');
-    });
+    if(appState.appActive){
+      $rootScope.$apply(function() {
+        appState.offline = true;
+        popup.offlineMessage();
+        $state.go('offline');
+      });
+    }
   }, false);
   $window.addEventListener("online", function () {
-    $rootScope.$apply(function() {
-      appState.offline = false;
-      popup.onlineMessage();
-    });
+    if(appState.appActive){
+      $rootScope.$apply(function() {
+        appState.offline = false;
+        popup.onlineMessage();
+      });
+    }
   }, false);
 })
 
