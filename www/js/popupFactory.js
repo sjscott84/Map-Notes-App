@@ -1,5 +1,5 @@
 angular.module('starter')
-  .factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', '$state', '$window', 'appState', '$injector', 'firebaseAuth', function($ionicPopup, listView, placeConstructor, existingPlaces, $state, $window, appState, $injector, firebaseAuth){
+  .factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', '$state', '$window', 'appState', '$injector', 'firebaseAuth', '$timeout', function($ionicPopup, listView, placeConstructor, existingPlaces, $state, $window, appState, $injector, firebaseAuth, $timeout){
     //Input details and save a new search to database
     function inputPlaceInfoFn(placeObject, mapScope, map){
       mapScope.data = {};
@@ -228,6 +228,9 @@ angular.module('starter')
           title: 'Offline',
           template: 'You are appear to be offline, you can still view a list of your places, but maps will be unavaiable until you are back online'
          });
+        $timeout(function() {
+          alertPopup.close(); //close the popup after 3 seconds for some reason
+        }, 4000);
       },
       onlineMessage: function(){
         var myPopup = $ionicPopup.show({
@@ -253,6 +256,9 @@ angular.module('starter')
             }
           ]
         })
+        $timeout(function() {
+          myPopup.close(); //close the popup after 3 seconds for some reason
+        }, 4000);
       }
     }
   }]);

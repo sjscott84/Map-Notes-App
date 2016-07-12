@@ -17,9 +17,11 @@ var app = angular.module('starter')
     function openMap (lat, lng){
 
       if(!isDeviceOnline){
+        appState.offline = true;
         popup.offlineMessage();
         $state.go('offline');
       }else{
+        appState.offline = false;
         var latLng = new google.maps.LatLng(lat, lng);
 
         currentPosition.lat = lat;
