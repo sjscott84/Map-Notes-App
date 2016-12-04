@@ -16,12 +16,12 @@ var app = angular.module('starter')
     //Opens the map based on the coordinates passed in
     function openMap (lat, lng){
 
-      if(!isDeviceOnline){
+      /*if(!isDeviceOnline){
         appState.offline = true;
         popup.offlineMessage();
         $state.go('offline');
-      }else{
-        appState.offline = false;
+      }else{*/
+        //appState.offline = false;
         var latLng = new google.maps.LatLng(lat, lng);
 
         currentPosition.lat = lat;
@@ -92,7 +92,7 @@ var app = angular.module('starter')
             placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "latitude":lat, "longitude":lng, "type": undefined, "notes": undefined};
           });
         });
-      }
+      //}
     }
 
     //Looks for current location and passes this to openMap, if can't find location opens map in San Francisco
@@ -163,7 +163,9 @@ var app = angular.module('starter')
       {title: 'Edit',
       func: 'editPlaces'},
       {title: 'Logout',
-      func: 'logoutScreen'}
+      func: 'logoutScreen'},
+      {title: 'Offline',
+      func: 'offline'}
     ];
 
     //Calls a function based on what item was clicked in the side menu
@@ -232,6 +234,10 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
     logoutScreen: function(){
       $ionicSideMenuDelegate.toggleLeft();
       $state.go('home');
+    },
+    offline: function(){
+      $ionicSideMenuDelegate.toggleLeft();
+      $state.go('offline');
     }
   }
 }])

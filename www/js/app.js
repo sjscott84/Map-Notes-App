@@ -65,7 +65,8 @@ app.run( function($ionicPlatform, $http, $rootScope, appState, $window, $state, 
     console.log(appState.appActive);
   }, false);
 
-  $window.addEventListener("offline", function () {
+  //Functionality too test if internet available and change app state accordingly. In testing this was super buggy so has been disabeled for now.
+  /*$window.addEventListener("offline", function () {
     if(appState.appActive){
       $rootScope.$apply(function() {
         appState.offline = true;
@@ -81,7 +82,7 @@ app.run( function($ionicPlatform, $http, $rootScope, appState, $window, $state, 
         popup.onlineMessage();
       });
     }
-  }, false);
+  }, false);*/
 })
 
 app.config(function($stateProvider, $urlRouterProvider) {
