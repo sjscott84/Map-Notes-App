@@ -29,9 +29,9 @@ angular.module('starter')
                 existingPlaces.types.push(placeObject.type);
               }
               var service;
-              if(!appState.offline){
+              //if(!appState.offline){
                 service = $injector.get('firebaseData');
-              }
+              //}
               service.savePlace(placeObject.group, placeObject.type, placeObject, map);
             }
           }
@@ -67,9 +67,9 @@ angular.module('starter')
               type: 'button-positive',
               onTap: function() {
                 var service;
-                if(!appState.offline){
+                //if(!appState.offline){
                   service = $injector.get('firebaseAuth');
-                }
+                //}
                 service.createAccount(scope.data.email, scope.data.password, function(code, message){
                   var codeForPopup;
                   if(code === 'auth/email-already-in-use'){
@@ -155,9 +155,9 @@ angular.module('starter')
               onTap: function() {
                 //console.log(scope.data.selectedGroup);
                 var service;
-                if(!appState.offline){
+                //if(!appState.offline){
                   service = $injector.get('firebaseData');
-                }
+                //}
                 service.searchForPlaces(scope.data.selectedGroup, scope.data.selectedType, map);
               }
             }
@@ -179,9 +179,9 @@ angular.module('starter')
               type: 'button-assertive',
               onTap: function() {
                 var service;
-                if(!appState.offline){
+                //if(!appState.offline){
                   service = $injector.get('firebaseData');
-                }
+                //}
                 service.deletePlace(item.group, item.uid);
               }
             }
@@ -207,9 +207,9 @@ angular.module('starter')
             type: 'button-positive',
               onTap: function(e) {
                 var service;
-                if(!appState.offline){
+                //if(!appState.offline){
                   service = $injector.get('firebaseData');
-                }
+                //}
                 service.editPlace(scope.data.group, scope.data.type, scope.data.note, scope.item);
               }
             }

@@ -154,18 +154,18 @@ var app = angular.module('starter')
 
     //List of items that display in the side menu
     scope.tasks = [
-      {title: 'Location',
+      {title: 'Search by Current Location',
       func: 'searchByLocation'},
-      {title: 'Catagories',
+      {title: 'Search by Catagories',
       func: 'searchByWhat'},
-      {title: 'Remove',
+      {title: 'Remove Current Places',
       func: 'removePlaces'},
-      {title: 'Edit',
+      {title: 'Edit Places',
       func: 'editPlaces'},
-      {title: 'Logout',
-      func: 'logoutScreen'},
       {title: 'Offline',
-      func: 'offline'}
+      func: 'offline'},
+      {title: 'Logout',
+      func: 'logoutScreen'}
     ];
 
     //Calls a function based on what item was clicked in the side menu
@@ -210,9 +210,9 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
     //TODO: Add error handling when location is not available
     searchByLocation: function(mapScope, map){
       var service;
-      if(!appState.offline){
+      //if(!appState.offline){
         service = $injector.get('firebaseData');
-      }
+      //}
       removePlacesFromList();
       map.setCenter({lat:currentPosition.lat, lng: currentPosition.lng});
       //firebaseData.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
