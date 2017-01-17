@@ -188,6 +188,30 @@ angular.module('starter')
           ]
         })
       },
+      deleteGroup: function(scope, item){
+        console.log(item);
+        var myPopup = $ionicPopup.show({
+          title: "Are you sure you want to delete "+item.name+"?",
+          scope : scope,
+          buttons: [
+            { text: 'Cancel',
+              onTap: function(){
+              } 
+            },
+            {
+              text: '<b>Delete</b>',
+              type: 'button-assertive',
+              onTap: function() {
+                var service;
+                //if(!appState.offline){
+                  service = $injector.get('firebaseData');
+                //}
+                service.deleteGroup(item.name);
+              }
+            }
+          ]
+        })
+      },
       //Popup with details of place to edit
       editItem: function(scope, item){
         scope.data = {group: item.group, type: item.type, note: item.notes};

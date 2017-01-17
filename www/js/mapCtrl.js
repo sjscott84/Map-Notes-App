@@ -215,13 +215,13 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
       //}
       removePlacesFromList();
       map.setCenter({lat:currentPosition.lat, lng: currentPosition.lng});
-      //firebaseData.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
       service.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
 
       $ionicSideMenuDelegate.toggleLeft();
     },
-    //Open the edit page
+    //Open the edit page and close any markers currently onscreen
     editPlaces: function(){
+      removePlacesFromList();
       $ionicSideMenuDelegate.toggleLeft();
       $state.go('edit');
     },

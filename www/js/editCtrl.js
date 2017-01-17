@@ -38,6 +38,10 @@ var app = angular.module('starter')
     $scope.delete= function(item){
       popup.deletePlace($scope, item);
     }
+
+    $scope.deleteGroup = function(item){
+      popup.deleteGroup($scope, item);
+    }
   }]);
 
   app.factory('editPage',['$state', function($state){

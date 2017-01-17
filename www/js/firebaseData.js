@@ -188,6 +188,12 @@ angular.module('starter')
           updateAfterChange();
         })
       },
+      deleteGroup: function(group){
+        database.ref('/users/'+user.data.uid+'/places/'+group).remove()
+        .then(function(){
+          updateAfterChange();
+        })
+      },
       editPlace: function(group, type, notes, olditem){
         if(olditem.group !== group){
           var newPlace = {group: group, type: type, notes: notes, address: olditem.address, latitude: olditem.latitude, longitude: olditem.longitude, name: olditem.name}

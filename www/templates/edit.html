@@ -9,13 +9,17 @@
 	<ion-list>
 		<div ng-repeat="thing in list">
 			<ion-item class="item-stable" ng-click="toggleGroup(thing)" ng-class="{active: isGroupShown(thing)}" can-swipe="listCanSwipe">
-				<i class="icon" ng-class="isGroupShown(thing) ? 'ion-minus' : 'ion-plus'" can-swipe="listCanSwipe"></i>
-				{{thing.name}}
+				<div>
+					<i class="icon" ng-class="isGroupShown(thing) ? 'ion-minus' : 'ion-plus'" can-swipe="listCanSwipe"></i>
+					{{thing.name}}
+					<i id="slideIcon" class="icon-right ion-chevron-left"></i>
+				</div>
+				<ion-option-button class="button-assertive" ng-click="deleteGroup(thing)">Delete</ion-option-button>
 			</ion-item>
 			<ion-item class="item-accordion" ng-repeat="item in thing.items" ng-show="isGroupShown(thing)" can-swipe="listCanSwipe">
 				<div>
-				{{item.name}}
-				<i id="slideIcon" class="icon-right ion-chevron-left"></i>
+					{{item.name}}
+					<i id="slideIcon" class="icon-right ion-chevron-left"></i>
 				 </div>
 				<ion-option-button class="button-positive" ng-click="edit(item)">Edit</ion-option-button>
 				<ion-option-button class="button-assertive" ng-click="delete(item)">Delete</ion-option-button>
