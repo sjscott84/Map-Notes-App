@@ -200,8 +200,8 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popu
       //var promise = server.pageSetUp();
       //promise.then(
         //function(){
-          mapScope.group  = existingPlaces.groups;
-          mapScope.type = existingPlaces.types;
+          mapScope.group  = existingPlaces.groups.sort();
+          mapScope.type = existingPlaces.types.sort();
           popup.getPlaces(mapScope, map);
         //}
       //);
