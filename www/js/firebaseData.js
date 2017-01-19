@@ -1,5 +1,5 @@
 angular.module('starter')
-  .factory("firebaseData",['existingPlaces', 'listView', 'placeConstructor', 'fitBounds', 'errorMessage', 'location', 'allPlaces', 'firebaseService', 'user', function(existingPlaces, listView, placeConstructor, fitBounds, errorMessage, location, allPlaces, firebaseService, user){
+  .factory("firebaseData",['existingPlaces', 'existingPlacesGrouped', 'listView', 'placeConstructor', 'fitBounds', 'errorMessage', 'location', 'allPlaces', 'firebaseService', 'user', function(existingPlaces, existingPlacesGrouped, listView, placeConstructor, fitBounds, errorMessage, location, allPlaces, firebaseService, user){
   
     var firebase = firebaseService.fb;
     var database = firebase.database();
@@ -73,7 +73,33 @@ angular.module('starter')
       pageSetUp: function(){
         //Clear out existingPlaces before repopulating
         clearExistingPlaces();
-        //Add groups to ExistingPlaces array
+        existingPlacesGrouped = {};
+        //
+        database.ref('/users/'+user.data.uid+'/places').once('value')
+        .then(function (response) {
+          var items = response.val();
+          if(items){
+            Object.keys(items).forEach(function(key){
+              //Add group to group array
+              if(existingPlaces.groups.indexOf(key) === -1){
+                existingPlaces.groups.push(key);
+                var type = items[key];
+                existingPlacesGrouped[key] = [];
+                //Add type to type array
+                Object.keys(type).forEach(function(typeKey){
+                  if(existingPlacesGrouped[key].indexOf(type[typeKey]['type']) === -1){
+                    existingPlacesGrouped[key].push(type[typeKey]['type']);
+                  }
+                  if(existingPlaces.types.indexOf(type[typeKey]['type']) === -1){
+                    existingPlaces.types.push(type[typeKey]['type']);
+                  }
+                })
+              }
+            });
+          }
+          //console.log(existingPlacesGrouped);
+        })
+        /*//Add groups to ExistingPlaces array
         database.ref('/users/'+user.data.uid+'/places').once('value')
         .then(function (response) {
           var items = response.val();
@@ -99,7 +125,7 @@ angular.module('starter')
               })
             });
           }
-        })
+        })*/
       },
       searchForPlaces: function(group, type, map){
         if(group === "All" && type === "All"){

@@ -9830,7 +9830,7 @@ a.button {
   margin-top: 20px;
   margin-left: -1px;
   width: 60%;
-  height: 65px;
+  height: 60px;
   border-radius: 0;
   position: -6px;
   padding-left: 10px; }
@@ -9839,7 +9839,7 @@ a.button {
   background-color: #fff;
   margin-top: 20px;
   margin-left: 10%;
-  height: 65px;
+  height: 60px;
   width: 20%;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
@@ -9850,7 +9850,7 @@ a.button {
   margin-top: 20px;
   margin-left: -2px;
   margin-right: 10%;
-  height: 65px;
+  height: 60px;
   width: 15%;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
