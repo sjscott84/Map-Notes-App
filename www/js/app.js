@@ -11,7 +11,9 @@ app.value('existingPlaces', {
   groups: ["All"],
   types: ["All"]
 });
-app.value('existingPlacesGrouped', {});
+app.value('existingPlacesGrouped', {
+  All: ["All"]
+});
 app.value('currentPlace', {});
 app.value('currentPosition', {
   lat: '',

@@ -73,8 +73,6 @@ angular.module('starter')
       pageSetUp: function(){
         //Clear out existingPlaces before repopulating
         clearExistingPlaces();
-        existingPlacesGrouped = {};
-        //
         database.ref('/users/'+user.data.uid+'/places').once('value')
         .then(function (response) {
           var items = response.val();
@@ -85,6 +83,7 @@ angular.module('starter')
                 existingPlaces.groups.push(key);
                 var type = items[key];
                 existingPlacesGrouped[key] = [];
+                existingPlacesGrouped[key].push("All");
                 //Add type to type array
                 Object.keys(type).forEach(function(typeKey){
                   if(existingPlacesGrouped[key].indexOf(type[typeKey]['type']) === -1){
@@ -97,7 +96,6 @@ angular.module('starter')
               }
             });
           }
-          //console.log(existingPlacesGrouped);
         })
         /*//Add groups to ExistingPlaces array
         database.ref('/users/'+user.data.uid+'/places').once('value')

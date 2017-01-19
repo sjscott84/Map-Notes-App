@@ -1,6 +1,6 @@
 var app = angular.module('starter')
-  app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'currentPosition', 'menu', 'listView', '$state', 'appState',
-                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, currentPosition, menu, listView, $state, appState) {
+  app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'existingPlacesGrouped', 'currentPosition', 'menu', 'listView', '$state', 'appState',
+                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, existingPlacesGrouped, currentPosition, menu, listView, $state, appState) {
     scope = $scope;
     var options = {timeout: 10000, enableHighAccuracy: true};
     var button = document.getElementById('button');
@@ -184,18 +184,22 @@ var app = angular.module('starter')
   }]);
 
 //Functions based on the items in the side menu
-app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'popup', 'currentPosition', '$injector', '$state', 'allPlaces', 'appState', function(listView, $ionicSideMenuDelegate, existingPlaces, popup, currentPosition, $injector, $state, allPlaces, appState){
+app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'existingPlacesGrouped', 'popup', 'currentPosition', '$injector', '$state', 'allPlaces', 'appState', function(listView, $ionicSideMenuDelegate, existingPlaces, existingPlacesGrouped, popup, currentPosition, $injector, $state, allPlaces, appState){
   //Clear the screen of previous searches
   removePlacesFromList = function(){
     while(listView.length !== 0){
       var x = listView.pop();
       x.marker.setMap(null);
     }
-  };
+  }; 
+
   return{
     //Search by group and/or type
     searchByWhat: function(mapScope, map){
       removePlacesFromList();
+      mapScope.getTypesForGroup = function(group){
+        mapScope.type = existingPlacesGrouped[group].sort();
+      };
       $ionicSideMenuDelegate.toggleLeft();
       //var promise = server.pageSetUp();
       //promise.then(
