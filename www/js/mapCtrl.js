@@ -84,7 +84,6 @@ var app = angular.module('starter')
 
             google.maps.event.addListener(marker, 'click', function() {
               placeObject = {"group": undefined, "name": this.title, "address":this.address, "latitude":this.lat, "longitude":this.lng, "type": undefined, "notes": undefined};
-              console.log(placeObject);
               popup.saveRequest(placeObject, scope, scope.map);
               //marker.setMap(null);
               for(i = 0; i < allMarkers.length; i++){
@@ -100,7 +99,7 @@ var app = angular.module('starter')
             }
             scope.map.setCenter(place.geometry.location);
             scope.map.fitBounds(bounds);
-            
+
             allMarkers.push(marker);
           });
         });
@@ -141,15 +140,13 @@ var app = angular.module('starter')
       for(var i = 1; i<existingPlaces.types.length; i++){
           var what = existingPlaces.types[i].slice(0, entry);
           if(scope.data.type.match(new RegExp([what], 'i'))){
-            //console.log(existingPlaces.groups[i]);
             scope.matchingTypes.push(existingPlaces.types[i]);
         }
       }
     }
 
-    //Not sure what this is for....
+    //Closes the "autocomplete" dropdown list once an option has been selected when creating a new entry
     scope.closeList = function(){
-      console.log('clostList called');
       scope.matchingGroups = [];
       scope.matchingTypes = [];
     }

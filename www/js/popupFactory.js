@@ -1,5 +1,5 @@
 angular.module('starter')
-  .factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', '$state', '$window', 'appState', '$injector', 'firebaseAuth', '$timeout', function($ionicPopup, listView, placeConstructor, existingPlaces, $state, $window, appState, $injector, firebaseAuth, $timeout){
+  .factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', 'existingPlacesGrouped', '$state', '$window', 'appState', '$injector', 'firebaseAuth', '$timeout', function($ionicPopup, listView, placeConstructor, existingPlaces, existingPlacesGrouped, $state, $window, appState, $injector, firebaseAuth, $timeout){
     //Input details and save a new search to database
     function inputPlaceInfoFn(placeObject, mapScope, map){
       mapScope.data = {};
@@ -28,6 +28,10 @@ angular.module('starter')
               if(existingPlaces.types.indexOf(placeObject.type) === -1){
                 existingPlaces.types.push(placeObject.type);
               }
+              if(existingPlacesGrouped[placeObject.group].indexOf(placeObject.type) === -1){
+                existingPlacesGrouped[placeObject.group].push(placeObject.type);
+              }
+
               var service;
               //if(!appState.offline){
                 service = $injector.get('firebaseData');
