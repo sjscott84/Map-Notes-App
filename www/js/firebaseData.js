@@ -3,8 +3,6 @@ angular.module('starter')
   
     var firebase = firebaseService.fb;
     var database = firebase.database();
-    //var userId = user.data.uid;
-
 
     savePlaceToListView = function(item, key, map){
       listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address'], key, map));
@@ -41,32 +39,31 @@ angular.module('starter')
       callback();
     }
 
-  updateAfterChange = function(){
-    database.ref('/users/'+user.data.uid+'/places').on('value', function(response){
-      clearExistingPlaces();
-      var items = response.val();
-      updateAllPlaces(items, function(){
-        localStorage.setItem('places', JSON.stringify(allPlaces));
-      });
-      if(items){
-        Object.keys(items).forEach(function(key){
-          if(existingPlaces.groups.indexOf(key) === -1){
-            existingPlaces.groups.push(key);
-          }
-          var item = items[key];
-          Object.keys(item).forEach(function(key){
-            if(existingPlaces.types.indexOf(item[key]['type']) === -1){
-              existingPlaces.types.push(item[key]['type']);
+    updateAfterChange = function(){
+      database.ref('/users/'+user.data.uid+'/places').on('value', function(response){
+        clearExistingPlaces();
+        var items = response.val();
+        updateAllPlaces(items, function(){
+          localStorage.setItem('places', JSON.stringify(allPlaces));
+        });
+        if(items){
+          Object.keys(items).forEach(function(key){
+            if(existingPlaces.groups.indexOf(key) === -1){
+              existingPlaces.groups.push(key);
             }
+            var item = items[key];
+            Object.keys(item).forEach(function(key){
+              if(existingPlaces.types.indexOf(item[key]['type']) === -1){
+                existingPlaces.types.push(item[key]['type']);
+              }
+            })
           })
-        })
-      }
-    });
-  }
+        }
+      });
+    }
 
     return {
       savePlace: function(group, type, placeObject, map){
-        //database.ref('places/places/'+group).push(placeObject);
         var key = database.ref('/users/'+user.data.uid+'/places/'+group).push(placeObject).key;
         savePlaceToListView(placeObject, key, map);
       },
@@ -78,13 +75,11 @@ angular.module('starter')
           var items = response.val();
           if(items){
             Object.keys(items).forEach(function(key){
-              //Add group to group array
               if(existingPlaces.groups.indexOf(key) === -1){
                 existingPlaces.groups.push(key);
                 var type = items[key];
                 existingPlacesGrouped[key] = [];
                 existingPlacesGrouped[key].push("All");
-                //Add type to type array
                 Object.keys(type).forEach(function(typeKey){
                   if(existingPlacesGrouped[key].indexOf(type[typeKey]['type']) === -1){
                     existingPlacesGrouped[key].push(type[typeKey]['type']);
@@ -97,33 +92,6 @@ angular.module('starter')
             });
           }
         })
-        /*//Add groups to ExistingPlaces array
-        database.ref('/users/'+user.data.uid+'/places').once('value')
-        .then(function (response) {
-          var items = response.val();
-          if(items){
-            Object.keys(items).forEach(function(key){
-              if(existingPlaces.groups.indexOf(key) === -1){
-                existingPlaces.groups.push(key);
-              }
-            });
-          }
-        })
-        //Add types to ExistingPlaces array
-        database.ref('/users/'+user.data.uid+'/places').once('value') 
-        .then(function (response) {
-          var items = response.val();
-          if(items){
-            Object.keys(items).forEach(function(key){
-              var item = items[key];
-              Object.keys(item).forEach(function(key){
-                if(existingPlaces.types.indexOf(item[key]['type']) === -1){
-                  existingPlaces.types.push(item[key]['type']);
-                }
-              })
-            });
-          }
-        })*/
       },
       searchForPlaces: function(group, type, map){
         if(group === "All" && type === "All"){
@@ -154,7 +122,6 @@ angular.module('starter')
           database.ref('/users/'+user.data.uid+'/places/'+group).once('value')
           .then(function(response){
             var items = response.val();
-            console.log(items); 
             Object.keys(items).forEach(function(key){
               savePlaceToListView(items[key], key, map);
             })
@@ -163,7 +130,6 @@ angular.module('starter')
           database.ref('/users/'+user.data.uid+'/places/'+group).once('value')
           .then(function(response){
             var items = response.val();
-            console.log(items);
             Object.keys(items).forEach(function(key){
               if(items[key]['type'] === type){
                 savePlaceToListView(items[key], key, map);

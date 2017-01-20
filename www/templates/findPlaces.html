@@ -4,9 +4,6 @@
     <div class="input-label">
       Group
     </div>
-    <!--<select name="selected" ng-model="data.selected">
-      <option ng-repeat="item in group" value="{{item}}">{{item}}</option>
-    </select>-->
     <select ng-init="data.selectedGroup = 'All'" ng-model="data.selectedGroup" ng-options="item for item in group" ng-change="getTypesForGroup(data.selectedGroup)">
       <option></option>
     </select>

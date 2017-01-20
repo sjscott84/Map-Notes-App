@@ -6,6 +6,7 @@ var app = angular.module('starter')
     var button = document.getElementById('button');
     var closeButton = document.getElementById('closeButton');
     var marker;
+    var allMarkers = [];
     var placeObject = {};
     var input;
     var searchBox;
@@ -55,13 +56,17 @@ var app = angular.module('starter')
         // removes any existing search history and
         // retrieves more details for that place.
         searchBox.addListener('places_changed', function() {
+          var allMarkers = [];
           var places = searchBox.getPlaces();
           if (places.length === 0) {
             return;
           }
           // Clear out the old marker
-          if(marker){
+          if(marker || allMarkers.length > 0){
             marker.setMap(null);
+            for(i = 0; i < allMarkers.length; i++){
+              allMarkers[i].setMap(null);
+            }
           }
           // For each place, get the icon, name and location.
           var bounds = new google.maps.LatLngBounds();
@@ -71,12 +76,20 @@ var app = angular.module('starter')
             marker = new google.maps.Marker({
               map: scope.map,
               title: place.name,
-              position: place.geometry.location
+              position: place.geometry.location,
+              address: place.formatted_address,
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng()
             });
 
             google.maps.event.addListener(marker, 'click', function() {
+              placeObject = {"group": undefined, "name": this.title, "address":this.address, "latitude":this.lat, "longitude":this.lng, "type": undefined, "notes": undefined};
+              console.log(placeObject);
               popup.saveRequest(placeObject, scope, scope.map);
-              marker.setMap(null);
+              //marker.setMap(null);
+              for(i = 0; i < allMarkers.length; i++){
+                allMarkers[i].setMap(null);
+              }
             });
 
             if (place.geometry.viewport) {
@@ -87,9 +100,8 @@ var app = angular.module('starter')
             }
             scope.map.setCenter(place.geometry.location);
             scope.map.fitBounds(bounds);
-            var lat = place.geometry.location.lat();
-            var lng = place.geometry.location.lng();
-            placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "latitude":lat, "longitude":lng, "type": undefined, "notes": undefined};
+            
+            allMarkers.push(marker);
           });
         });
       //}
@@ -137,11 +149,11 @@ var app = angular.module('starter')
 
     //Not sure what this is for....
     scope.closeList = function(){
+      console.log('clostList called');
       scope.matchingGroups = [];
       scope.matchingTypes = [];
     }
 
-    //Not sure what this is for
     scope.disableTap = function(){
       container = document.getElementsByClassName('pac-container');
       // disable ionic data tab
@@ -211,7 +223,6 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'exis
       //);
     },
     //Search based on location (if avaiable)
-    //TODO: Add error handling when location is not available
     searchByLocation: function(mapScope, map){
       var service;
       //if(!appState.offline){
