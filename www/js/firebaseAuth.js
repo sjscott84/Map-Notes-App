@@ -19,6 +19,7 @@ angular.module('starter')
           $state.go('map');
         }, 0);
       }else{
+        $state.go('home');
         console.log('No User');
       }
     });
