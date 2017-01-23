@@ -7743,7 +7743,7 @@ input[type="color"] {
   color: #111;
   vertical-align: middle;
   font-size: 14px;
-  line-height: 16px; }
+  /*line-height: 16px;*/ }
 
 .platform-ios input[type="datetime-local"],
 .platform-ios input[type="date"],
@@ -9881,12 +9881,21 @@ p {
   margin-bottom: 5px; }
 
 #appDescription{
-  color: #444;
   margin-top: 50%;
   font-family: "-apple-system", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
   font-size: 15px;
   font-weight: normal;
   text-align: center;
+  color: rgb(255, 255, 255);
+}
+
+#appDescriptionText {
+  margin-top: 50%;
+  font-family: "-apple-system", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
+  font-size: 15px;
+  font-weight: normal;
+  text-align: center;
+  color: rgb(255, 255, 255);
 }
 
 #loginButtons{

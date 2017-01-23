@@ -5,7 +5,7 @@
   <h1 class="title">All Places</h1>
 </ion-header-bar>
 
-<ion-content class="has-header">
+<ion-content class="has-header" overflow-scroll="true">
   <ion-list>
     <div ng-repeat="thing in list">
       <ion-item class="item-stable" ng-click="toggleGroup(thing)" ng-class="{active: isGroupShown(thing)}">
