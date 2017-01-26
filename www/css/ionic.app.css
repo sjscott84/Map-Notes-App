@@ -9821,12 +9821,15 @@ a.button {
   width: 100%;
   height: 100%; }
 
+#search-bar {
+  width: 80%;
+}
+
 #pac-input {
   background-color: #fff;
   font-family: Roboto;
   font-size: 17px;
   font-weight: 300;
-  text-align: center;
   text-overflow: ellipsis;
   margin-top: 20px;
   margin-left: -1px;
@@ -9841,7 +9844,7 @@ a.button {
   margin-top: 20px;
   margin-left: 10%;
   height: 60px;
-  width: 20%;
+  width: 60px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   padding-left: 20px; }
@@ -9852,7 +9855,7 @@ a.button {
   margin-left: -2px;
   margin-right: 10%;
   height: 60px;
-  width: 15%;
+  width: 60px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   border-top-left-radius: 0;

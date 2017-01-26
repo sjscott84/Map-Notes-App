@@ -157,7 +157,6 @@ angular.module('starter')
               text: 'Retrieve Places',
               type: 'button-positive',
               onTap: function() {
-                //console.log(scope.data.selectedGroup);
                 var service;
                 //if(!appState.offline){
                   service = $injector.get('firebaseData');
@@ -193,7 +192,6 @@ angular.module('starter')
         })
       },
       deleteGroup: function(scope, item){
-        console.log(item);
         var myPopup = $ionicPopup.show({
           title: "Are you sure you want to delete "+item.name+"?",
           scope : scope,
