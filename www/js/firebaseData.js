@@ -75,8 +75,12 @@ angular.module('starter')
 
     return {
       savePlace: function(group, type, placeObject, map){
-        var key = database.ref('/users/'+user.data.uid+'/places/'+group).push(placeObject).key;
-        savePlaceToListView(placeObject, key, map);
+        if(!group || !type || !placeObject.notes){
+          errorMessage.savePlaceErrorAlert();
+        }else{
+          var key = database.ref('/users/'+user.data.uid+'/places/'+group).push(placeObject).key;
+          savePlaceToListView(placeObject, key, map);
+        }
       },
       pageSetUp: function(){
         //Clear out existingPlaces before repopulating

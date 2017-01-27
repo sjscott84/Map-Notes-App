@@ -156,7 +156,7 @@ var app = angular.module('starter')
         var entry = scope.data.type.length;
       }
       scope.matchingTypes = [];
-      for(var i = 1; i<existingPlaces.types.length; i++){
+      for(var i = 1; i<existingPlaces.types.length-1; i++){
           var what = existingPlaces.types[i].slice(0, entry);
           if(scope.data.type.match(new RegExp([what], 'i'))){
             scope.matchingTypes.push(existingPlaces.types[i]);

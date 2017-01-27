@@ -13,6 +13,12 @@ angular.module('starter')
            title: 'Error',
            template: 'No results found for your location please try searching'
          });
+      },
+      savePlaceErrorAlert: function(){
+          var alertPopup = $ionicPopup.alert({
+           title: 'Error',
+           template: 'Ensure you enter a group, type and note!'
+         });
       }
     }
   }])
