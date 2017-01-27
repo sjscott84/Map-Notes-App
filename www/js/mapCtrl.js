@@ -52,6 +52,25 @@ var app = angular.module('starter')
         google.maps.event.addListenerOnce(scope.map, 'idle', function(){
           appState.mapReady = true;
         });
+
+        var infowindow = new google.maps.InfoWindow();
+
+        scope.map.addListener('click', function(event){
+          infowindow.close();
+          if(event.placeId){
+            event.stop();
+            var request = {
+              placeId: event.placeId
+            };
+            service = new google.maps.places.PlacesService(scope.map);
+            service.getDetails(request, callback);
+            function callback(place, status){
+              scope.map.setCenter(place.geometry.location);
+              placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "latitude":place.geometry.location.lat(), "longitude":place.geometry.location.lng(), "type": undefined, "notes": undefined};
+              popup.saveRequest(placeObject, scope, scope.map);
+            } 
+          };
+        })
         // Listen for the event fired when the user selects a prediction,
         // removes any existing search history and
         // retrieves more details for that place.

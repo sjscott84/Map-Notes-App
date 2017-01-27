@@ -112,9 +112,9 @@ angular.module('starter')
               type: 'button-positive',
               onTap: function() {
                 var service;
-                if(!appState.offline){
+                //if(!appState.offline){
                   service = $injector.get('firebaseAuth');
-                }
+               // }
                 service.signinEmail(scope.data.email, scope.data.password, function(code, message){
                   createAccountErrors(code, message);
                 });
