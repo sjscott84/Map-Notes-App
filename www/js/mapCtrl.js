@@ -110,7 +110,7 @@ var app = angular.module('starter')
     $cordovaGeolocation.getCurrentPosition(options).then(function(position){
       openMap(position.coords.latitude, position.coords.longitude);
     }, function(error){
-      console.log(error);
+      //console.log(error);
       if(isDeviceOnline){
         popup.couldNotGetLocation();
       }
@@ -207,7 +207,11 @@ app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'exis
     searchByWhat: function(mapScope, map){
       removePlacesFromList();
       mapScope.getTypesForGroup = function(group){
-        mapScope.type = existingPlacesGrouped[group].sort();
+        if(group != "All"){
+          mapScope.type = existingPlacesGrouped[group].sort();
+        }else{
+          mapScope.type = existingPlaces.types.sort();
+        }
       };
       $ionicSideMenuDelegate.toggleLeft();
       //var promise = server.pageSetUp();

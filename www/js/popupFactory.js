@@ -24,6 +24,9 @@ angular.module('starter')
               //listView.push(new placeConstructor.Place(placeObject.name, placeObject.latitude, placeObject.longitude, placeObject.type, placeObject.notes, placeObject.address, ''));
               if(existingPlaces.groups.indexOf(placeObject.group) === -1){
                 existingPlaces.groups.push(placeObject.group);
+                existingPlacesGrouped[placeObject.group] = [];
+                existingPlacesGrouped[placeObject.group].push("All");
+
               }
               if(existingPlaces.types.indexOf(placeObject.type) === -1){
                 existingPlaces.types.push(placeObject.type);
@@ -34,7 +37,7 @@ angular.module('starter')
 
               var service;
               //if(!appState.offline){
-                service = $injector.get('firebaseData');
+              service = $injector.get('firebaseData');
               //}
               service.savePlace(placeObject.group, placeObject.type, placeObject, map);
             }

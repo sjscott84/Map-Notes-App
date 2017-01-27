@@ -11,6 +11,8 @@ angular.module('starter')
 
     clearExistingPlaces = function(){
       if(existingPlaces.groups.length > 1 || existingPlaces.types.length > 1){
+        existingPlaces.groups[0] = "All"
+        existingPlaces.types[0] = "All";
         while(existingPlaces.groups.length !== 1){
           existingPlaces.groups.pop();
         }
@@ -46,20 +48,29 @@ angular.module('starter')
         updateAllPlaces(items, function(){
           localStorage.setItem('places', JSON.stringify(allPlaces));
         });
-        if(items){
-          Object.keys(items).forEach(function(key){
-            if(existingPlaces.groups.indexOf(key) === -1){
-              existingPlaces.groups.push(key);
-            }
-            var item = items[key];
-            Object.keys(item).forEach(function(key){
-              if(existingPlaces.types.indexOf(item[key]['type']) === -1){
-                existingPlaces.types.push(item[key]['type']);
+        updateHelperMethod(items);
+      });
+    }
+
+    updateHelperMethod = function(data){
+      if(data){
+        Object.keys(data).forEach(function(key){
+          if(existingPlaces.groups.indexOf(key) === -1){
+            existingPlaces.groups.push(key);
+            var type = data[key];
+            existingPlacesGrouped[key] = [];
+            existingPlacesGrouped[key].push("All");
+            Object.keys(type).forEach(function(typeKey){
+              if(existingPlacesGrouped[key].indexOf(type[typeKey]['type']) === -1){
+                existingPlacesGrouped[key].push(type[typeKey]['type']);
+              }
+              if(existingPlaces.types.indexOf(type[typeKey]['type']) === -1){
+                existingPlaces.types.push(type[typeKey]['type']);
               }
             })
-          })
-        }
-      });
+          }
+        });
+      }
     }
 
     return {
@@ -73,24 +84,7 @@ angular.module('starter')
         database.ref('/users/'+user.data.uid+'/places').once('value')
         .then(function (response) {
           var items = response.val();
-          if(items){
-            Object.keys(items).forEach(function(key){
-              if(existingPlaces.groups.indexOf(key) === -1){
-                existingPlaces.groups.push(key);
-                var type = items[key];
-                existingPlacesGrouped[key] = [];
-                existingPlacesGrouped[key].push("All");
-                Object.keys(type).forEach(function(typeKey){
-                  if(existingPlacesGrouped[key].indexOf(type[typeKey]['type']) === -1){
-                    existingPlacesGrouped[key].push(type[typeKey]['type']);
-                  }
-                  if(existingPlaces.types.indexOf(type[typeKey]['type']) === -1){
-                    existingPlaces.types.push(type[typeKey]['type']);
-                  }
-                })
-              }
-            });
-          }
+          updateHelperMethod(items);
         })
       },
       searchForPlaces: function(group, type, map){
