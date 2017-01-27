@@ -8,18 +8,18 @@
 
     <!--<div id="loginButtons" ng-show="appState.ready">-->
     <div id="loginButtons">
-      <button id="googleButton" class="button button-block" ng-click="loginGoogle()" ng-hide="activeUser">Login with Google</button>
+      <button id="googleButton" class="button button-block" ng-click="loginEmail()" ng-hide="activeUser">Login with Email</button>
 
       <button id="facebook" class="button button-positive button-block" ng-click="loginFacebook()" ng-hide="activeUser">Login with Facebook</button>
 
       <div class="button-bar" id="emailAccounts">
-        <button class="button button-clear button-stable" ng-click="loginEmail()" ng-hide="activeUser">Sign in with email</button>
+        <!--<button class="button button-clear button-stable" ng-click="loginEmail()" ng-hide="activeUser">Sign in with email</button>-->
 
         <button class="button button-clear button-stable" ng-click="createAccount()" ng-hide="activeUser">Create Account</button>
       </div>
 
       <div id="logoutButtons">
-        <button id="logout" class="button button-block" ng-click="logout()" ng-show="activeUser">Logout as {{displayName}}</button>
+        <button id="logout" class="button button-block" ng-click="logout()" ng-show="activeUser">Logout {{displayName}}</button>
         <button class="button button-block button-positive" ng-click="openMap()" ng-show="activeUser">Back to Map</button>
       </div>
     </div>

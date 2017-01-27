@@ -8,11 +8,14 @@ angular.module('starter')
     //Watch for changes to the currently logged in user
     firebase.auth().onAuthStateChanged(function(currentUser){
       if(currentUser){
+        console.log(currentUser);
         $timeout(function(){
           user.data = currentUser;
-          user.displayName = user.data.displayName;
+          //user.displayName = user.data.displayName;
           if(!user.data.displayName){
-            user.displayName = currentUser.email;
+            user.displayName = user.data.email;
+          }else{
+            user.displayName = user.data.displayName;
           }
           firebaseData.pageSetUp();
           firebaseData.getPlaces();
@@ -39,7 +42,7 @@ angular.module('starter')
 
     return {
       //Login using google sign in
-      googleLogin: function(callback){
+      /*googleLogin: function(callback){
         if(appState.cordova){
           $cordovaOauth.google("225031542438-trph43971tepg2g6085aoci4sujs26hb.apps.googleusercontent.com", ["email"])
           .then(function(result) {
@@ -51,7 +54,7 @@ angular.module('starter')
         }else{
           signInWithRedirect(new firebase.auth.GoogleAuthProvider(), callback);
         }
-      },
+      },*/
       //Login using facebook sign in
       facebookLogin: function(callback){
         if(appState.cordova){
