@@ -53,10 +53,10 @@ var app = angular.module('starter')
           appState.mapReady = true;
         });
 
-        var infowindow = new google.maps.InfoWindow();
+        //var infowindow = new google.maps.InfoWindow();
 
         scope.map.addListener('click', function(event){
-          infowindow.close();
+          //infowindow.close();
           if(event.placeId){
             event.stop();
             var request = {
@@ -75,7 +75,6 @@ var app = angular.module('starter')
         // removes any existing search history and
         // retrieves more details for that place.
         searchBox.addListener('places_changed', function() {
-          //var allMarkers = [];
           var places = searchBox.getPlaces();
           if (places.length === 0) {
             return;

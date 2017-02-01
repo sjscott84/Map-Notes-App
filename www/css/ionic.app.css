@@ -9943,6 +9943,10 @@ p {
   margin-top: 65%
 }
 
+#inputTextFormat {
+  padding-left: 7px;
+}
+
 .spinner svg {
   width: 75px;
   height: 75px;

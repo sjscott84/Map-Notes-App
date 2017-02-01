@@ -100,7 +100,7 @@ angular.module('starter')
         scope.data = {};
         var myPopup = $ionicPopup.show({
           title: 'Sign In',
-          template: '<input placeholder=" Email" type="text" ng-model="data.email"><br><input placeholder=" Password" type="password" ng-model="data.password">',
+          template: '<input id="inputTextFormat" placeholder="Email" type="text" ng-model="data.email"><br><input id="inputTextFormat" placeholder="Password" type="password" ng-model="data.password">',
           scope: scope,
           buttons: [
             { text: 'Cancel',

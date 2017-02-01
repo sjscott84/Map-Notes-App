@@ -8,7 +8,6 @@ angular.module('starter')
     //Watch for changes to the currently logged in user
     firebase.auth().onAuthStateChanged(function(currentUser){
       if(currentUser){
-        console.log(currentUser);
         $timeout(function(){
           user.data = currentUser;
           //user.displayName = user.data.displayName;
@@ -23,7 +22,6 @@ angular.module('starter')
         }, 0);
       }else{
         $state.go('home');
-        console.log('No User');
       }
     });
 
@@ -60,7 +58,6 @@ angular.module('starter')
         if(appState.cordova){
           $cordovaOauth.facebook('247208372329875', [ "public_profile", "email"])
           .then(function(result){
-            console.log(result);
             var credential = firebase.auth.FacebookAuthProvider.credential(result.access_token);
             signInWithCredential(credential, callback);
           }).catch(function(err){
