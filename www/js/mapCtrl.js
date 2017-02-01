@@ -75,7 +75,7 @@ var app = angular.module('starter')
         // removes any existing search history and
         // retrieves more details for that place.
         searchBox.addListener('places_changed', function() {
-          var allMarkers = [];
+          //var allMarkers = [];
           var places = searchBox.getPlaces();
           if (places.length === 0) {
             return;

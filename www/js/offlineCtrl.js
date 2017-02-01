@@ -1,5 +1,5 @@
 var app = angular.module('starter')  
-  app.controller('offlineCtrl',['$scope', '$state', 'appState', '$window', function($scope, $state, appState, $window){
+  app.controller('offlineCtrl',['$scope', '$state', 'appState', '$window', 'allPlaces', function($scope, $state, appState, $window, allPlaces){
 
     var toParse = localStorage.getItem('places');
     $scope.list = JSON.parse(toParse);

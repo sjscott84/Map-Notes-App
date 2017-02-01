@@ -31,10 +31,11 @@ angular.module('starter')
         Object.keys(items).forEach(function(key){
           var nameKey = key;
           place = {name: nameKey, items:[]};
-          var item = items[key];
+          var item = items[nameKey];
           Object.keys(item).forEach(function(key){
             place.items.push({name: item[key]['name'], group: item[key]['group'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], latitude: item[key]['latitude'], longitude: item[key]['longitude'], uid: key});
           })
+          
           allPlaces.push(place);
         })
       }
@@ -80,6 +81,7 @@ angular.module('starter')
         }else{
           var key = database.ref('/users/'+user.data.uid+'/places/'+group).push(placeObject).key;
           savePlaceToListView(placeObject, key, map);
+          updateAfterChange();
         }
       },
       pageSetUp: function(){

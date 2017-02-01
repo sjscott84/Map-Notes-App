@@ -102,6 +102,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
     controller: 'editCtrl'
   })
   .state('offline', {
+    cache: false,
     url: '/offline',
     templateUrl: 'templates/offline.html',
     controller: 'offlineCtrl'
