@@ -2,7 +2,7 @@ angular.module('starter')
   .value("user", {})
   .factory('firebaseAuth', ['$state', 'user', 'firebaseService', 'firebaseData', '$timeout', '$cordovaOauth', 'appState', function($state, user, firebaseService, firebaseData, $timeout, $cordovaOauth, appState){
     var firebase = firebaseService.fb;
-    var provider = new firebase.auth.GoogleAuthProvider();
+    //var provider = new firebase.auth.GoogleAuthProvider();
     var fbProvider = new firebase.auth.FacebookAuthProvider();
 
     //Watch for changes to the currently logged in user

@@ -1,5 +1,5 @@
 var app = angular.module('starter')  
-  app.controller('offlineCtrl',['$scope', '$state', 'appState', '$window', 'allPlaces', function($scope, $state, appState, $window, allPlaces){
+  app.controller('offlineCtrl',['$scope', '$state', 'appState', '$window', 'allPlaces', 'popup', function($scope, $state, appState, $window, allPlaces, popup){
 
     var toParse = localStorage.getItem('places');
     $scope.list = JSON.parse(toParse);
@@ -30,9 +30,11 @@ var app = angular.module('starter')
     }
 
     $scope.returnToMap = function(){
-      if(appState.mapReady){
+      if(appState.mapReady && !appState.offline){
         $state.go('map');
-      }else{
+      }else if(appState.offline){
+        popup.offlineMessage();
+      }else if(!appState.mapReady && !appState.offline){
         $state.go('map');
         $window.location.reload();
       }

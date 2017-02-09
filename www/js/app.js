@@ -20,17 +20,25 @@ app.value('appState',{
   cordova: false,
   offline: true,
   mapReady: false,
+  removeLoader: false,
   appActive: true
 });
 
-app.run( function($ionicPlatform, $http, $rootScope, appState, $window, $state, popup) {
+app.run(function($ionicPlatform, $rootScope, appState, $window, $state, ConnectivityMonitor) {
   $rootScope.appState = appState;
-  var deviceOnline = navigator.onLine;
 
   $ionicPlatform.ready(function() {
+
     appState.ready = true;
 
+    if(ConnectivityMonitor.isOnline()){
+      appState.offline = false;
+    }
+
+    ConnectivityMonitor.startWatching();
+
     if(window.cordova){
+
       appState.cordova = true;
 
       if(window.cordova && window.cordova.plugins.Keyboard) {
@@ -85,6 +93,7 @@ app.run( function($ionicPlatform, $http, $rootScope, appState, $window, $state, 
 })
 
 app.config(function($stateProvider, $urlRouterProvider) {
+  console.log('app.config called');
   $stateProvider
   .state('home',{
     url: '/home',
@@ -110,6 +119,54 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
   $urlRouterProvider.otherwise("/map");
   //$urlRouterProvider.otherwise("/home");
+})
+
+app.factory('ConnectivityMonitor', function($rootScope, $cordovaNetwork, appState, popup){
+  return {
+    isOnline: function(){
+      if(ionic.Platform.isWebView()){
+        return $cordovaNetwork.isOnline();
+      } else {
+        return navigator.onLine;
+      }
+    },
+    isOffline: function(){
+      if(ionic.Platform.isWebView()){
+        return !$cordovaNetwork.isOnline();
+      } else {
+        return !navigator.onLine;
+      }
+    },
+    startWatching: function(){
+        if(ionic.Platform.isWebView()){
+ 
+          $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
+            appState.offline = false;
+          });
+ 
+          $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
+            if(!appState.offline){
+              appState.offline = true;
+              popup.offlineMessageNew();
+            }
+          });
+ 
+        }else {
+ 
+          window.addEventListener("online", function(e) {
+            appState.offline = false;
+          }, false);
+ 
+          window.addEventListener("offline", function(e) {
+            if(!appState.offline){
+              appState.offline = true;
+              popup.offlineMessageNew();
+            }
+          }, false);
+        
+      }
+    }
+  }
 })
 
 

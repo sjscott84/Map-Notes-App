@@ -252,14 +252,17 @@ angular.module('starter')
           template: 'Could not get your location, please use the Catagories search to find things near you'
          });
       },
+      offlineMessageNew: function(){
+        var alertPopup = $ionicPopup.alert({
+          title: 'Offline',
+          template: 'You are appear to have gone offline, you can still see a list of places from menu -> Offline, but other functionality will be unavailable until a connection is restored'
+         });
+      },
       offlineMessage: function(){
         var alertPopup = $ionicPopup.alert({
           title: 'Offline',
-          template: 'You are appear to be offline, you can still view a list of your places, but maps will be unavaiable until you are back online'
+          template: 'You are appear to be offline, you can still view a list of your places, but maps will be unavailable until you are back online'
          });
-        $timeout(function() {
-          alertPopup.close(); //close the popup after 3 seconds for some reason
-        }, 4000);
       },
       onlineMessage: function(){
         var myPopup = $ionicPopup.show({
@@ -285,9 +288,6 @@ angular.module('starter')
             }
           ]
         })
-        $timeout(function() {
-          myPopup.close(); //close the popup after 3 seconds for some reason
-        }, 4000);
       }
     }
   }]);

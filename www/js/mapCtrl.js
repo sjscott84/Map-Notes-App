@@ -17,12 +17,11 @@ var app = angular.module('starter')
     //Opens the map based on the coordinates passed in
     function openMap (lat, lng){
 
-      /*if(!isDeviceOnline){
-        appState.offline = true;
-        popup.offlineMessage();
+      if(appState.offline){
         $state.go('offline');
-      }else{*/
-        //appState.offline = false;
+        popup.offlineMessage();
+        appState.removeLoader = true;
+      }else{
         var latLng = new google.maps.LatLng(lat, lng);
 
         currentPosition.lat = lat;
@@ -50,6 +49,7 @@ var app = angular.module('starter')
         });
 
         google.maps.event.addListenerOnce(scope.map, 'idle', function(){
+          appState.removeLoader = true;
           appState.mapReady = true;
         });
 
@@ -121,7 +121,7 @@ var app = angular.module('starter')
             allMarkers.push(marker);
           });
         });
-      //}
+      }
     }
 
     //Looks for current location and passes this to openMap, if can't find location opens map in San Francisco

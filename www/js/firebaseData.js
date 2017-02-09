@@ -1,8 +1,16 @@
 angular.module('starter')
-  .factory("firebaseData",['existingPlaces', 'existingPlacesGrouped', 'listView', 'placeConstructor', 'fitBounds', 'errorMessage', 'location', 'allPlaces', 'firebaseService', 'user', function(existingPlaces, existingPlacesGrouped, listView, placeConstructor, fitBounds, errorMessage, location, allPlaces, firebaseService, user){
+  .factory("firebaseData",['existingPlaces', 'existingPlacesGrouped', 'listView', 'placeConstructor', 'fitBounds', 'errorMessage', 'location', 'allPlaces', 'firebaseService', 'user', 'appState', function(existingPlaces, existingPlacesGrouped, listView, placeConstructor, fitBounds, errorMessage, location, allPlaces, firebaseService, user, appState){
   
     var firebase = firebaseService.fb;
     var database = firebase.database();
+
+    function checkConnection(){
+      if(!appState.offline){
+        return firebase.database();
+      }else{
+        return 'NA';
+      }
+    }
 
     savePlaceToListView = function(item, key, map){
       listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address'], key, map));
@@ -35,7 +43,7 @@ angular.module('starter')
           Object.keys(item).forEach(function(key){
             place.items.push({name: item[key]['name'], group: item[key]['group'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], latitude: item[key]['latitude'], longitude: item[key]['longitude'], uid: key});
           })
-          
+
           allPlaces.push(place);
         })
       }
@@ -88,10 +96,13 @@ angular.module('starter')
         //Clear out existingPlaces before repopulating
         clearExistingPlaces();
         database.ref('/users/'+user.data.uid+'/places').once('value')
-        .then(function (response) {
-          var items = response.val();
-          updateHelperMethod(items);
-        })
+          .then(function (response) {
+            var items = response.val();
+            updateHelperMethod(items);
+          })
+          .catch(function(response){
+            console.log('No Internet');
+          })
       },
       searchForPlaces: function(group, type, map){
         if(group === "All" && type === "All"){
