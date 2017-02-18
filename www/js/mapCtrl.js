@@ -1,5 +1,5 @@
-var app = angular.module('starter')
-  app.controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'existingPlacesGrouped', 'currentPosition', 'menu', 'listView', '$state', 'appState',
+angular.module('starter')
+  .controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'existingPlacesGrouped', 'currentPosition', 'menu', 'listView', '$state', 'appState',
                   function($scope, $state, $cordovaGeolocation, popup, existingPlaces, existingPlacesGrouped, currentPosition, menu, listView, $state, appState) {
     scope = $scope;
     var options = {timeout: 10000, enableHighAccuracy: true};
@@ -10,9 +10,19 @@ var app = angular.module('starter')
     var placeObject = {};
     var input;
     var searchBox;
-    var isDeviceOnline = navigator.onLine;
+    var lat;
+    var lng;
     scope.matchingGroups = [];
     scope.matchingTypes = [];
+
+    scope.$watch(function () {
+       return appState.ready;
+     },
+      function(newVal, oldVal) {
+        if(newVal !== oldVal && newVal === true){
+          openMap(lat, lng);
+        }
+    }, true);
 
     //Opens the map based on the coordinates passed in
     function openMap (lat, lng){
@@ -126,12 +136,16 @@ var app = angular.module('starter')
 
     //Looks for current location and passes this to openMap, if can't find location opens map in San Francisco
     $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+      lat = position.coords.latitude;
+      lng = position.coords.longitude;
       openMap(position.coords.latitude, position.coords.longitude);
     }, function(error){
       //console.log(error);
-      if(isDeviceOnline){
+      if(!appState.offline){
         popup.couldNotGetLocation();
       }
+      lat = 37.773972;
+      lng = -122.431297;
       openMap(37.773972, -122.431297);
     });
 
@@ -209,69 +223,3 @@ var app = angular.module('starter')
       }
     }
   }]);
-
-//Functions based on the items in the side menu
-app.factory('menu',['listView','$ionicSideMenuDelegate', 'existingPlaces', 'existingPlacesGrouped', 'popup', 'currentPosition', '$injector', '$state', 'allPlaces', 'appState', function(listView, $ionicSideMenuDelegate, existingPlaces, existingPlacesGrouped, popup, currentPosition, $injector, $state, allPlaces, appState){
-  //Clear the screen of previous searches
-  removePlacesFromList = function(){
-    while(listView.length !== 0){
-      var x = listView.pop();
-      x.marker.setMap(null);
-    }
-  }; 
-
-  return{
-    //Search by group and/or type
-    searchByWhat: function(mapScope, map){
-      removePlacesFromList();
-      mapScope.getTypesForGroup = function(group){
-        if(group != "All"){
-          mapScope.type = existingPlacesGrouped[group].sort();
-        }else{
-          mapScope.type = existingPlaces.types.sort();
-        }
-      };
-      $ionicSideMenuDelegate.toggleLeft();
-      //var promise = server.pageSetUp();
-      //promise.then(
-        //function(){
-          mapScope.group  = existingPlaces.groups.sort();
-          mapScope.type = existingPlaces.types.sort();
-          popup.getPlaces(mapScope, map);
-        //}
-      //);
-    },
-    //Search based on location (if avaiable)
-    searchByLocation: function(mapScope, map){
-      var service;
-      //if(!appState.offline){
-        service = $injector.get('firebaseData');
-      //}
-      removePlacesFromList();
-      map.setCenter({lat:currentPosition.lat, lng: currentPosition.lng});
-      service.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
-
-      $ionicSideMenuDelegate.toggleLeft();
-    },
-    //Open the edit page and close any markers currently onscreen
-    editPlaces: function(){
-      removePlacesFromList();
-      $ionicSideMenuDelegate.toggleLeft();
-      $state.go('edit');
-    },
-    //Clear screen of previous searches
-    removePlaces: function(){
-      removePlacesFromList();
-      $ionicSideMenuDelegate.toggleLeft();
-    },
-    //Open the home screen
-    logoutScreen: function(){
-      $ionicSideMenuDelegate.toggleLeft();
-      $state.go('home');
-    },
-    offline: function(){
-      $ionicSideMenuDelegate.toggleLeft();
-      $state.go('offline');
-    }
-  }
-}])

@@ -18,24 +18,24 @@ app.value('currentPosition', {
 app.value('appState',{
   ready: false,
   cordova: false,
-  offline: true,
+  offline: false,
   mapReady: false,
   removeLoader: false,
   appActive: true
 });
 
-app.run(function($ionicPlatform, $rootScope, appState, $window, $state, ConnectivityMonitor) {
+app.run(function($ionicPlatform, $rootScope, appState, $window, $state, connectivityMonitor) {
   $rootScope.appState = appState;
 
   $ionicPlatform.ready(function() {
 
-    appState.ready = true;
-
-    if(ConnectivityMonitor.isOnline()){
-      appState.offline = false;
+    if(connectivityMonitor.isOffline()){
+      appState.offline = true;
     }
 
-    ConnectivityMonitor.startWatching();
+    appState.ready = true;
+
+    connectivityMonitor.startWatching();
 
     if(window.cordova){
 
@@ -71,29 +71,9 @@ app.run(function($ionicPlatform, $rootScope, appState, $window, $state, Connecti
     appState.appActive = true;
     console.log(appState.appActive);
   }, false);
-
-  //Functionality too test if internet available and change app state accordingly. In testing this was super buggy so has been disabeled for now.
-  /*$window.addEventListener("offline", function () {
-    if(appState.appActive){
-      $rootScope.$apply(function() {
-        appState.offline = true;
-        popup.offlineMessage();
-        $state.go('offline');
-      });
-    }
-  }, false);
-  $window.addEventListener("online", function () {
-    if(appState.appActive){
-      $rootScope.$apply(function() {
-        appState.offline = false;
-        popup.onlineMessage();
-      });
-    }
-  }, false);*/
 })
 
 app.config(function($stateProvider, $urlRouterProvider) {
-  console.log('app.config called');
   $stateProvider
   .state('home',{
     url: '/home',
@@ -119,54 +99,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
   $urlRouterProvider.otherwise("/map");
   //$urlRouterProvider.otherwise("/home");
-})
-
-app.factory('ConnectivityMonitor', function($rootScope, $cordovaNetwork, appState, popup){
-  return {
-    isOnline: function(){
-      if(ionic.Platform.isWebView()){
-        return $cordovaNetwork.isOnline();
-      } else {
-        return navigator.onLine;
-      }
-    },
-    isOffline: function(){
-      if(ionic.Platform.isWebView()){
-        return !$cordovaNetwork.isOnline();
-      } else {
-        return !navigator.onLine;
-      }
-    },
-    startWatching: function(){
-        if(ionic.Platform.isWebView()){
- 
-          $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
-            appState.offline = false;
-          });
- 
-          $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
-            if(!appState.offline){
-              appState.offline = true;
-              popup.offlineMessageNew();
-            }
-          });
- 
-        }else {
- 
-          window.addEventListener("online", function(e) {
-            appState.offline = false;
-          }, false);
- 
-          window.addEventListener("offline", function(e) {
-            if(!appState.offline){
-              appState.offline = true;
-              popup.offlineMessageNew();
-            }
-          }, false);
-        
-      }
-    }
-  }
 })
 
 

@@ -1,5 +1,5 @@
-var app = angular.module('starter')  
-  app.controller('editCtrl',['$scope', '$state', 'allPlaces', 'popup', 'editPage', function($scope, $state, allPlaces, popup, editPage){
+angular.module('starter')  
+  .controller('editCtrl',['$scope', '$state', 'allPlaces', 'popup', 'editPage', function($scope, $state, allPlaces, popup, editPage){
 
     $scope.list = allPlaces;
 
