@@ -25,8 +25,12 @@ angular.module('starter')
           self.marker = new google.maps.Marker({
             map: map,
             title: name,
-            icon: 'img/star_gold_16.png',
-            //icon: markerImage,
+            //icon: 'img/star_gold_16.png',
+            icon: {
+              url: 'img/star_gold_16.png',
+              origin: new google.maps.Point(0,0),
+              anchor: new google.maps.Point(15,15)
+            },
             position: self.position,
             zoomOnClick: false,
           });

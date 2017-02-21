@@ -27,7 +27,7 @@ angular.module('starter')
     //Opens the map based on the coordinates passed in
     function openMap (lat, lng){
 
-      if(appState.offline){
+      if(appState.offline && !appState.mapReady){
         $state.go('offline');
         popup.offlineMessage();
         appState.removeLoader = true;
