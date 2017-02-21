@@ -1,3 +1,4 @@
+'use strict';
 angular.module('starter')
   .controller('homeCtrl',['$scope', '$state', 'firebaseAuth', 'appState', 'user', 'popup', function($scope, $state, firebaseAuth, appState, user, popup){
 
@@ -35,23 +36,23 @@ angular.module('starter')
       firebaseAuth.facebookLogin(function(error){
         popup.loginErrors(error);
       });
-    }
+    };
 
     $scope.loginEmail = function(){
       popup.signinEmail($scope);
-    }
+    };
 
     $scope.createAccount = function(){
       popup.createAccount($scope);
-    }
+    };
 
     $scope.logout = function(){
       firebaseAuth.logout();
       Object.keys(user).forEach(function(key){delete user[key]});
-    }
+    };
 
     $scope.openMap = function(){
       $state.go('map');
-    }
+    };
 
-  }])
+  }]);

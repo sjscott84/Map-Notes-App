@@ -1,3 +1,4 @@
+'use strict';
 angular.module('starter')
   //Change the map bounds based on the markers on the screen
   .factory('fitBounds', function(){
@@ -17,5 +18,5 @@ angular.module('starter')
         map.fitBounds(bounds);
         zoomControl(map);
       }
-    }
+    };
   });

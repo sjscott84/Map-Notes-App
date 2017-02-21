@@ -1,3 +1,4 @@
+'use strict';
 angular.module('starter')
   .factory("firebaseData",['existingPlaces', 'existingPlacesGrouped', 'listView', 'placeConstructor', 'fitBounds', 'errorMessage', 'location', 'allPlaces', 'firebaseService', 'user', 'appState', function(existingPlaces, existingPlacesGrouped, listView, placeConstructor, fitBounds, errorMessage, location, allPlaces, firebaseService, user, appState){
   
@@ -12,14 +13,19 @@ angular.module('starter')
       }
     }
 
-    savePlaceToListView = function(item, key, map){
+    function savePlaceToListView (item, key, map){
       listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address'], key, map));
       fitBounds.fitBoundsToVisibleMarkers(listView, map);
     }
 
-    clearExistingPlaces = function(){
+    /*savePlaceToListView = function(item, key, map){
+      listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address'], key, map));
+      fitBounds.fitBoundsToVisibleMarkers(listView, map);
+    }*/
+
+    function clearExistingPlaces(){
       if(existingPlaces.groups.length > 1 || existingPlaces.types.length > 1){
-        existingPlaces.groups[0] = "All"
+        existingPlaces.groups[0] = "All";
         existingPlaces.types[0] = "All";
         while(existingPlaces.groups.length !== 1){
           existingPlaces.groups.pop();
@@ -30,7 +36,7 @@ angular.module('starter')
       }
     }
 
-    updateAllPlaces = function(items, callback){
+    function updateAllPlaces(items, callback){
       var place = {};
       while(allPlaces.length !== 0){
         allPlaces.pop();
@@ -42,15 +48,15 @@ angular.module('starter')
           var item = items[nameKey];
           Object.keys(item).forEach(function(key){
             place.items.push({name: item[key]['name'], group: item[key]['group'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], latitude: item[key]['latitude'], longitude: item[key]['longitude'], uid: key});
-          })
+          });
 
           allPlaces.push(place);
-        })
+        });
       }
       callback();
     }
 
-    updateAfterChange = function(){
+    function updateAfterChange(){
       database.ref('/users/'+user.data.uid+'/places').on('value', function(response){
         clearExistingPlaces();
         var items = response.val();
@@ -61,7 +67,7 @@ angular.module('starter')
       });
     }
 
-    updateHelperMethod = function(data){
+    function updateHelperMethod(data){
       if(data){
         Object.keys(data).forEach(function(key){
           if(existingPlaces.groups.indexOf(key) === -1){
@@ -76,7 +82,7 @@ angular.module('starter')
               if(existingPlaces.types.indexOf(type[typeKey]['type']) === -1){
                 existingPlaces.types.push(type[typeKey]['type']);
               }
-            })
+            });
           }
         });
       }
@@ -102,7 +108,7 @@ angular.module('starter')
           })
           .catch(function(response){
             console.log('No Internet');
-          })
+          });
       },
       searchForPlaces: function(group, type, map){
         if(group === "All" && type === "All"){
@@ -113,9 +119,9 @@ angular.module('starter')
               var item = items[key];
               Object.keys(item).forEach(function(key){
                 savePlaceToListView(item[key], key, map);
-              })
-            })
-          })
+              });
+            });
+          });
         }else if(group === "All" && type !== "All"){
           database.ref('/users/'+user.data.uid+'/places').once('value')
           .then(function(response){
@@ -126,17 +132,17 @@ angular.module('starter')
                 if(item[key]['type'] === type){
                   savePlaceToListView(item[key], key, map);
                 }
-              })
-            })
-          })
+              });
+            });
+          });
         }else if(group !== "All" && type === "All"){
           database.ref('/users/'+user.data.uid+'/places/'+group).once('value')
           .then(function(response){
             var items = response.val();
             Object.keys(items).forEach(function(key){
               savePlaceToListView(items[key], key, map);
-            })
-          })
+            });
+          });
         }else{
           database.ref('/users/'+user.data.uid+'/places/'+group).once('value')
           .then(function(response){
@@ -145,11 +151,11 @@ angular.module('starter')
               if(items[key]['type'] === type){
                 savePlaceToListView(items[key], key, map);
               }
-            })
+            });
             if(listView.length === 0){
               errorMessage.searchErrorAlert();
             }
-          })
+          });
         }
       },
       placesByLocation: function(lat, lng, distance, map, callback){
@@ -167,12 +173,12 @@ angular.module('starter')
                   savePlaceToListView(item[key], key, map);
                 }
               }
-            })
-          })
+            });
+          });
           if(listView.length === 0){
             errorMessage.searchErrorAlert();
           }
-        })
+        });
       },
       //Used by firebaseAuth at page setup
       getPlaces: function(){
@@ -181,26 +187,26 @@ angular.module('starter')
           updateAllPlaces(items, function(){
             localStorage.setItem('places', JSON.stringify(allPlaces));
           });
-        })
+        });
       },
       deletePlace: function(group, placeId){
         database.ref('/users/'+user.data.uid+'/places/'+group+'/'+placeId).remove()
         .then(function(){
           updateAfterChange();
-        })
+        });
       },
       deleteGroup: function(group){
         database.ref('/users/'+user.data.uid+'/places/'+group).remove()
         .then(function(){
           updateAfterChange();
-        })
+        });
       },
       editPlace: function(group, type, notes, olditem){
         if(olditem.group !== group){
           var newPlace = {group: group, type: type, notes: notes, address: olditem.address, latitude: olditem.latitude, longitude: olditem.longitude, name: olditem.name}
           database.ref('/users/'+user.data.uid+'/places/'+group).push(newPlace)
           .then(function(){
-            database.ref('/users/'+user.data.uid+'/places/'+olditem.group+'/'+olditem.uid).remove()
+            database.ref('/users/'+user.data.uid+'/places/'+olditem.group+'/'+olditem.uid).remove();
             updateAfterChange();
           })
         }else{

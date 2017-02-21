@@ -1,5 +1,6 @@
+'use strict';
 angular.module('starter')
-  .controller('MainCtrl', ['$scope', 'currentPlace', 'appState', function($scope, currentPlace, appState){
+  .controller('MainCtrl', ['$scope', 'currentPlace', function($scope, currentPlace){
     $scope.$watchCollection(
       function(){
         return currentPlace;
@@ -10,4 +11,4 @@ angular.module('starter')
         }else{
         }
       },true);
-  }])
+  }]);

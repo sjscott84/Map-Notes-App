@@ -1,7 +1,8 @@
+'use strict';
 angular.module('starter')
-  .controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'existingPlacesGrouped', 'currentPosition', 'menu', 'listView', '$state', 'appState',
-                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, existingPlacesGrouped, currentPosition, menu, listView, $state, appState) {
-    scope = $scope;
+  .controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'existingPlacesGrouped', 'currentPosition', 'menu', 'listView', 'appState',
+                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, existingPlacesGrouped, currentPosition, menu, listView, appState) {
+    var scope = $scope;
     var options = {timeout: 10000, enableHighAccuracy: true};
     var button = document.getElementById('button');
     var closeButton = document.getElementById('closeButton');
@@ -72,15 +73,15 @@ angular.module('starter')
             var request = {
               placeId: event.placeId
             };
-            service = new google.maps.places.PlacesService(scope.map);
+            var service = new google.maps.places.PlacesService(scope.map);
             service.getDetails(request, callback);
             function callback(place, status){
               scope.map.setCenter(place.geometry.location);
               placeObject = {"group": undefined, "name": place.name, "address":place.formatted_address, "latitude":place.geometry.location.lat(), "longitude":place.geometry.location.lng(), "type": undefined, "notes": undefined};
               popup.saveRequest(placeObject, scope, scope.map);
             } 
-          };
-        })
+          }
+        });
         // Listen for the event fired when the user selects a prediction,
         // removes any existing search history and
         // retrieves more details for that place.
@@ -92,7 +93,7 @@ angular.module('starter')
           // Clear out the old marker
           if(marker || allMarkers.length > 0){
             marker.setMap(null);
-            for(i = 0; i < allMarkers.length; i++){
+            for(var i = 0; i < allMarkers.length; i++){
               allMarkers[i].setMap(null);
             }
           }
@@ -114,7 +115,7 @@ angular.module('starter')
               placeObject = {"group": undefined, "name": this.title, "address":this.address, "latitude":this.lat, "longitude":this.lng, "type": undefined, "notes": undefined};
               popup.saveRequest(placeObject, scope, scope.map);
               //marker.setMap(null);
-              for(i = 0; i < allMarkers.length; i++){
+              for(var i = 0; i < allMarkers.length; i++){
                 allMarkers[i].setMap(null);
               }
             });
@@ -141,9 +142,9 @@ angular.module('starter')
       openMap(position.coords.latitude, position.coords.longitude);
     }, function(error){
       //console.log(error);
-      if(!appState.offline){
+      //if(!appState.offline){
         popup.couldNotGetLocation();
-      }
+      //}
       lat = 37.773972;
       lng = -122.431297;
       openMap(37.773972, -122.431297);
@@ -161,7 +162,7 @@ angular.module('starter')
             scope.matchingGroups.push(existingPlaces.groups[i]);
         }
       }
-    }
+    };
 
     //Updates the types that display on screen that match the search term
     scope.getTypes = function() {
@@ -175,16 +176,16 @@ angular.module('starter')
             scope.matchingTypes.push(existingPlaces.types[i]);
         }
       }
-    }
+    };
 
     //Closes the "autocomplete" dropdown list once an option has been selected when creating a new entry
     scope.closeList = function(){
       scope.matchingGroups = [];
       scope.matchingTypes = [];
-    }
+    };
 
     scope.disableTap = function(){
-      container = document.getElementsByClassName('pac-container');
+      var container = document.getElementsByClassName('pac-container');
       // disable ionic data tab
       angular.element(container).attr('data-tap-disabled', 'true');
       // leave input field if google-address-entry is selected
@@ -213,7 +214,7 @@ angular.module('starter')
     scope.getFunctions = function(task){
       var func = task.func;
       menu[func](scope, scope.map);
-    }
+    };
 
     //Resets the search box
     scope.emptySearch = function(){
@@ -221,5 +222,5 @@ angular.module('starter')
       if(marker){
         marker.setMap(null);
       }
-    }
+    };
   }]);

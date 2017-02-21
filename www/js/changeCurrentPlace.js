@@ -1,3 +1,4 @@
+'use strict';
 angular.module('starter')
   //Update the currentPlace when a new marker is clicked
 	.factory('changeCurrentPlace',['$timeout', 'currentPlace', function($timeout, currentPlace){
@@ -13,5 +14,5 @@ angular.module('starter')
           currentPlace.uid = place.uid;
         }, 0);
       }
-    }
-  }])
+    };
+  }]);

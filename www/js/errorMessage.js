@@ -1,3 +1,4 @@
+'use strict';
 angular.module('starter')
 //TODO: Why is this not in the popup factory????
   .factory('errorMessage',['$ionicPopup', function($ionicPopup){
@@ -20,5 +21,5 @@ angular.module('starter')
            template: 'Ensure you enter a group, type and note!'
          });
       }
-    }
-  }])
+    };
+  }]);

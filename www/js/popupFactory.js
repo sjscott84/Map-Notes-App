@@ -1,3 +1,4 @@
+'use strict';
 angular.module('starter')
   .factory('popup', ['$ionicPopup', 'listView', 'placeConstructor', 'existingPlaces', 'existingPlacesGrouped', '$state', '$window', 'appState', '$injector', 'firebaseAuth', '$timeout', function($ionicPopup, listView, placeConstructor, existingPlaces, existingPlacesGrouped, $state, $window, appState, $injector, firebaseAuth, $timeout){
     //Input details and save a new search to database
@@ -43,7 +44,7 @@ angular.module('starter')
             }
           }
         ]
-      })
+      });
     }
     //Alert an error
     function createAccountErrors (code, message){
@@ -93,7 +94,7 @@ angular.module('starter')
               }
             }
           ]
-        })
+        });
       },
       //Sign in with email account
       signinEmail: function(scope){
@@ -121,7 +122,7 @@ angular.module('starter')
               }
             }
           ]
-        })
+        });
       },
       //Confirmation to save a new place
       saveRequest: function(placeObject, mapScope, map){
@@ -142,7 +143,7 @@ angular.module('starter')
               }
             }
           ]
-        })
+        });
       },
       //Search for places based on group and type
       getPlaces: function(scope, map){
@@ -168,7 +169,7 @@ angular.module('starter')
               }
             }
           ]
-        })
+        });
       },
       //Confirmation that user wishes to delete an exisiting place
       deletePlace: function(scope, item){
@@ -192,7 +193,7 @@ angular.module('starter')
               }
             }
           ]
-        })
+        });
       },
       deleteGroup: function(scope, item){
         var myPopup = $ionicPopup.show({
@@ -215,7 +216,7 @@ angular.module('starter')
               }
             }
           ]
-        })
+        });
       },
       //Popup with details of place to edit
       editItem: function(scope, item){
@@ -243,7 +244,7 @@ angular.module('starter')
               }
             }
           ]
-        })
+        });
       },
       //Could not get location when app opens
       couldNotGetLocation: function(){
@@ -287,7 +288,7 @@ angular.module('starter')
               }
             }
           ]
-        })
+        });
       }
-    }
+    };
   }]);

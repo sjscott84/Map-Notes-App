@@ -1,5 +1,6 @@
+'use strict';
 angular.module('starter')  
-  .controller('editCtrl',['$scope', '$state', 'allPlaces', 'popup', 'editPage', function($scope, $state, allPlaces, popup, editPage){
+  .controller('editCtrl',['$scope', '$state', 'allPlaces', 'popup', function($scope, $state, allPlaces, popup){
 
     $scope.list = allPlaces;
 
@@ -17,7 +18,7 @@ angular.module('starter')
 
     $scope.returnToMap = function(){
       $state.go('map');
-    }
+    };
 
     $scope.toggleGroup = function(group) {
       if ($scope.isGroupShown(group)) {
@@ -33,15 +34,15 @@ angular.module('starter')
 
     $scope.edit= function(item){
       popup.editItem($scope, item);
-    }
+    };
 
     $scope.delete= function(item){
       popup.deletePlace($scope, item);
-    }
+    };
 
     $scope.deleteGroup = function(item){
       popup.deleteGroup($scope, item);
-    }
+    };
   }]);
 
   app.factory('editPage',['$state', function($state){

@@ -1,3 +1,4 @@
+'use strict';
 var app = angular.module('starter', ['ionic', 'ngCordovaOauth', 'ngCordova'])
 
 app.value('listView', []);
@@ -14,7 +15,7 @@ app.value('currentPosition', {
   lat: '',
   lng: '',
   radius: 2
-})
+});
 app.value('appState',{
   ready: false,
   cordova: false,
@@ -57,7 +58,7 @@ app.run(function($ionicPlatform, $rootScope, appState, $window, $state, connecti
         StatusBar.styleDefault();
       }
       if (cordova.InAppBrowser) {
-        window.open = cordova.InAppBrowser.open
+        window.open = cordova.InAppBrowser.open;
       }
     }
   });
@@ -71,7 +72,7 @@ app.run(function($ionicPlatform, $rootScope, appState, $window, $state, connecti
     appState.appActive = true;
     console.log(appState.appActive);
   }, false);
-})
+});
 
 app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
@@ -99,7 +100,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
   $urlRouterProvider.otherwise("/map");
   //$urlRouterProvider.otherwise("/home");
-})
+});
 
 
 

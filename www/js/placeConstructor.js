@@ -1,14 +1,7 @@
+'use strict';
 angular.module('starter')
-  .factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeCurrentPlace', 'appState', function($cordovaAppAvailability, $compile, changeCurrentPlace, appState){
-    //var infoWindow = new google.maps.InfoWindow();
+  .factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeCurrentPlace', function($cordovaAppAvailability, $compile, changeCurrentPlace){
       var infoWindow;
-      /*var markerImage = {
-        url: 'img/star_gold_16.png',
-        origin: new google.maps.Point(0,0),
-        anchor: new google.maps.Point(15,15)
-      }*/
-      //var infoWindow = (appState.online) ? 'online' : 'not online';
-      //console.log(infoWindow)
       var content = document.getElementById("infoWindow");
       return{
         Place: function (name, lat, lng, type, note, address, key, map){
@@ -25,7 +18,6 @@ angular.module('starter')
           self.marker = new google.maps.Marker({
             map: map,
             title: name,
-            //icon: 'img/star_gold_16.png',
             icon: {
               url: 'img/star_gold_16.png',
               origin: new google.maps.Point(0,0),
@@ -46,5 +38,5 @@ angular.module('starter')
             //map.setCenter(self.marker.getPosition());
           });
         }
-      }
-  }])
+      };
+  }]);

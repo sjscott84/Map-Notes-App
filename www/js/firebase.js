@@ -1,5 +1,6 @@
+'use strict';
 angular.module('starter')
-  .factory("firebaseService",['appState', '$state', function(appState, $state){ 
+  .factory("firebaseService",['$state', function($state){ 
 
     var config = {
       apiKey: "AIzaSyAQchOOXdXejiMOcTKoj_w6hDbg-01m3jQ",
@@ -14,6 +15,6 @@ angular.module('starter')
     //var userId = 'piyDDcON4kZPoS1KxwwE4tk7mGM2';
     return{
       fb: firebase
-    }
+    };
 
-  }])
+  }]);

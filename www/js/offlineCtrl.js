@@ -1,3 +1,4 @@
+'use strict';
 angular.module('starter')  
   .controller('offlineCtrl',['$scope', '$state', 'appState', '$window', 'allPlaces', 'popup', function($scope, $state, appState, $window, allPlaces, popup){
 
@@ -27,7 +28,7 @@ angular.module('starter')
 
     $scope.isPlaceShown = function(place){
       return $scope.shownPlace === place;
-    }
+    };
 
     $scope.returnToMap = function(){
       if(appState.mapReady && !appState.offline){
@@ -38,5 +39,5 @@ angular.module('starter')
         $state.go('map');
         $window.location.reload();
       }
-    }
+    };
   }]);

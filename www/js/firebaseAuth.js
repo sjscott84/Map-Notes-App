@@ -1,3 +1,4 @@
+'use strict';
 angular.module('starter')
   .value("user", {})
   .factory('firebaseAuth', ['$state', 'user', 'firebaseService', 'firebaseData', '$timeout', '$cordovaOauth', 'appState', function($state, user, firebaseService, firebaseData, $timeout, $cordovaOauth, appState){
@@ -62,7 +63,7 @@ angular.module('starter')
             signInWithCredential(credential, callback);
           }).catch(function(err){
             callback(err);
-          })
+          });
         }else{
           signInWithRedirect(new firebase.auth.FacebookAuthProvider(), callback);
         }
@@ -70,7 +71,7 @@ angular.module('starter')
       //Logout
       logout: function(){
         firebase.auth().signOut().then(function(){
-        })
+        });
       },
       //Create an account using email
       createAccount: function(email, password, callback){
@@ -88,5 +89,5 @@ angular.module('starter')
           callback(errorCode, errorMessage);
         });
       }
-    }
-}])
+    };
+}]);

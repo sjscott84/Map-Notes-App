@@ -1,3 +1,4 @@
+'use strict';
 angular.module('starter')
 //Controls the content of the infowindow when a marker is clicked
   .directive('info',['$cordovaAppAvailability', 'currentPlace', 'appState', function($cordovaAppAvailability, currentPlace, appState){
@@ -42,12 +43,12 @@ angular.module('starter')
               })
               .catch(function(){
                 window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng, "_blank");
-              })
+              });
             });
           }else{
             window.open("https://maps.google.com/maps?ll="+lat+","+lng+"&z=13&t=m&hl=en-US&q="+lat+"+"+lng, "_blank");
           }
-        }
+        };
       }
-    }
-  }])
+    };
+  }]);
