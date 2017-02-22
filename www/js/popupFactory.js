@@ -258,12 +258,18 @@ angular.module('starter')
           title: 'Offline',
           template: 'You are appear to have gone offline, you can still see a list of places from menu -> Offline, but other functionality will be unavailable until a connection is restored'
          });
+        $timeout(function() {
+          alertPopup.close(); //closes the popup after a set time so user does not end up with mulitple popups
+        }, 10000);
       },
       offlineMessage: function(){
         var alertPopup = $ionicPopup.alert({
           title: 'Offline',
           template: 'You are appear to be offline, you can still view a list of your places, but maps will be unavailable until you are back online'
          });
+        $timeout(function() {
+          alertPopup.close(); //closes the popup after a set time so user does not end up with mulitple popups
+        }, 10000);
       },
       onlineMessage: function(){
         var myPopup = $ionicPopup.show({
