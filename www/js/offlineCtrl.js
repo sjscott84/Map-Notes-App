@@ -3,7 +3,24 @@ angular.module('starter')
   .controller('offlineCtrl',['$scope', '$state', 'appState', '$window', 'allPlaces', 'popup', function($scope, $state, appState, $window, allPlaces, popup){
 
     var toParse = localStorage.getItem('places');
-    $scope.list = JSON.parse(toParse);
+    $scope.tempList = JSON.parse(toParse);
+    $scope.list = [];
+
+    for(var i = 0; i < $scope.tempList.length; i++){
+      var placeObject = {name: $scope.tempList[i].name};
+      var places = $scope.tempList[i].items;
+      for(var j = 0; j < places.length; j++){
+        var tempTypes = [];
+        var placeItem = {name: places[j].name, address: places[j].address, notes: places[j].notes, type: places[j].type}
+        if(tempTypes.indexOf(places[j].type) === -1){
+          tempTypes.push(places[j].type);
+          placeObject[places[j].type] = placeItem;
+        }else{
+          placeObject[places[j].type] = placeItem;
+        }
+      }
+      $scope.list.push(placeObject);
+    }
 
     $scope.toggleGroup = function(group) {
       if ($scope.isGroupShown(group)) {
@@ -11,6 +28,14 @@ angular.module('starter')
         $scope.shownPlace = null;
       } else {
         $scope.shownGroup = group;
+      }
+    };
+
+    $scope.toggleType = function(type) {
+      if ($scope.isTypeShown(type)) {
+        $scope.shownType = null;
+      } else {
+        $scope.shownType = type;
       }
     };
 
@@ -28,6 +53,18 @@ angular.module('starter')
 
     $scope.isPlaceShown = function(place){
       return $scope.shownPlace === place;
+    };
+
+    $scope.isTypeShown = function(type, group){
+      return $scope.shownType === type;
+    };
+
+    $scope.isTypeAndGroup = function(type, group){
+      if($scope.shownType === type && $scope.shownGroup === group){
+        return true;
+      }else{
+        return false;
+      }
     };
 
     $scope.returnToMap = function(){
