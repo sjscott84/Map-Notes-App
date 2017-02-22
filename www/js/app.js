@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('starter', ['ionic', 'ngCordovaOauth', 'ngCordova'])
+var app = angular.module('starter', ['ionic', 'ngCordovaOauth', 'ngCordova']);
 
 app.value('listView', []);
 app.value('allPlaces', []);
@@ -24,8 +24,13 @@ app.value('appState',{
   removeLoader: false,
   appActive: true
 });
+app.value('location', {
+  lat: '',
+  lng: ''
+});
 
-app.run(function($ionicPlatform, $rootScope, appState, $window, $state, connectivityMonitor) {
+app.run(function($ionicPlatform, $rootScope, appState, location, $window, $state, connectivityMonitor, $cordovaGeolocation, popup) {
+  var options = {timeout: 10000, enableHighAccuracy: true};
   $rootScope.appState = appState;
 
   $ionicPlatform.ready(function() {
@@ -34,7 +39,20 @@ app.run(function($ionicPlatform, $rootScope, appState, $window, $state, connecti
       appState.offline = true;
     }
 
-    appState.ready = true;
+    $cordovaGeolocation.getCurrentPosition(options)
+    .then(function(position){
+      location.lat = position.coords.latitude;
+      location.lng = position.coords.longitude;
+    }, function(error){
+      if(!appState.offline){
+        popup.couldNotGetLocation();
+      }
+      location.lat = 37.773972;
+      location.lng = -122.431297;
+    })
+    .then(function(){
+      appState.ready = true;
+    });
 
     connectivityMonitor.startWatching();
 
@@ -99,7 +117,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
   });
 
   $urlRouterProvider.otherwise("/map");
-  //$urlRouterProvider.otherwise("/home");
 });
 
 

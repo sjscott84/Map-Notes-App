@@ -1,9 +1,8 @@
 'use strict';
 angular.module('starter')
-  .controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'existingPlacesGrouped', 'currentPosition', 'menu', 'listView', 'appState',
-                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, existingPlacesGrouped, currentPosition, menu, listView, appState) {
+  .controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'existingPlacesGrouped', 'currentPosition', 'menu', 'listView', 'appState', 'location',
+                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, existingPlacesGrouped, currentPosition, menu, listView, appState, location) {
     var scope = $scope;
-    var options = {timeout: 10000, enableHighAccuracy: true};
     var button = document.getElementById('button');
     var closeButton = document.getElementById('closeButton');
     var marker;
@@ -11,8 +10,6 @@ angular.module('starter')
     var placeObject = {};
     var input;
     var searchBox;
-    var lat;
-    var lng;
     scope.matchingGroups = [];
     scope.matchingTypes = [];
 
@@ -21,7 +18,7 @@ angular.module('starter')
      },
       function(newVal, oldVal) {
         if(newVal !== oldVal && newVal === true){
-          openMap(lat, lng);
+          openMap(location.lat, location.lng);
         }
     }, true);
 
@@ -135,8 +132,9 @@ angular.module('starter')
       }
     }
 
-    //Looks for current location and passes this to openMap, if can't find location opens map in San Francisco
-    $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+    /*ooks for current location and passes this to openMap, if can't find location opens map in San Francisco
+    $cordovaGeolocation.getCurrentPosition(options)
+    .then(function(position){
       lat = position.coords.latitude;
       lng = position.coords.longitude;
       openMap(position.coords.latitude, position.coords.longitude);
@@ -148,7 +146,7 @@ angular.module('starter')
       lat = 37.773972;
       lng = -122.431297;
       openMap(37.773972, -122.431297);
-    });
+    });*/
 
     //Updates the groups that display on screen that match the search term
     scope.getGroups = function() {
