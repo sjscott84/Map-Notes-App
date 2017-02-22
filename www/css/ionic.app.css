@@ -9827,7 +9827,7 @@ a.button {
 
 #pac-input {
   background-color: #fff;
-  font-family: Roboto;
+  font-family: inherit;
   font-size: 17px;
   font-weight: 300;
   text-overflow: ellipsis;

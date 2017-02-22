@@ -44,11 +44,12 @@ angular.module('starter')
         };
 
         scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-        scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
+        //scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
 
         // Create the search box and link it to the UI element.
         input = document.getElementById('pac-input');
         searchBox = new google.maps.places.SearchBox(input);
+        scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
         scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
         scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(closeButton);
         //Bias the SearchBox results towards current map's viewport.
@@ -131,22 +132,6 @@ angular.module('starter')
         });
       }
     }
-
-    /*ooks for current location and passes this to openMap, if can't find location opens map in San Francisco
-    $cordovaGeolocation.getCurrentPosition(options)
-    .then(function(position){
-      lat = position.coords.latitude;
-      lng = position.coords.longitude;
-      openMap(position.coords.latitude, position.coords.longitude);
-    }, function(error){
-      //console.log(error);
-      //if(!appState.offline){
-        popup.couldNotGetLocation();
-      //}
-      lat = 37.773972;
-      lng = -122.431297;
-      openMap(37.773972, -122.431297);
-    });*/
 
     //Updates the groups that display on screen that match the search term
     scope.getGroups = function() {

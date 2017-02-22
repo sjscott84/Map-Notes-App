@@ -37,7 +37,7 @@ angular.module('starter')
         popup.offlineMessage();
       }else if(!appState.mapReady && !appState.offline){
         $state.go('map');
-        $window.location.reload();
+        location.reload();
       }
     };
   }]);
