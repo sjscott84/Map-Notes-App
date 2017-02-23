@@ -6,17 +6,19 @@ angular.module('starter')
     $scope.tempList = JSON.parse(toParse);
     $scope.list = [];
 
+    //Sorts data into group and type for display purposes
     for(var i = 0; i < $scope.tempList.length; i++){
       var placeObject = {name: $scope.tempList[i].name};
       var places = $scope.tempList[i].items;
+      var tempTypes = [];
       for(var j = 0; j < places.length; j++){
-        var tempTypes = [];
-        var placeItem = {name: places[j].name, address: places[j].address, notes: places[j].notes, type: places[j].type}
+        var placeItem = {name: places[j].name, address: places[j].address, notes: places[j].notes};
         if(tempTypes.indexOf(places[j].type) === -1){
           tempTypes.push(places[j].type);
-          placeObject[places[j].type] = placeItem;
+          placeObject[places[j].type] = [];
+          placeObject[places[j].type].push(placeItem);
         }else{
-          placeObject[places[j].type] = placeItem;
+          placeObject[places[j].type].push(placeItem);
         }
       }
       $scope.list.push(placeObject);
@@ -25,6 +27,7 @@ angular.module('starter')
     $scope.toggleGroup = function(group) {
       if ($scope.isGroupShown(group)) {
         $scope.shownGroup = null;
+        $scope.shownType = null;
         $scope.shownPlace = null;
       } else {
         $scope.shownGroup = group;
@@ -34,6 +37,7 @@ angular.module('starter')
     $scope.toggleType = function(type) {
       if ($scope.isTypeShown(type)) {
         $scope.shownType = null;
+        $scope.shownPlace = null;
       } else {
         $scope.shownType = type;
       }
@@ -55,17 +59,17 @@ angular.module('starter')
       return $scope.shownPlace === place;
     };
 
-    $scope.isTypeShown = function(type, group){
+    $scope.isTypeShown = function(type){
       return $scope.shownType === type;
     };
 
-    $scope.isTypeAndGroup = function(type, group){
-      if($scope.shownType === type && $scope.shownGroup === group){
+    $scope.isTypeAndGroup = function (key, thing){
+      if($scope.shownType === key && $scope.shownGroup === thing){
         return true;
       }else{
         return false;
       }
-    };
+    }
 
     $scope.returnToMap = function(){
       if(appState.mapReady && !appState.offline){

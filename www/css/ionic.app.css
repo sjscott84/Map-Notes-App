@@ -9954,5 +9954,17 @@ p {
   margin: auto;
 }
 
+#offlineType {
+  text-indent: 10px;
+}
+
+#offlinePlace {
+  text-indent: 20px;
+}
+
+#offlineStyleOff {
+  text-indent: 0px;
+}
+
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important; }
