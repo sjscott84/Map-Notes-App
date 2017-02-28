@@ -45,13 +45,14 @@ angular.module('starter')
 
         scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
         //scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
-
-        // Create the search box and link it to the UI element.
         input = document.getElementById('pac-input');
         searchBox = new google.maps.places.SearchBox(input);
+
+        // Create the search box and link it to the UI element.
         scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
         scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
         scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(closeButton);
+
         //Bias the SearchBox results towards current map's viewport.
         scope.map.addListener('bounds_changed', function() {
           searchBox.setBounds(scope.map.getBounds());
@@ -61,8 +62,6 @@ angular.module('starter')
           appState.removeLoader = true;
           appState.mapReady = true;
         });
-
-        //var infowindow = new google.maps.InfoWindow();
 
         scope.map.addListener('click', function(event){
           //infowindow.close();
@@ -196,7 +195,7 @@ angular.module('starter')
     //Calls a function based on what item was clicked in the side menu
     scope.getFunctions = function(task){
       var func = task.func;
-      menu[func](scope, scope.map);
+      menu[func](scope, scope.map, button, input, closeButton);
     };
 
     //Resets the search box

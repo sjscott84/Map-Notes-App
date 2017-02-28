@@ -32,7 +32,9 @@ angular.module('starter')
       //);
     },
     //Search based on location (if avaiable)
-    searchByLocation: function(mapScope, map){
+    searchByLocation: function(mapScope, map, button, input, closeButton){
+      map.controls[google.maps.ControlPosition.TOP_CENTER].clear();
+
       var service;
       //if(!appState.offline){
         service = $injector.get('firebaseData');
@@ -42,6 +44,12 @@ angular.module('starter')
       service.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);
 
       $ionicSideMenuDelegate.toggleLeft();
+
+      window.setTimeout(function() {
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(closeButton);
+      }, 400);
     },
     //Open the edit page and close any markers currently onscreen
     editPlaces: function(){
@@ -50,9 +58,16 @@ angular.module('starter')
       $state.go('edit');
     },
     //Clear screen of previous searches
-    removePlaces: function(){
+    removePlaces: function(mapScope, map, button, input, closeButton){
+      map.controls[google.maps.ControlPosition.TOP_CENTER].clear();
       removePlacesFromList();
       $ionicSideMenuDelegate.toggleLeft();
+
+      window.setTimeout(function() {
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(closeButton);
+      }, 400);
     },
     //Open the home screen
     logoutScreen: function(){
