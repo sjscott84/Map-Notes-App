@@ -109,6 +109,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
     templateUrl: 'templates/edit.html',
     controller: 'editCtrl'
   })
+  .state('instructions', {
+    url: '/instructions',
+    templateUrl: 'templates/instructions.html',
+    controller: 'instructionsCtrl'
+  })
   .state('offline', {
     cache: false,
     url: '/offline',

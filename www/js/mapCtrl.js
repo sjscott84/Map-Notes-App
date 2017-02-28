@@ -188,6 +188,8 @@ angular.module('starter')
       func: 'editPlaces'},
       {title: 'Offline',
       func: 'offline'},
+      {title: 'Instructions',
+      func: 'instructions'},
       {title: 'Logout',
       func: 'logoutScreen'}
     ];

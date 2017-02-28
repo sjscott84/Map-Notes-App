@@ -77,6 +77,10 @@ angular.module('starter')
     offline: function(){
       $ionicSideMenuDelegate.toggleLeft();
       $state.go('offline');
+    },
+    instructions: function(){
+      $ionicSideMenuDelegate.toggleLeft();
+      $state.go('instructions');
     }
   };
 }]);
