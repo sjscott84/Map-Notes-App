@@ -9967,5 +9967,10 @@ p {
   text-indent: 0px;
 }
 
+#instructions {
+  font: inherit;
+  padding: 10px;
+}
+
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important; }
