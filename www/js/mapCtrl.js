@@ -48,10 +48,12 @@ angular.module('starter')
         input = document.getElementById('pac-input');
         searchBox = new google.maps.places.SearchBox(input);
 
-        // Create the search box and link it to the UI element.
-        scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
-        scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
-        scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(closeButton);
+        // Create the search box and link it to the UI element. Timeout used to stop the placeholder loading twice
+        window.setTimeout(function() {
+          scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
+          scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+          scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(closeButton);
+        }, 400);
 
         //Bias the SearchBox results towards current map's viewport.
         scope.map.addListener('bounds_changed', function() {

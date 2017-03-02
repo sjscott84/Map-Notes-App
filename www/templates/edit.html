@@ -10,7 +10,7 @@
 		<div ng-repeat="thing in list">
 			<ion-item class="item-stable" ng-click="toggleGroup(thing)" ng-class="{active: isGroupShown(thing)}" can-swipe="listCanSwipe">
 				<div>
-					<i class="icon" ng-class="isGroupShown(thing) ? 'ion-minus' : 'ion-plus'" can-swipe="listCanSwipe"></i>
+					<i id="plus_minus" class="icon" ng-class="isGroupShown(thing) ? 'ion-minus' : 'ion-plus'" can-swipe="listCanSwipe"></i>
 					{{thing.name}}
 					<i id="slideIcon" class="icon-right ion-chevron-left"></i>
 				</div>

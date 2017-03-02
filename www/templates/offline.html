@@ -9,19 +9,19 @@
   <ion-list>
     <div ng-repeat="thing in list">
       <ion-item class="item-stable" ng-click="toggleGroup(thing)" ng-class="{active: isGroupShown(thing)}">
-        <i class="icon" ng-class="isGroupShown(thing) ? 'ion-minus' : 'ion-plus'"></i>
+        <i id="plus_minus" class="icon" ng-class="isGroupShown(thing) ? 'ion-minus' : 'ion-plus'"></i>
         {{thing.name}}
       </ion-item>
 
       <div ng-repeat="(key, value) in thing" ng-if="key !='name'" id="offlineType">
         <ion-item class="item-accordion" ng-show="isGroupShown(thing)" ng-click="toggleType(key)">
-          <i class="icon" ng-class="isTypeShown(key) ? 'ion-minus' : 'ion-plus'"></i>
+          <i id="plus_minus" class="icon" ng-class="isTypeShown(key) ? 'ion-minus' : 'ion-plus'"></i>
           {{key}}
         </ion-item>
 
         <div ng-repeat="place in value" id="offlinePlace">
           <ion-item class="item-accordion" ng-show="isTypeAndGroup(key, thing)" ng-click="togglePlace(place)">
-            <i class="icon" ng-class="isPlaceShown(place) ? 'ion-minus' : 'ion-plus'"></i>
+            <i id="plus_minus" class="icon" ng-class="isPlaceShown(place) ? 'ion-minus' : 'ion-plus'"></i>
             {{place.name}}
           </ion-item>
 
