@@ -87,7 +87,8 @@ angular.module('starter')
         searchBox.addListener('places_changed', function() {
           var places = searchBox.getPlaces();
           if (places.length === 0) {
-            return;
+            popup.noPlacesFound();
+            //return;
           }
           // Clear out the old marker
           if(marker || allMarkers.length > 0){

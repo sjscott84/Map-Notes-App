@@ -271,6 +271,12 @@ angular.module('starter')
           alertPopup.close(); //closes the popup after a set time so user does not end up with mulitple popups
         }, 10000);
       },
+      noPlacesFound: function(){
+        var alertPopup = $ionicPopup.alert({
+          title: 'No Places Found',
+          template: 'No places match your search, please try a new search'
+         });
+      },
       onlineMessage: function(){
         var myPopup = $ionicPopup.show({
           title: 'Internet Connection Detected',

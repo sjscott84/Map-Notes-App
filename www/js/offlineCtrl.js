@@ -1,5 +1,5 @@
 'use strict';
-angular.module('starter')  
+angular.module('starter')
   .controller('offlineCtrl',['$scope', '$state', 'appState', '$window', 'allPlaces', 'popup', function($scope, $state, appState, $window, allPlaces, popup){
 
     var toParse = localStorage.getItem('places');
