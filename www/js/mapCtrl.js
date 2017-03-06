@@ -185,7 +185,7 @@ angular.module('starter')
       func: 'searchByLocation'},
       {title: 'Search by Catagories',
       func: 'searchByWhat'},
-      {title: 'Remove Current Places',
+      {title: 'Clear Markers',
       func: 'removePlaces'},
       {title: 'Edit Places',
       func: 'editPlaces'},
