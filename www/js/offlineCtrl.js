@@ -7,18 +7,26 @@ angular.module('starter')
     $scope.list = [];
 
     //Sorts data into group and type for display purposes
+    //TODO: Can this be refactored??
     for(var i = 0; i < $scope.tempList.length; i++){
-      var placeObject = {name: $scope.tempList[i].name};
+      var placeObject = {name: $scope.tempList[i].name, types: []};
       var places = $scope.tempList[i].items;
       var tempTypes = [];
       for(var j = 0; j < places.length; j++){
-        var placeItem = {name: places[j].name, address: places[j].address, notes: places[j].notes};
         if(tempTypes.indexOf(places[j].type) === -1){
           tempTypes.push(places[j].type);
-          placeObject[places[j].type] = [];
-          placeObject[places[j].type].push(placeItem);
-        }else{
-          placeObject[places[j].type].push(placeItem);
+        }
+      }
+      for(var k = 0; k < tempTypes.length; k++){
+        var what = {typeName: tempTypes[k], places: []}
+        placeObject['types'].push(what);
+      }
+      for(var l = 0; l < places.length; l++){
+        var placeItem = {name: places[l].name, address: places[l].address, notes: places[l].notes, type: places[l].type};
+        for(var m = 0; m < placeObject['types'].length; m++){
+          if(places[l].type === placeObject['types'][m]['typeName']){
+            placeObject['types'][m]['places'].push(placeItem);
+          }
         }
       }
       $scope.list.push(placeObject);
@@ -63,8 +71,8 @@ angular.module('starter')
       return $scope.shownType === type;
     };
 
-    $scope.isTypeAndGroup = function (key, thing){
-      if($scope.shownType === key && $scope.shownGroup === thing){
+    $scope.isTypeAndGroup = function (type, place){
+      if($scope.shownType === type && $scope.shownGroup === place){
         return true;
       }else{
         return false;

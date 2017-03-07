@@ -13,14 +13,15 @@
         {{thing.name}}
       </ion-item>
 
-      <div ng-repeat="(key, value) in thing" ng-if="key !='name'" id="offlineType">
-        <ion-item class="item-accordion" ng-show="isGroupShown(thing)" ng-click="toggleType(key)">
-          <i id="plus_minus" class="icon" ng-class="isTypeShown(key) ? 'ion-minus' : 'ion-plus'"></i>
-          {{key}}
+      <!--<div ng-repeat="(key, value) in thing" ng-if="key !='name'" id="offlineType">-->
+      <div ng-repeat="type in thing.types | orderBy: 'typeName'" id="offlineType">
+        <ion-item class="item-accordion" ng-show="isGroupShown(thing)" ng-click="toggleType(type)">
+          <i id="plus_minus" class="icon" ng-class="isTypeShown(type) ? 'ion-minus' : 'ion-plus'"></i>
+          {{type.typeName}}
         </ion-item>
 
-        <div ng-repeat="place in value" id="offlinePlace">
-          <ion-item class="item-accordion" ng-show="isTypeAndGroup(key, thing)" ng-click="togglePlace(place)">
+        <div ng-repeat="place in type.places | orderBy: 'name'" id="offlinePlace">
+          <ion-item class="item-accordion" ng-show="isTypeAndGroup(type, thing)" ng-click="togglePlace(place)">
             <i id="plus_minus" class="icon" ng-class="isPlaceShown(place) ? 'ion-minus' : 'ion-plus'"></i>
             {{place.name}}
           </ion-item>
