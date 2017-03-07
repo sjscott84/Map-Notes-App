@@ -12,15 +12,18 @@ angular.module('starter')
       var placeObject = {name: $scope.tempList[i].name, types: []};
       var places = $scope.tempList[i].items;
       var tempTypes = [];
+      //Get a list of all the types
       for(var j = 0; j < places.length; j++){
         if(tempTypes.indexOf(places[j].type) === -1){
           tempTypes.push(places[j].type);
         }
       }
+      //For each type create an object
       for(var k = 0; k < tempTypes.length; k++){
-        var what = {typeName: tempTypes[k], places: []}
+        var what = {typeName: tempTypes[k], places: []};
         placeObject['types'].push(what);
       }
+      //For each place, add place to appropriate type object
       for(var l = 0; l < places.length; l++){
         var placeItem = {name: places[l].name, address: places[l].address, notes: places[l].notes, type: places[l].type};
         for(var m = 0; m < placeObject['types'].length; m++){
@@ -77,7 +80,7 @@ angular.module('starter')
       }else{
         return false;
       }
-    }
+    };
 
     $scope.returnToMap = function(){
       if(appState.mapReady && !appState.offline){
