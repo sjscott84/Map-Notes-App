@@ -7,28 +7,22 @@ angular.module('starter')
     $scope.list = [];
 
     //Sorts data into group and type for display purposes
-    //TODO: Can this be refactored??
     for(var i = 0; i < $scope.tempList.length; i++){
       var placeObject = {name: $scope.tempList[i].name, types: []};
       var places = $scope.tempList[i].items;
       var tempTypes = [];
-      //Get a list of all the types
       for(var j = 0; j < places.length; j++){
+        var placeItem = {name: places[j].name, address: places[j].address, notes: places[j].notes, type: places[j].type};
         if(tempTypes.indexOf(places[j].type) === -1){
           tempTypes.push(places[j].type);
-        }
-      }
-      //For each type create an object
-      for(var k = 0; k < tempTypes.length; k++){
-        var what = {typeName: tempTypes[k], places: []};
-        placeObject['types'].push(what);
-      }
-      //For each place, add place to appropriate type object
-      for(var l = 0; l < places.length; l++){
-        var placeItem = {name: places[l].name, address: places[l].address, notes: places[l].notes, type: places[l].type};
-        for(var m = 0; m < placeObject['types'].length; m++){
-          if(places[l].type === placeObject['types'][m]['typeName']){
-            placeObject['types'][m]['places'].push(placeItem);
+          var what = {typeName: places[j].type, places: []};
+          what['places'].push(placeItem);
+          placeObject['types'].push(what);
+        }else{
+          for(var k = 0; k < placeObject['types'].length; k++){
+            if(places[j].type === placeObject['types'][k]['typeName']){
+              placeObject['types'][k]['places'].push(placeItem);
+            }
           }
         }
       }
