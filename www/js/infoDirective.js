@@ -30,7 +30,7 @@ angular.module('starter')
             sApp.start(function() {
             }, function(error) {
               alert(error);
-            });
+            }); 
             })
             .catch(function(){
               $cordovaAppAvailability.check('http://maps.apple.com')

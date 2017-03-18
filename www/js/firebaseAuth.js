@@ -11,7 +11,6 @@ angular.module('starter')
       if(currentUser){
         $timeout(function(){
           user.data = currentUser;
-          //user.displayName = user.data.displayName;
           if(!user.data.displayName){
             user.displayName = user.data.email;
           }else{

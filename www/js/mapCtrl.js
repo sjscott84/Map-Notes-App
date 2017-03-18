@@ -17,7 +17,7 @@ angular.module('starter')
        return appState.ready;
      },
       function(newVal, oldVal) {
-        if(newVal !== oldVal && newVal === true){
+        if(newVal){
           openMap(location.lat, location.lng);
         }
     }, true);
