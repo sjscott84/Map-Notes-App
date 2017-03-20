@@ -44,7 +44,6 @@ angular.module('starter')
         };
 
         scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-        //scope.map.controls[google.maps.ControlPosition.TOP_CENTER].push(button);
         input = document.getElementById('pac-input');
         searchBox = new google.maps.places.SearchBox(input);
 
@@ -88,7 +87,6 @@ angular.module('starter')
           var places = searchBox.getPlaces();
           if (places.length === 0) {
             popup.noPlacesFound();
-            //return;
           }
           // Clear out the old marker
           if(marker || allMarkers.length > 0){

@@ -18,11 +18,6 @@ angular.module('starter')
       fitBounds.fitBoundsToVisibleMarkers(listView, map);
     }
 
-    /*savePlaceToListView = function(item, key, map){
-      listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address'], key, map));
-      fitBounds.fitBoundsToVisibleMarkers(listView, map);
-    }*/
-
     function clearExistingPlaces(){
       if(existingPlaces.groups.length > 1 || existingPlaces.types.length > 1){
         existingPlaces.groups[0] = "All";
