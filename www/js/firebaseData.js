@@ -14,7 +14,7 @@ angular.module('starter')
     }
 
     function savePlaceToListView (item, key, map){
-      listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address'], item['group'], key, map));
+      listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address'], item['group'], item['visited'], key, map));
       fitBounds.fitBoundsToVisibleMarkers(listView, map);
     }
 
@@ -42,7 +42,7 @@ angular.module('starter')
           place = {name: nameKey, items:[]};
           var item = items[nameKey];
           Object.keys(item).forEach(function(key){
-            place.items.push({name: item[key]['name'], group: item[key]['group'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], latitude: item[key]['latitude'], longitude: item[key]['longitude'], uid: key});
+            place.items.push({name: item[key]['name'], group: item[key]['group'], address: item[key]['address'], type: item[key]['type'], notes: item[key]['notes'], latitude: item[key]['latitude'], longitude: item[key]['longitude'], visited: item[key]['visited'], uid: key});
           });
 
           allPlaces.push(place);
@@ -195,6 +195,13 @@ angular.module('starter')
         .then(function(){
           updateAfterChange();
         });
+      },
+      addVisited: function(group, visited, uid){
+        var updates = {visited: visited};
+        database.ref('/users/'+user.data.uid+'/places/'+group+'/'+uid).update(updates)
+        .then(function(){
+          updateAfterChange();
+        })
       },
       editPlace: function(group, type, notes, olditem){
         if(olditem.group !== group){

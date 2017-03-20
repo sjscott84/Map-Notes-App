@@ -3,9 +3,17 @@ angular.module('starter')
   .factory('placeConstructor', ['$cordovaAppAvailability', '$compile', 'changeCurrentPlace', function($cordovaAppAvailability, $compile, changeCurrentPlace){
       var infoWindow;
       var content = document.getElementById("infoWindow");
+      function chooseIcon(visited){
+        if(!visited){
+          return 'img/star_gold_16.png';
+        }else{
+          return 'img/red_circle_12.png';
+        }
+      }
       return{
-        Place: function (name, lat, lng, type, note, address, group, key, map){
+        Place: function (name, lat, lng, type, note, address, group, visited, key, map){
           var self = this;
+          self.visited = visited;
           self.group = group;
           self.map = map;
           self.name = name;
@@ -20,7 +28,7 @@ angular.module('starter')
             map: map,
             title: name,
             icon: {
-              url: 'img/star_gold_16.png',
+              url: chooseIcon(self.visited),
               origin: new google.maps.Point(0,0),
               anchor: new google.maps.Point(15,15)
             },

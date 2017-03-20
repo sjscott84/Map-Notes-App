@@ -5,7 +5,7 @@ angular.module('starter')
     return {
       changePlace: function(place){
         $timeout(function(){
-          console.log(place)
+          currentPlace.visited = place.visited;
           currentPlace.group = place.group;
           currentPlace.name = place.name;
           currentPlace.address = place.address;

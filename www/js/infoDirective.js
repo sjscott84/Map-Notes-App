@@ -4,7 +4,6 @@ angular.module('starter')
   .directive('info',['$cordovaAppAvailability', 'currentPlace', 'appState', '$injector', function($cordovaAppAvailability, currentPlace, appState, $injector){
 
     var name = currentPlace.name;
-    var visited = false;
 
     /*changeNameForGoogleSearch = function(name){
       for(var i=0; i<name.length; i++){
@@ -19,17 +18,13 @@ angular.module('starter')
       scope: {
         place:  '=places'
       },
-      template: '<div class="infowindow"><div class="iw-title">{{place.name}}</div><div class="iw-info"><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">Navigation</a></div><button ng-click="markAsVisited()" class="button button-block button-positive">Visited?</button></div>',
+      template: '<div class="infowindow"><div class="iw-title">{{place.name}}</div><div class="iw-info"><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">Navigation</a></div><p ng-show="place.visited">You have visited this place!</p><button ng-hide="place.visited" ng-click="markAsVisited()" class="button button-block button-positive">Visited?</button></div>',
       link: function(scope, element, attrs) {
         scope.markAsVisited = function(){
-          if(visited){
-            visited = false;
-          }else{
-            visited = true;
-          }
-          console.log(currentPlace);
+          var visited = true;
+          scope.place.visited = true;
           var service = $injector.get('firebaseData');
-          //service.addVisited(scope.data.group, scope.data.type, scope.data.note, scope.item);
+          service.addVisited(currentPlace.group, visited, currentPlace.uid);
         },
         scope.openNewMap = function(){
           var lat = currentPlace.lat;
