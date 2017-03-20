@@ -14,7 +14,7 @@ angular.module('starter')
     }
 
     function savePlaceToListView (item, key, map){
-      listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address'], key, map));
+      listView.push(new placeConstructor.Place(item['name'], item['latitude'], item['longitude'], item['type'], item['notes'], item['address'], item['group'], key, map));
       fitBounds.fitBoundsToVisibleMarkers(listView, map);
     }
 

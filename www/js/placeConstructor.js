@@ -4,8 +4,9 @@ angular.module('starter')
       var infoWindow;
       var content = document.getElementById("infoWindow");
       return{
-        Place: function (name, lat, lng, type, note, address, key, map){
+        Place: function (name, lat, lng, type, note, address, group, key, map){
           var self = this;
+          self.group = group;
           self.map = map;
           self.name = name;
           self.lat = lat;
