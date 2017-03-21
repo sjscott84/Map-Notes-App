@@ -18,6 +18,16 @@ angular.module('starter')
       fitBounds.fitBoundsToVisibleMarkers(listView, map);
     }
 
+    function getVisitedPlaces(visited, place, key, map){
+      if(visited){
+        savePlaceToListView(place, key, map);
+      }else{
+        if(!place['visited']){
+          savePlaceToListView(place, key, map);
+        }
+      }
+    }
+
     function clearExistingPlaces(){
       if(existingPlaces.groups.length > 1 || existingPlaces.types.length > 1){
         existingPlaces.groups[0] = "All";
@@ -105,7 +115,7 @@ angular.module('starter')
             console.log('No Internet');
           });
       },
-      searchForPlaces: function(group, type, map){
+      searchForPlaces: function(group, type, visited, map){
         if(group === "All" && type === "All"){
           database.ref('/users/'+user.data.uid+'/places').once('value')
           .then(function(response){
@@ -113,7 +123,8 @@ angular.module('starter')
             Object.keys(items).forEach(function(key){
               var item = items[key];
               Object.keys(item).forEach(function(key){
-                savePlaceToListView(item[key], key, map);
+                getVisitedPlaces(visited, item[key], key, map)
+                //savePlaceToListView(item[key], key, map);
               });
             });
           });
@@ -125,7 +136,8 @@ angular.module('starter')
               var item = items[key];
               Object.keys(item).forEach(function(key){
                 if(item[key]['type'] === type){
-                  savePlaceToListView(item[key], key, map);
+                  getVisitedPlaces(visited, item[key], key, map)
+                  //savePlaceToListView(item[key], key, map);
                 }
               });
             });
@@ -135,7 +147,7 @@ angular.module('starter')
           .then(function(response){
             var items = response.val();
             Object.keys(items).forEach(function(key){
-              savePlaceToListView(items[key], key, map);
+              getVisitedPlaces(visited, items[key], key, map);
             });
           });
         }else{
@@ -144,7 +156,8 @@ angular.module('starter')
             var items = response.val();
             Object.keys(items).forEach(function(key){
               if(items[key]['type'] === type){
-                savePlaceToListView(items[key], key, map);
+                getVisitedPlaces(visited, items[key], key, map)
+                //savePlaceToListView(items[key], key, map);
               }
             });
             if(listView.length === 0){

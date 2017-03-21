@@ -165,7 +165,7 @@ angular.module('starter')
                 //if(!appState.offline){
                   service = $injector.get('firebaseData');
                 //}
-                service.searchForPlaces(scope.data.selectedGroup, scope.data.selectedType, map);
+                service.searchForPlaces(scope.data.selectedGroup, scope.data.selectedType, scope.data.showVisitedTrue, map);
               }
             }
           ]

@@ -28,7 +28,7 @@ angular.module('starter')
             map: map,
             title: name,
             icon: {
-              url: chooseIcon(self.visited),
+              url: 'img/star_gold_16.png',
               origin: new google.maps.Point(0,0),
               anchor: new google.maps.Point(15,15)
             },
