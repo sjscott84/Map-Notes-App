@@ -127,6 +127,9 @@ angular.module('starter')
                 //savePlaceToListView(item[key], key, map);
               });
             });
+            if(listView.length === 0){
+              errorMessage.searchErrorAlert();
+            }
           });
         }else if(group === "All" && type !== "All"){
           database.ref('/users/'+user.data.uid+'/places').once('value')
@@ -141,6 +144,9 @@ angular.module('starter')
                 }
               });
             });
+            if(listView.length === 0){
+              errorMessage.searchErrorAlert();
+            }
           });
         }else if(group !== "All" && type === "All"){
           database.ref('/users/'+user.data.uid+'/places/'+group).once('value')
@@ -149,6 +155,9 @@ angular.module('starter')
             Object.keys(items).forEach(function(key){
               getVisitedPlaces(visited, items[key], key, map);
             });
+            if(listView.length === 0){
+              errorMessage.searchErrorAlert();
+            }
           });
         }else{
           database.ref('/users/'+user.data.uid+'/places/'+group).once('value')
