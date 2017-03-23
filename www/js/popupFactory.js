@@ -220,9 +220,11 @@ angular.module('starter')
       },
       //Popup with details of place to edit
       editItem: function(scope, item){
-        console.log(scope)
         scope.data = {group: item.group, type: item.type, note: item.notes};
         scope.item = item;
+        scope.closeSelf = function(){
+            myPopup.close();
+        };
         var myPopup = $ionicPopup.show({
           templateUrl: 'templates/editPopup.html',
           title: item.name,
