@@ -18,19 +18,20 @@ angular.module('starter')
       scope: {
         place:  '=places'
       },
-      template: '<div class="infowindow"><div class="iw-title">{{place.name}}</div><div class="iw-info"><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">Navigation</a></div><p ng-show="place.visited">You have visited this place!</p><button ng-hide="place.visited" ng-click="markAsVisited()" class="button button-block button-positive">Visited?</button></div>',
+      template: '<div class="infowindow"><div class="iw-title">{{place.name}}</div><div class="iw-info"><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">Navigation</a></div><ion-checkbox ng-model="place.visited" ng-change="markAsVisited()">Mark as done?</ion-checkbox></div>',
+      //<button ng-hide="place.visited" ng-click="markAsVisited()" class="button button-block button-positive">Visited?</button>
+      //<p ng-show="place.visited">You have visited this place!</p>
       link: function(scope, element, attrs) {
         scope.markAsVisited = function(){
           var copyOfPlace;
-          scope.place.visited = true;
-          //Changes the marker icon when visited changed to true
+          //Changes the marker icon when visited value changed
           listView.forEach(function(listViewPlace){
             if(listViewPlace.uid === currentPlace.uid){
               copyOfPlace = listViewPlace;
               var index = listView.indexOf(listViewPlace);
               var x = listView.splice(index, 1);
               x[0].marker.setMap(null);
-              copyOfPlace.visited = true;
+              copyOfPlace.visited = scope.place.visited;
               listView.push(new placeConstructor.Place(copyOfPlace['name'], copyOfPlace['lat'], copyOfPlace['lng'], copyOfPlace['type'], copyOfPlace['notes'], copyOfPlace['address'], copyOfPlace['group'], copyOfPlace['visited'], copyOfPlace['uid'], copyOfPlace.map));
             }
           })
