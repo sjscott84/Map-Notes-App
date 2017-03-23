@@ -7,7 +7,7 @@ angular.module('starter')
         if(!visited){
           return 'img/star_gold_16.png';
         }else{
-          return 'img/red_circle_12.png';
+          return 'img/star_green_16.png';
         }
       }
       return{

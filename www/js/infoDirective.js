@@ -18,7 +18,7 @@ angular.module('starter')
       scope: {
         place:  '=places'
       },
-      template: '<div class="infowindow"><div class="iw-title">{{place.name}}</div><div class="iw-info"><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">Navigation</a></div><ion-checkbox ng-model="place.visited" ng-change="markAsVisited()">Mark as done?</ion-checkbox></div>',
+      template: '<div class="infowindow"><div class="iw-title">{{place.name}}</div><div class="iw-info"><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">Navigation</a></div><ion-checkbox ng-model="place.visited" ng-change="markAsVisited()">Mark as done</ion-checkbox></div>',
       //<button ng-hide="place.visited" ng-click="markAsVisited()" class="button button-block button-positive">Visited?</button>
       //<p ng-show="place.visited">You have visited this place!</p>
       link: function(scope, element, attrs) {

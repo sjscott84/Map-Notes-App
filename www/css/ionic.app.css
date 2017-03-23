@@ -9976,5 +9976,12 @@ p {
   margin-right: 20px;
 }
 
+.item.item-checkbox {
+  border-width: 0;
+  font-size: 15px;
+  line-height: 1.2;
+  margin-left: -15px;
+}
+
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important; }
