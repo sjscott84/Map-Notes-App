@@ -28,7 +28,7 @@ angular.module('starter')
             map: map,
             title: name,
             icon: {
-              url: 'img/star_gold_16.png',
+              url: chooseIcon(self.visited),
               origin: new google.maps.Point(0,0),
               anchor: new google.maps.Point(15,15)
             },
@@ -39,12 +39,10 @@ angular.module('starter')
             if(infoWindow){
               infoWindow.close();
             }
-            //infoWindow = (!appState.offline) ? new google.maps.InfoWindow() : '';
             infoWindow = new google.maps.InfoWindow();
             changeCurrentPlace.changePlace(self);
             infoWindow.setContent(content);
             infoWindow.open(self.map, self.marker);
-            //map.setCenter(self.marker.getPosition());
           });
         }
       };

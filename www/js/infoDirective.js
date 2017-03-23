@@ -1,7 +1,7 @@
 'use strict';
 angular.module('starter')
 //Controls the content of the infowindow when a marker is clicked
-  .directive('info',['$cordovaAppAvailability', 'currentPlace', 'appState', '$injector', function($cordovaAppAvailability, currentPlace, appState, $injector){
+  .directive('info',['$rootScope', '$cordovaAppAvailability', 'currentPlace', 'appState', '$injector', 'listView', 'placeConstructor', 'fitBounds', function($rootScope, $cordovaAppAvailability, currentPlace, appState, $injector, listView, placeConstructor, fitBounds){
 
     var name = currentPlace.name;
 
@@ -21,10 +21,22 @@ angular.module('starter')
       template: '<div class="infowindow"><div class="iw-title">{{place.name}}</div><div class="iw-info"><p>Type: {{place.type}}</p><p>Note: {{place.note}}</p><a ng-click="openNewMap()"">Navigation</a></div><p ng-show="place.visited">You have visited this place!</p><button ng-hide="place.visited" ng-click="markAsVisited()" class="button button-block button-positive">Visited?</button></div>',
       link: function(scope, element, attrs) {
         scope.markAsVisited = function(){
-          var visited = true;
+          var copyOfPlace;
           scope.place.visited = true;
+          //Changes the marker icon when visited changed to true
+          listView.forEach(function(listViewPlace){
+            if(listViewPlace.uid === currentPlace.uid){
+              copyOfPlace = listViewPlace;
+              var index = listView.indexOf(listViewPlace);
+              var x = listView.splice(index, 1);
+              x[0].marker.setMap(null);
+              copyOfPlace.visited = true;
+              listView.push(new placeConstructor.Place(copyOfPlace['name'], copyOfPlace['lat'], copyOfPlace['lng'], copyOfPlace['type'], copyOfPlace['notes'], copyOfPlace['address'], copyOfPlace['group'], copyOfPlace['visited'], copyOfPlace['uid'], copyOfPlace.map));
+            }
+          })
           var service = $injector.get('firebaseData');
-          service.addVisited(currentPlace.group, visited, currentPlace.uid);
+          //Updates firebase with changes
+          service.addVisited(currentPlace.group, scope.place.visited, currentPlace.uid);
         },
         scope.openNewMap = function(){
           var lat = currentPlace.lat;
