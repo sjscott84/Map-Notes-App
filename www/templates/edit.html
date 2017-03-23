@@ -16,7 +16,7 @@
 				</div>
 				<ion-option-button class="button-assertive" ng-click="deleteGroup(thing)">Delete</ion-option-button>
 			</ion-item>
-			<ion-item class="item-accordion item-text-wrap" ng-repeat="item in thing.items" ng-show="isGroupShown(thing)" can-swipe="listCanSwipe" ng-click="edit(item)">
+			<ion-item class="item-accordion item-text-wrap" ng-repeat="item in thing.items | orderBy:'name'" ng-show="isGroupShown(thing)" can-swipe="listCanSwipe" ng-click="edit(item)">
 				<div>
 					{{item.name}}
 					<i id="slideIcon" class="icon-right ion-chevron-left"></i>
