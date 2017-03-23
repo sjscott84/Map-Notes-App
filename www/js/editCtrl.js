@@ -1,8 +1,10 @@
 'use strict';
 angular.module('starter')  
-  .controller('editCtrl',['$scope', '$state', 'allPlaces', 'popup', function($scope, $state, allPlaces, popup){
+  .controller('editCtrl',['$scope', '$state', 'allPlaces', 'popup', 'existingPlaces', 'dropdownList', function($scope, $state, allPlaces, popup, existingPlaces, dropdownList){
 
     $scope.list = allPlaces;
+    $scope.matchingGroups = [];
+    $scope.matchingTypes = [];
 
     $scope.$watchCollection(
       function(){
@@ -42,6 +44,22 @@ angular.module('starter')
 
     $scope.deleteGroup = function(item){
       popup.deleteGroup($scope, item);
+    };
+
+    //Updates the groups that display on screen that match the search term
+    $scope.getGroups = function(data) {
+      $scope.matchingGroups = dropdownList.getGroups(data);
+    };
+
+    //Updates the types that display on screen that match the search term
+    $scope.getTypes = function(data) {
+      $scope.matchingTypes = dropdownList.getTypes(data);
+    };
+
+    //Closes the "autocomplete" dropdown list once an option has been selected when creating a new entry
+    $scope.closeList = function(){
+      $scope.matchingGroups = [];
+      $scope.matchingTypes = [];
     };
   }]);
 

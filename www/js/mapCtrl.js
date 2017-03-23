@@ -1,7 +1,7 @@
 'use strict';
 angular.module('starter')
-  .controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'existingPlacesGrouped', 'currentPosition', 'menu', 'listView', 'appState', 'location',
-                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, existingPlacesGrouped, currentPosition, menu, listView, appState, location) {
+  .controller('MapCtrl', ['$scope', '$state', '$cordovaGeolocation', 'popup', 'existingPlaces', 'existingPlacesGrouped', 'currentPosition', 'menu', 'listView', 'appState', 'location', 'dropdownList',
+                  function($scope, $state, $cordovaGeolocation, popup, existingPlaces, existingPlacesGrouped, currentPosition, menu, listView, appState, location, dropdownList) {
     var scope = $scope;
     var button = document.getElementById('button');
     var closeButton = document.getElementById('closeButton');
@@ -134,31 +134,13 @@ angular.module('starter')
     }
 
     //Updates the groups that display on screen that match the search term
-    scope.getGroups = function() {
-      if(scope.data.group.length !== 0){
-        var entry = scope.data.group.length;
-      }
-      scope.matchingGroups = [];
-      for(var i = 1; i<existingPlaces.groups.length; i++){
-          var what = existingPlaces.groups[i].slice(0, entry);
-          if(scope.data.group.match(new RegExp([what], 'i'))){
-            scope.matchingGroups.push(existingPlaces.groups[i]);
-        }
-      }
+    scope.getGroups = function(data) {
+      scope.matchingGroups = dropdownList.getGroups(data);
     };
 
     //Updates the types that display on screen that match the search term
-    scope.getTypes = function() {
-      if(scope.data.type.length !== 0){
-        var entry = scope.data.type.length;
-      }
-      scope.matchingTypes = [];
-      for(var i = 1; i<existingPlaces.types.length-1; i++){
-          var what = existingPlaces.types[i].slice(0, entry);
-          if(scope.data.type.match(new RegExp([what], 'i'))){
-            scope.matchingTypes.push(existingPlaces.types[i]);
-        }
-      }
+    scope.getTypes = function(data) {
+      scope.matchingTypes = dropdownList.getTypes(data);
     };
 
     //Closes the "autocomplete" dropdown list once an option has been selected when creating a new entry

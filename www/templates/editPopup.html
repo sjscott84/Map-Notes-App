@@ -1,12 +1,22 @@
 <div class="list" class="ng-cloak">
   <label class="item item-input item-stacked-label">
     <span class="input-label">Group</span>
-    <input type="text" ng-model="data.group">
+    <input type="text" ng-model="data.group" ng-keyup="getGroups(data.group)">
   </label>
+  <ion-list>
+    <ion-item ng-repeat="group in matchingGroups" ng-click="data.group=group; closeList()">
+      {{group}}
+    </ion-item>
+  </ion-list>
   <label class="item item-input item-stacked-label">
     <span class="input-label">Type</span>
-    <input type="text" ng-model="data.type">
+    <input type="text" ng-model="data.type" ng-keyup="getTypes(data.type)">
   </label>
+  <ion-list>
+    <ion-item ng-repeat="type in matchingTypes" ng-click="data.type=type; closeList()">
+      {{type}}
+    </ion-item>
+  </ion-list>
   <label class="item item-input item-stacked-label">
     <span class="input-label">Note</span>
     <input type="text" ng-model="data.note">
