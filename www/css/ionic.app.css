@@ -9935,6 +9935,8 @@ p {
 
 #slideIcon {
   float: right;
+  margin-right: -25px;
+  color: #D3D3D3;
 }
 
 #spinnerDiv {
