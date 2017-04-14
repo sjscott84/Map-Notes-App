@@ -22,23 +22,15 @@ angular.module('starter')
         }
       };
       $ionicSideMenuDelegate.toggleLeft();
-      //var promise = server.pageSetUp();
-      //promise.then(
-        //function(){
-          mapScope.group  = existingPlaces.groups.sort();
-          mapScope.type = existingPlaces.types.sort();
-          popup.getPlaces(mapScope, map);
-        //}
-      //);
+        mapScope.group  = existingPlaces.groups.sort();
+        mapScope.type = existingPlaces.types.sort();
+        popup.getPlaces(mapScope, map);
     },
     //Search based on location (if avaiable)
     searchByLocation: function(mapScope, map, button, input, closeButton){
       map.controls[google.maps.ControlPosition.TOP_CENTER].clear();
 
-      var service;
-      //if(!appState.offline){
-        service = $injector.get('firebaseData');
-      //}
+      var service = $injector.get('firebaseData');
       removePlacesFromList();
       map.setCenter({lat:currentPosition.lat, lng: currentPosition.lng});
       service.placesByLocation(currentPosition.lat, currentPosition.lng, currentPosition.radius, map);

@@ -1,6 +1,6 @@
 'use strict';
 angular.module('starter')  
-  .controller('editCtrl',['$scope', '$state', 'allPlaces', 'popup', 'existingPlaces', 'dropdownList', function($scope, $state, allPlaces, popup, existingPlaces, dropdownList){
+  .controller('editCtrl',['$scope', '$state', 'allPlaces', 'popup', 'existingPlaces', 'dropdownList', '$ionicModal', function($scope, $state, allPlaces, popup, existingPlaces, dropdownList, $ionicModal){
 
     $scope.list = allPlaces;
     $scope.matchingGroups = [];

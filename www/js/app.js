@@ -83,12 +83,10 @@ app.run(function($ionicPlatform, $rootScope, appState, location, $window, $state
 
   document.addEventListener("pause", function(){
     appState.appActive = false;
-    console.log(appState.appActive);
   }, false);
 
   document.addEventListener("resume", function(){
     appState.appActive = true;
-    console.log(appState.appActive);
   }, false);
 });
 

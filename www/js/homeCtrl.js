@@ -26,12 +26,6 @@ angular.module('starter')
         }
       },true);
 
-    /*$scope.loginGoogle = function(){
-      firebaseAuth.googleLogin(function(error){
-        popup.loginErrors(error);
-      });
-    }*/
-
     $scope.loginFacebook = function(){
       firebaseAuth.facebookLogin(function(error){
         popup.loginErrors(error);
