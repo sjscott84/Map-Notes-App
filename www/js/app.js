@@ -98,6 +98,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
     controller: 'homeCtrl'
   })
   .state('map', {
+    cache: false,
     url: '/map',
     templateUrl: 'templates/map.html',
     controller: 'MapCtrl',
