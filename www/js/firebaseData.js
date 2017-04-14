@@ -125,12 +125,16 @@ angular.module('starter')
               Object.keys(item).forEach(function(key){
                 getVisitedPlaces(visited, item[key], key, map)
                 //savePlaceToListView(item[key], key, map);
+                console.log(listView)
               });
             });
             if(listView.length === 0){
               errorMessage.searchErrorAlert();
             }
-          });
+          })
+          .catch(function(error){
+            errorMessage.noData();
+          })
         }else if(group === "All" && type !== "All"){
           database.ref('/users/'+user.data.uid+'/places').once('value')
           .then(function(response){
@@ -147,7 +151,10 @@ angular.module('starter')
             if(listView.length === 0){
               errorMessage.searchErrorAlert();
             }
-          });
+          })
+          .catch(function(error){
+            errorMessage.noData();
+          })
         }else if(group !== "All" && type === "All"){
           database.ref('/users/'+user.data.uid+'/places/'+group).once('value')
           .then(function(response){
@@ -158,7 +165,10 @@ angular.module('starter')
             if(listView.length === 0){
               errorMessage.searchErrorAlert();
             }
-          });
+          })
+          .catch(function(error){
+            errorMessage.noData();
+          })
         }else{
           database.ref('/users/'+user.data.uid+'/places/'+group).once('value')
           .then(function(response){
@@ -172,7 +182,10 @@ angular.module('starter')
             if(listView.length === 0){
               errorMessage.searchErrorAlert();
             }
-          });
+          })
+          .catch(function(error){
+            errorMessage.noData();
+          })
         }
       },
       placesByLocation: function(lat, lng, distance, map, callback){
@@ -193,9 +206,12 @@ angular.module('starter')
             });
           });
           if(listView.length === 0){
-            errorMessage.searchErrorAlert();
+            errorMessage.locationErrorAlert();
           }
-        });
+        })
+        .catch(function(error){
+          errorMessage.noData();
+        })
       },
       //Used by firebaseAuth at page setup
       getPlaces: function(){

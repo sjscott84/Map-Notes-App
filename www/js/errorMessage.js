@@ -15,6 +15,12 @@ angular.module('starter')
            template: 'No results found for your location please try searching'
          });
       },
+      noData: function(){
+        var alertPopup = $ionicPopup.alert({
+         title: 'Error',
+         template: "You don't have any recommendations saved, please start saving some places"
+       });
+      },
       savePlaceErrorAlert: function(){
           var alertPopup = $ionicPopup.alert({
            title: 'Error',
